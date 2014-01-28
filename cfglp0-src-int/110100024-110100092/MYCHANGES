@@ -1,0 +1,27 @@
+110100024 - Sagar Jha
+110100092 - Raghav Gupta
+
+CS306 - Interpretation of Programming Languages Lab
+
+Assignment 2a) (parser for level 1, no semantic analysis or interpretation)
+
+The changes made are summarized as follows-
+
+1) scanner.ll
+	With the updated language description, new tokens needed to be recognized- namely the keywords "if", "else", "goto" and meta-character '!'. Separate token descriptions were added for the former three and the two new characters were clubbed with the meta-char token type.
+
+2) parser.yy
+	It was interesting to note that all kinds of control statements were converted in the CFG dump to a highly simplified structure- a basic block (starting with an optional list of assignment statements) could end with just a "if (<boolean expression>) goto <basic block> else <basic block>" pattern OR just a "goto <basic block>" statement, or neither (a relic from level 0).
+
+	First up, new rules were added to accommodate an if-goto-else-goto statement or a goto statement at the end of a basic block.
+
+	Then we had to define boolean expressions. These could either make consist of variables/constants related by relational operators ('<', '>', '<=', '>=', '!=', '==') or even assignment statements as have been defined. New rules were inserted to accept boolean expressions.
+
+The rules that we have added are :- 
+basic_block: '<' NAME INTEGER_NUMBER '>' ':' executable_statement_list conditional_statement | '<' NAME INTEGER_NUMBER '>' ':' executable_statement_list goto_statement
+conditional_statement: IF '(' predicate ')' GOTO '<' NAME INTEGER_NUMBER '>' ';' ELSE GOTO '<' NAME INTEGER_NUMBER '>' ';' ;
+goto_statement: GOTO '<' NAME INTEGER_NUMBER '>' ';';
+modified_variable: variable | constant ;
+predicate: predicate '=' modified_variable | predicate '<' '=' modified_variable |	predicate '>' '=' modified_variable | predicate '<' modified_variable | predicate '>' modified_variable | predicate '!' '=' modified_variable |	predicate '=' '=' modified_variable | modified_variable '=' modified_variable | modified_variable '<' '=' modified_variable | modified_variable '>' '=' modified_variable | modified_variable '<' modified_variable | modified_variable '>' modified_variable |	modified_variable '!' '=' modified_variable | modified_variable '=' '=' modified_variable;
+
+	
