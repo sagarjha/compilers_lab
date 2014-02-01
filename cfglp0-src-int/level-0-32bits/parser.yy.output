@@ -1,0 +1,699 @@
+[[parser.yy (info)] Line 537: 
+Production Rules
+(rule precedences determined from %prec or 1st terminal between parentheses):
+1: program ->  declaration_statement_list procedure_name #0001 procedure_body
+2: #0001 ->  <empty>
+3: program ->  procedure_name #0002 procedure_body
+4: #0002 ->  <empty>
+5: procedure_name (NAME) ->  NAME '(' ')'
+6: procedure_body ('{') ->  '{' declaration_statement_list #0003 basic_block_list '}'
+7: #0003 ->  <empty>
+8: procedure_body ('{') ->  '{' basic_block_list '}'
+9: declaration_statement_list ->  declaration_statement
+10: declaration_statement_list ->  declaration_statement_list declaration_statement
+11: declaration_statement (INTEGER) ->  INTEGER NAME ';'
+12: basic_block_list ->  basic_block_list basic_block
+13: basic_block_list ->  basic_block
+14: basic_block (BASIC_BLOCK) ->  BASIC_BLOCK ':' executable_statement_list
+15: basic_block (BASIC_BLOCK) ->  BASIC_BLOCK ':' executable_statement_list conditional_statement
+16: basic_block (BASIC_BLOCK) ->  BASIC_BLOCK ':' executable_statement_list goto_statement
+17: executable_statement_list ->  assignment_statement_list
+18: executable_statement_list (RETURN) ->  assignment_statement_list RETURN ';'
+19: assignment_statement_list ->  <empty>
+20: assignment_statement_list ->  assignment_statement_list assignment_statement
+21: assignment_statement (ASSIGN_OP) ->  variable ASSIGN_OP variable ';'
+22: assignment_statement (ASSIGN_OP) ->  variable ASSIGN_OP constant ';'
+23: assignment_statement (ASSIGN_OP) ->  variable ASSIGN_OP predicate ';'
+24: variable (NAME) ->  NAME
+25: constant (INTEGER_NUMBER) ->  INTEGER_NUMBER
+26: conditional_statement (IF) ->  IF '(' predicate ')' GOTO BASIC_BLOCK ';' ELSE GOTO BASIC_BLOCK ';'
+27: goto_statement (GOTO) ->  GOTO BASIC_BLOCK ';'
+28: modified_variable ->  variable
+29: modified_variable ->  constant
+30: predicate (ASSIGN_OP) ->  predicate ASSIGN_OP modified_variable
+31: predicate ('<') ->  predicate '<' ASSIGN_OP modified_variable
+32: predicate ('>') ->  predicate '>' ASSIGN_OP modified_variable
+33: predicate ('<') ->  predicate '<' modified_variable
+34: predicate ('>') ->  predicate '>' modified_variable
+35: predicate ('!') ->  predicate '!' ASSIGN_OP modified_variable
+36: predicate (ASSIGN_OP) ->  predicate ASSIGN_OP ASSIGN_OP modified_variable
+37: predicate (ASSIGN_OP) ->  modified_variable ASSIGN_OP modified_variable
+38: predicate ('<') ->  modified_variable '<' ASSIGN_OP modified_variable
+39: predicate ('>') ->  modified_variable '>' ASSIGN_OP modified_variable
+40: predicate ('<') ->  modified_variable '<' modified_variable
+41: predicate ('>') ->  modified_variable '>' modified_variable
+42: predicate ('!') ->  modified_variable '!' ASSIGN_OP modified_variable
+43: predicate (ASSIGN_OP) ->  modified_variable ASSIGN_OP ASSIGN_OP modified_variable
+44: program_$ ->  program
+
+[[parser.yy (info)] 
+Symbolic Terminal tokens:
+       error
+       EOF
+   257: INTEGER_NUMBER
+   258: BASIC_BLOCK
+   259: NAME
+   260: RETURN
+   261: INTEGER
+   262: IF
+   263: ELSE
+   264: GOTO
+   265: ASSIGN_OP
+    40: '('
+    41: ')'
+   123: '{'
+   125: '}'
+    59: ';'
+    58: ':'
+    60: '<'
+    62: '>'
+    33: '!'
+
+[[parser.yy (info)] 
+Grammar States: 
+[[parser.yy (info)] State 0:
+44: program_$ ->  . program 
+  0:   On program to state 1
+  1:   On declaration_statement_list to state 2
+  2:   On procedure_name to state 3
+  3:   On declaration_statement to state 4
+  4:   On NAME to state 5
+  5:   On INTEGER to state 6
+
+
+State 1:
+44: program_$ -> program  . 
+
+
+State 2:
+1: program -> declaration_statement_list  . procedure_name #0001 procedure_body 
+10: declaration_statement_list -> declaration_statement_list  . declaration_statement 
+  0:   On procedure_name to state 7
+  1:   On declaration_statement to state 8
+  2:   On NAME to state 5
+  3:   On INTEGER to state 6
+
+
+State 3:
+3: program -> procedure_name  . #0002 procedure_body 
+  0:   On #0002 to state 9
+  Reduce by 4: #0002 ->  . 
+
+
+State 4:
+9: declaration_statement_list -> declaration_statement  . 
+  Reduce by 9: declaration_statement_list -> declaration_statement  . 
+
+
+State 5:
+5: procedure_name -> NAME  . '(' ')' 
+  0:   On '(' to state 10
+
+
+State 6:
+11: declaration_statement -> INTEGER  . NAME ';' 
+  0:   On NAME to state 11
+
+
+State 7:
+1: program -> declaration_statement_list procedure_name  . #0001 procedure_body 
+  0:   On #0001 to state 12
+  Reduce by 2: #0001 ->  . 
+
+
+State 8:
+10: declaration_statement_list -> declaration_statement_list declaration_statement  . 
+  Reduce by 10: declaration_statement_list -> declaration_statement_list declaration_statement  . 
+
+
+State 9:
+3: program -> procedure_name #0002  . procedure_body 
+  0:   On procedure_body to state 13
+  1:   On '{' to state 14
+
+
+State 10:
+5: procedure_name -> NAME '('  . ')' 
+  0:   On ')' to state 15
+
+
+State 11:
+11: declaration_statement -> INTEGER NAME  . ';' 
+  0:   On ';' to state 16
+
+
+State 12:
+1: program -> declaration_statement_list procedure_name #0001  . procedure_body 
+  0:   On procedure_body to state 17
+  1:   On '{' to state 14
+
+
+State 13:
+3: program -> procedure_name #0002 procedure_body  . 
+  Reduce by 3: program -> procedure_name #0002 procedure_body  . 
+
+
+State 14:
+6: procedure_body -> '{'  . declaration_statement_list #0003 basic_block_list '}' 
+8: procedure_body -> '{'  . basic_block_list '}' 
+  0:   On declaration_statement_list to state 18
+  1:   On basic_block_list to state 19
+  2:   On declaration_statement to state 4
+  3:   On basic_block to state 20
+  4:   On INTEGER to state 6
+  5:   On BASIC_BLOCK to state 21
+
+
+State 15:
+5: procedure_name -> NAME '(' ')'  . 
+  Reduce by 5: procedure_name -> NAME '(' ')'  . 
+
+
+State 16:
+11: declaration_statement -> INTEGER NAME ';'  . 
+  Reduce by 11: declaration_statement -> INTEGER NAME ';'  . 
+
+
+State 17:
+1: program -> declaration_statement_list procedure_name #0001 procedure_body  . 
+  Reduce by 1: program -> declaration_statement_list procedure_name #0001 procedure_body  . 
+
+
+State 18:
+6: procedure_body -> '{' declaration_statement_list  . #0003 basic_block_list '}' 
+10: declaration_statement_list -> declaration_statement_list  . declaration_statement 
+  0:   On #0003 to state 22
+  1:   On declaration_statement to state 8
+  2:   On INTEGER to state 6
+  Reduce by 7: #0003 ->  . 
+
+
+State 19:
+8: procedure_body -> '{' basic_block_list  . '}' 
+12: basic_block_list -> basic_block_list  . basic_block 
+  0:   On '}' to state 23
+  1:   On basic_block to state 24
+  2:   On BASIC_BLOCK to state 21
+
+
+State 20:
+13: basic_block_list -> basic_block  . 
+  Reduce by 13: basic_block_list -> basic_block  . 
+
+
+State 21:
+14: basic_block -> BASIC_BLOCK  . ':' executable_statement_list 
+15: basic_block -> BASIC_BLOCK  . ':' executable_statement_list conditional_statement 
+16: basic_block -> BASIC_BLOCK  . ':' executable_statement_list goto_statement 
+  0:   On ':' to state 25
+
+
+State 22:
+6: procedure_body -> '{' declaration_statement_list #0003  . basic_block_list '}' 
+  0:   On basic_block_list to state 26
+  1:   On basic_block to state 20
+  2:   On BASIC_BLOCK to state 21
+
+
+State 23:
+8: procedure_body -> '{' basic_block_list '}'  . 
+  Reduce by 8: procedure_body -> '{' basic_block_list '}'  . 
+
+
+State 24:
+12: basic_block_list -> basic_block_list basic_block  . 
+  Reduce by 12: basic_block_list -> basic_block_list basic_block  . 
+
+
+State 25:
+14: basic_block -> BASIC_BLOCK ':'  . executable_statement_list 
+15: basic_block -> BASIC_BLOCK ':'  . executable_statement_list conditional_statement 
+16: basic_block -> BASIC_BLOCK ':'  . executable_statement_list goto_statement 
+  0:   On executable_statement_list to state 27
+  1:   On assignment_statement_list to state 28
+  Reduce by 19: assignment_statement_list ->  . 
+
+
+State 26:
+6: procedure_body -> '{' declaration_statement_list #0003 basic_block_list  . '}' 
+12: basic_block_list -> basic_block_list  . basic_block 
+  0:   On '}' to state 29
+  1:   On basic_block to state 24
+  2:   On BASIC_BLOCK to state 21
+
+
+State 27:
+14: basic_block -> BASIC_BLOCK ':' executable_statement_list  . 
+15: basic_block -> BASIC_BLOCK ':' executable_statement_list  . conditional_statement 
+16: basic_block -> BASIC_BLOCK ':' executable_statement_list  . goto_statement 
+  0:   On conditional_statement to state 30
+  1:   On goto_statement to state 31
+  2:   On IF to state 32
+  3:   On GOTO to state 33
+  Reduce by 14: basic_block -> BASIC_BLOCK ':' executable_statement_list  . 
+
+
+State 28:
+17: executable_statement_list -> assignment_statement_list  . 
+18: executable_statement_list -> assignment_statement_list  . RETURN ';' 
+20: assignment_statement_list -> assignment_statement_list  . assignment_statement 
+  0:   On RETURN to state 34
+  1:   On assignment_statement to state 35
+  2:   On variable to state 36
+  3:   On NAME to state 37
+  Reduce by 17: executable_statement_list -> assignment_statement_list  . 
+
+
+State 29:
+6: procedure_body -> '{' declaration_statement_list #0003 basic_block_list '}'  . 
+  Reduce by 6: procedure_body -> '{' declaration_statement_list #0003 basic_block_list '}'  . 
+
+
+State 30:
+15: basic_block -> BASIC_BLOCK ':' executable_statement_list conditional_statement  . 
+  Reduce by 15: basic_block -> BASIC_BLOCK ':' executable_statement_list conditional_statement  . 
+
+
+State 31:
+16: basic_block -> BASIC_BLOCK ':' executable_statement_list goto_statement  . 
+  Reduce by 16: basic_block -> BASIC_BLOCK ':' executable_statement_list goto_statement  . 
+
+
+State 32:
+26: conditional_statement -> IF  . '(' predicate ')' GOTO BASIC_BLOCK ';' ELSE GOTO BASIC_BLOCK ';' 
+  0:   On '(' to state 38
+
+
+State 33:
+27: goto_statement -> GOTO  . BASIC_BLOCK ';' 
+  0:   On BASIC_BLOCK to state 39
+
+
+State 34:
+18: executable_statement_list -> assignment_statement_list RETURN  . ';' 
+  0:   On ';' to state 40
+
+
+State 35:
+20: assignment_statement_list -> assignment_statement_list assignment_statement  . 
+  Reduce by 20: assignment_statement_list -> assignment_statement_list assignment_statement  . 
+
+
+State 36:
+21: assignment_statement -> variable  . ASSIGN_OP variable ';' 
+22: assignment_statement -> variable  . ASSIGN_OP constant ';' 
+23: assignment_statement -> variable  . ASSIGN_OP predicate ';' 
+  0:   On ASSIGN_OP to state 41
+
+
+State 37:
+24: variable -> NAME  . 
+  Reduce by 24: variable -> NAME  . 
+
+
+State 38:
+26: conditional_statement -> IF '('  . predicate ')' GOTO BASIC_BLOCK ';' ELSE GOTO BASIC_BLOCK ';' 
+  0:   On predicate to state 42
+  1:   On modified_variable to state 43
+  2:   On variable to state 44
+  3:   On constant to state 45
+  4:   On NAME to state 37
+  5:   On INTEGER_NUMBER to state 46
+
+
+State 39:
+27: goto_statement -> GOTO BASIC_BLOCK  . ';' 
+  0:   On ';' to state 47
+
+
+State 40:
+18: executable_statement_list -> assignment_statement_list RETURN ';'  . 
+  Reduce by 18: executable_statement_list -> assignment_statement_list RETURN ';'  . 
+
+
+State 41:
+21: assignment_statement -> variable ASSIGN_OP  . variable ';' 
+22: assignment_statement -> variable ASSIGN_OP  . constant ';' 
+23: assignment_statement -> variable ASSIGN_OP  . predicate ';' 
+  0:   On variable to state 48
+  1:   On constant to state 49
+  2:   On predicate to state 50
+  3:   On NAME to state 37
+  4:   On INTEGER_NUMBER to state 46
+  5:   On modified_variable to state 43
+
+
+State 42:
+26: conditional_statement -> IF '(' predicate  . ')' GOTO BASIC_BLOCK ';' ELSE GOTO BASIC_BLOCK ';' 
+30: predicate -> predicate  . ASSIGN_OP modified_variable 
+31: predicate -> predicate  . '<' ASSIGN_OP modified_variable 
+32: predicate -> predicate  . '>' ASSIGN_OP modified_variable 
+33: predicate -> predicate  . '<' modified_variable 
+34: predicate -> predicate  . '>' modified_variable 
+35: predicate -> predicate  . '!' ASSIGN_OP modified_variable 
+36: predicate -> predicate  . ASSIGN_OP ASSIGN_OP modified_variable 
+  0:   On ')' to state 51
+  1:   On ASSIGN_OP to state 52
+  2:   On '<' to state 53
+  3:   On '>' to state 54
+  4:   On '!' to state 55
+
+
+State 43:
+37: predicate -> modified_variable  . ASSIGN_OP modified_variable 
+38: predicate -> modified_variable  . '<' ASSIGN_OP modified_variable 
+39: predicate -> modified_variable  . '>' ASSIGN_OP modified_variable 
+40: predicate -> modified_variable  . '<' modified_variable 
+41: predicate -> modified_variable  . '>' modified_variable 
+42: predicate -> modified_variable  . '!' ASSIGN_OP modified_variable 
+43: predicate -> modified_variable  . ASSIGN_OP ASSIGN_OP modified_variable 
+  0:   On ASSIGN_OP to state 56
+  1:   On '<' to state 57
+  2:   On '>' to state 58
+  3:   On '!' to state 59
+
+
+State 44:
+28: modified_variable -> variable  . 
+  Reduce by 28: modified_variable -> variable  . 
+
+
+State 45:
+29: modified_variable -> constant  . 
+  Reduce by 29: modified_variable -> constant  . 
+
+
+State 46:
+25: constant -> INTEGER_NUMBER  . 
+  Reduce by 25: constant -> INTEGER_NUMBER  . 
+
+
+State 47:
+27: goto_statement -> GOTO BASIC_BLOCK ';'  . 
+  Reduce by 27: goto_statement -> GOTO BASIC_BLOCK ';'  . 
+
+
+State 48:
+21: assignment_statement -> variable ASSIGN_OP variable  . ';' 
+28: modified_variable -> variable  . 
+  0:   On ';' to state 60
+  Reduce by 28: modified_variable -> variable  . 
+
+
+State 49:
+22: assignment_statement -> variable ASSIGN_OP constant  . ';' 
+29: modified_variable -> constant  . 
+  0:   On ';' to state 61
+  Reduce by 29: modified_variable -> constant  . 
+
+
+State 50:
+23: assignment_statement -> variable ASSIGN_OP predicate  . ';' 
+30: predicate -> predicate  . ASSIGN_OP modified_variable 
+31: predicate -> predicate  . '<' ASSIGN_OP modified_variable 
+32: predicate -> predicate  . '>' ASSIGN_OP modified_variable 
+33: predicate -> predicate  . '<' modified_variable 
+34: predicate -> predicate  . '>' modified_variable 
+35: predicate -> predicate  . '!' ASSIGN_OP modified_variable 
+36: predicate -> predicate  . ASSIGN_OP ASSIGN_OP modified_variable 
+  0:   On ';' to state 62
+  1:   On ASSIGN_OP to state 52
+  2:   On '<' to state 53
+  3:   On '>' to state 54
+  4:   On '!' to state 55
+
+
+State 51:
+26: conditional_statement -> IF '(' predicate ')'  . GOTO BASIC_BLOCK ';' ELSE GOTO BASIC_BLOCK ';' 
+  0:   On GOTO to state 63
+
+
+State 52:
+30: predicate -> predicate ASSIGN_OP  . modified_variable 
+36: predicate -> predicate ASSIGN_OP  . ASSIGN_OP modified_variable 
+  0:   On modified_variable to state 64
+  1:   On ASSIGN_OP to state 65
+  2:   On variable to state 44
+  3:   On constant to state 45
+  4:   On NAME to state 37
+  5:   On INTEGER_NUMBER to state 46
+
+
+State 53:
+31: predicate -> predicate '<'  . ASSIGN_OP modified_variable 
+33: predicate -> predicate '<'  . modified_variable 
+  0:   On ASSIGN_OP to state 66
+  1:   On modified_variable to state 67
+  2:   On variable to state 44
+  3:   On constant to state 45
+  4:   On NAME to state 37
+  5:   On INTEGER_NUMBER to state 46
+
+
+State 54:
+32: predicate -> predicate '>'  . ASSIGN_OP modified_variable 
+34: predicate -> predicate '>'  . modified_variable 
+  0:   On ASSIGN_OP to state 68
+  1:   On modified_variable to state 69
+  2:   On variable to state 44
+  3:   On constant to state 45
+  4:   On NAME to state 37
+  5:   On INTEGER_NUMBER to state 46
+
+
+State 55:
+35: predicate -> predicate '!'  . ASSIGN_OP modified_variable 
+  0:   On ASSIGN_OP to state 70
+
+
+State 56:
+37: predicate -> modified_variable ASSIGN_OP  . modified_variable 
+43: predicate -> modified_variable ASSIGN_OP  . ASSIGN_OP modified_variable 
+  0:   On modified_variable to state 71
+  1:   On ASSIGN_OP to state 72
+  2:   On variable to state 44
+  3:   On constant to state 45
+  4:   On NAME to state 37
+  5:   On INTEGER_NUMBER to state 46
+
+
+State 57:
+38: predicate -> modified_variable '<'  . ASSIGN_OP modified_variable 
+40: predicate -> modified_variable '<'  . modified_variable 
+  0:   On ASSIGN_OP to state 73
+  1:   On modified_variable to state 74
+  2:   On variable to state 44
+  3:   On constant to state 45
+  4:   On NAME to state 37
+  5:   On INTEGER_NUMBER to state 46
+
+
+State 58:
+39: predicate -> modified_variable '>'  . ASSIGN_OP modified_variable 
+41: predicate -> modified_variable '>'  . modified_variable 
+  0:   On ASSIGN_OP to state 75
+  1:   On modified_variable to state 76
+  2:   On variable to state 44
+  3:   On constant to state 45
+  4:   On NAME to state 37
+  5:   On INTEGER_NUMBER to state 46
+
+
+State 59:
+42: predicate -> modified_variable '!'  . ASSIGN_OP modified_variable 
+  0:   On ASSIGN_OP to state 77
+
+
+State 60:
+21: assignment_statement -> variable ASSIGN_OP variable ';'  . 
+  Reduce by 21: assignment_statement -> variable ASSIGN_OP variable ';'  . 
+
+
+State 61:
+22: assignment_statement -> variable ASSIGN_OP constant ';'  . 
+  Reduce by 22: assignment_statement -> variable ASSIGN_OP constant ';'  . 
+
+
+State 62:
+23: assignment_statement -> variable ASSIGN_OP predicate ';'  . 
+  Reduce by 23: assignment_statement -> variable ASSIGN_OP predicate ';'  . 
+
+
+State 63:
+26: conditional_statement -> IF '(' predicate ')' GOTO  . BASIC_BLOCK ';' ELSE GOTO BASIC_BLOCK ';' 
+  0:   On BASIC_BLOCK to state 78
+
+
+State 64:
+30: predicate -> predicate ASSIGN_OP modified_variable  . 
+  Reduce by 30: predicate -> predicate ASSIGN_OP modified_variable  . 
+
+
+State 65:
+36: predicate -> predicate ASSIGN_OP ASSIGN_OP  . modified_variable 
+  0:   On modified_variable to state 79
+  1:   On variable to state 44
+  2:   On constant to state 45
+  3:   On NAME to state 37
+  4:   On INTEGER_NUMBER to state 46
+
+
+State 66:
+31: predicate -> predicate '<' ASSIGN_OP  . modified_variable 
+  0:   On modified_variable to state 80
+  1:   On variable to state 44
+  2:   On constant to state 45
+  3:   On NAME to state 37
+  4:   On INTEGER_NUMBER to state 46
+
+
+State 67:
+33: predicate -> predicate '<' modified_variable  . 
+  Reduce by 33: predicate -> predicate '<' modified_variable  . 
+
+
+State 68:
+32: predicate -> predicate '>' ASSIGN_OP  . modified_variable 
+  0:   On modified_variable to state 81
+  1:   On variable to state 44
+  2:   On constant to state 45
+  3:   On NAME to state 37
+  4:   On INTEGER_NUMBER to state 46
+
+
+State 69:
+34: predicate -> predicate '>' modified_variable  . 
+  Reduce by 34: predicate -> predicate '>' modified_variable  . 
+
+
+State 70:
+35: predicate -> predicate '!' ASSIGN_OP  . modified_variable 
+  0:   On modified_variable to state 82
+  1:   On variable to state 44
+  2:   On constant to state 45
+  3:   On NAME to state 37
+  4:   On INTEGER_NUMBER to state 46
+
+
+State 71:
+37: predicate -> modified_variable ASSIGN_OP modified_variable  . 
+  Reduce by 37: predicate -> modified_variable ASSIGN_OP modified_variable  . 
+
+
+State 72:
+43: predicate -> modified_variable ASSIGN_OP ASSIGN_OP  . modified_variable 
+  0:   On modified_variable to state 83
+  1:   On variable to state 44
+  2:   On constant to state 45
+  3:   On NAME to state 37
+  4:   On INTEGER_NUMBER to state 46
+
+
+State 73:
+38: predicate -> modified_variable '<' ASSIGN_OP  . modified_variable 
+  0:   On modified_variable to state 84
+  1:   On variable to state 44
+  2:   On constant to state 45
+  3:   On NAME to state 37
+  4:   On INTEGER_NUMBER to state 46
+
+
+State 74:
+40: predicate -> modified_variable '<' modified_variable  . 
+  Reduce by 40: predicate -> modified_variable '<' modified_variable  . 
+
+
+State 75:
+39: predicate -> modified_variable '>' ASSIGN_OP  . modified_variable 
+  0:   On modified_variable to state 85
+  1:   On variable to state 44
+  2:   On constant to state 45
+  3:   On NAME to state 37
+  4:   On INTEGER_NUMBER to state 46
+
+
+State 76:
+41: predicate -> modified_variable '>' modified_variable  . 
+  Reduce by 41: predicate -> modified_variable '>' modified_variable  . 
+
+
+State 77:
+42: predicate -> modified_variable '!' ASSIGN_OP  . modified_variable 
+  0:   On modified_variable to state 86
+  1:   On variable to state 44
+  2:   On constant to state 45
+  3:   On NAME to state 37
+  4:   On INTEGER_NUMBER to state 46
+
+
+State 78:
+26: conditional_statement -> IF '(' predicate ')' GOTO BASIC_BLOCK  . ';' ELSE GOTO BASIC_BLOCK ';' 
+  0:   On ';' to state 87
+
+
+State 79:
+36: predicate -> predicate ASSIGN_OP ASSIGN_OP modified_variable  . 
+  Reduce by 36: predicate -> predicate ASSIGN_OP ASSIGN_OP modified_variable  . 
+
+
+State 80:
+31: predicate -> predicate '<' ASSIGN_OP modified_variable  . 
+  Reduce by 31: predicate -> predicate '<' ASSIGN_OP modified_variable  . 
+
+
+State 81:
+32: predicate -> predicate '>' ASSIGN_OP modified_variable  . 
+  Reduce by 32: predicate -> predicate '>' ASSIGN_OP modified_variable  . 
+
+
+State 82:
+35: predicate -> predicate '!' ASSIGN_OP modified_variable  . 
+  Reduce by 35: predicate -> predicate '!' ASSIGN_OP modified_variable  . 
+
+
+State 83:
+43: predicate -> modified_variable ASSIGN_OP ASSIGN_OP modified_variable  . 
+  Reduce by 43: predicate -> modified_variable ASSIGN_OP ASSIGN_OP modified_variable  . 
+
+
+State 84:
+38: predicate -> modified_variable '<' ASSIGN_OP modified_variable  . 
+  Reduce by 38: predicate -> modified_variable '<' ASSIGN_OP modified_variable  . 
+
+
+State 85:
+39: predicate -> modified_variable '>' ASSIGN_OP modified_variable  . 
+  Reduce by 39: predicate -> modified_variable '>' ASSIGN_OP modified_variable  . 
+
+
+State 86:
+42: predicate -> modified_variable '!' ASSIGN_OP modified_variable  . 
+  Reduce by 42: predicate -> modified_variable '!' ASSIGN_OP modified_variable  . 
+
+
+State 87:
+26: conditional_statement -> IF '(' predicate ')' GOTO BASIC_BLOCK ';'  . ELSE GOTO BASIC_BLOCK ';' 
+  0:   On ELSE to state 88
+
+
+State 88:
+26: conditional_statement -> IF '(' predicate ')' GOTO BASIC_BLOCK ';' ELSE  . GOTO BASIC_BLOCK ';' 
+  0:   On GOTO to state 89
+
+
+State 89:
+26: conditional_statement -> IF '(' predicate ')' GOTO BASIC_BLOCK ';' ELSE GOTO  . BASIC_BLOCK ';' 
+  0:   On BASIC_BLOCK to state 90
+
+
+State 90:
+26: conditional_statement -> IF '(' predicate ')' GOTO BASIC_BLOCK ';' ELSE GOTO BASIC_BLOCK  . ';' 
+  0:   On ';' to state 91
+
+
+State 91:
+26: conditional_statement -> IF '(' predicate ')' GOTO BASIC_BLOCK ';' ELSE GOTO BASIC_BLOCK ';'  . 
+  Reduce by 26: conditional_statement -> IF '(' predicate ')' GOTO BASIC_BLOCK ';' ELSE GOTO BASIC_BLOCK ';'  . 
+
+
+

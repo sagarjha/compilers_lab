@@ -1,0 +1,7 @@
+!/bin/bash
+# for f in ./*.cfg
+# do
+#     diff ../../level-1-32bits/output/$f $f
+# done
+
+diff ../../level-1-32bits/output/test.cs306.cfg test.cs306.cfg
