@@ -1,6 +1,0 @@
-#!/bin/bash
-
-for f in *.c
-do
-    make FILE=$f Makefile.cfg
-done
