@@ -104,6 +104,45 @@ public:
 	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
 };
 
+// class definition of relational_expr_ast
+class Relational_Expr_Ast:public Ast
+{
+  Ast *lhs;
+  Ast *rhs;
+  int op;
+
+public:
+  Relational_Expr_Ast (Ast*, int, Ast*);
+  ~Relational_Expr_Ast();
+
+  Data_Type get_data_type();
+  bool check_ast(int line);
+  
+  void print_ast (ostream&);
+
+  Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
+};
+
+// class definition of boolean_expr_ast
+class Boolean_Expr_Ast: public Ast
+{
+  Ast* lhs;
+  Ast* rhs;
+  int op;
+
+public:
+  Boolean_Expr_Ast(Ast*, int, Ast*);
+  ~Boolean_Expr_Ast();
+
+  Data_Type get_data_type();
+  bool check_ast(int line);
+  
+  void print_ast (ostream &);
+
+  Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
+};
+
+
 class Return_Ast:public Ast
 {
 

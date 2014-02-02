@@ -11,7 +11,7 @@
            cs302+cs306: Language  Processors  (theory and  lab)  at  IIT
            Bombay.
 
-           Release  date  Jan  15, 2013.  Copyrights  reserved  by  Uday
+           Release  date  Jan  15, 2013.  Copyrhss  reserved  by  Uday
            Khedker. This  implemenation  has been made  available purely
            for academic purposes without any warranty of any kind.
 
@@ -218,6 +218,111 @@ Number_Ast<DATA_TYPE>::Number_Ast(DATA_TYPE number, Data_Type constant_data_type
 	constant = number;
 	node_data_type = constant_data_type;
 }
+
+///////////////////////////////////////////////////////////////////////////////
+
+// code for the implementation of relational expressions
+Relational_Expr_Ast::Relational_Expr_Ast (Ast* l, int oper, Ast* r)
+{
+  lhs = l;
+  rhs = r;
+  op = oper;
+}
+
+Relational_Expr_Ast::~Relational_Expr_Ast()
+{
+  delete lhs,rhs;
+}
+
+bool Relational_Expr_Ast::check_ast(int line)
+{
+	if (lhs->get_data_type() == rhs->get_data_type())
+	{
+		node_data_type = lhs->get_data_type();
+		return true;
+	}
+
+	report_error("Relational Expression statement data type not compatible", line);
+}
+
+Data_Type Relational_Expr_Ast::get_data_type()
+{
+	return node_data_type;
+}
+
+// needs to be modified
+void Relational_Expr_Ast::print_ast(ostream & file_buffer)
+{
+	file_buffer << AST_SPACE << "Rel_Expr:\n";
+
+	file_buffer << AST_NODE_SPACE"LHS (";
+	lhs->print_ast(file_buffer);
+	file_buffer << ")\n";
+
+	file_buffer << AST_NODE_SPACE << "RHS (";
+	rhs->print_ast(file_buffer);
+	file_buffer << ")\n";
+}
+
+// needs to be defined
+Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)
+{
+
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+// code for the implementation of boolean expressions
+Boolean_Expr_Ast::Boolean_Expr_Ast (Ast* l, int oper, Ast* r)
+{
+  lhs = l;
+  rhs = r;
+  op = oper;
+}
+
+Boolean_Expr_Ast::~Boolean_Expr_Ast()
+{
+  delete lhs, rhs;
+}
+
+bool Boolean_Expr_Ast::check_ast(int line)
+{
+	if (lhs->get_data_type() == rhs->get_data_type())
+	{
+		node_data_type = lhs->get_data_type();
+		return true;
+	}
+
+	report_error("Boolean Expression statement data type not compatible", line);
+}
+
+Data_Type Boolean_Expr_Ast::get_data_type()
+{
+	return node_data_type;
+}
+
+// needs to be modified
+void Boolean_Expr_Ast::print_ast(ostream & file_buffer)
+{
+	file_buffer << AST_SPACE << "Bool_Expr:\n";
+
+	file_buffer << AST_NODE_SPACE"LHS (";
+	lhs->print_ast(file_buffer);
+	file_buffer << ")\n";
+
+	file_buffer << AST_NODE_SPACE << "RHS (";
+	rhs->print_ast(file_buffer);
+	file_buffer << ")\n";
+}
+
+// needs to be modified
+Eval_Result & Boolean_Expr_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)
+{
+
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
 
 template <class DATA_TYPE>
 Number_Ast<DATA_TYPE>::~Number_Ast()

@@ -23,15 +23,18 @@
 
 %filenames="scanner"
 %lex-source="scanner.cc"
-
 %%
 [<]bb[ ][[:digit:]_][[:digit:]_]+[>] {
 			store_token_name("BASIC BLOCK");
+			ParserBase::STYPE__ * val = getSval();
+			val->string_value = new std::string(matched());
 			return Parser::BASIC_BLOCK;
     		   }
 
 [<]bb[ ][2-9][>] {
 			store_token_name("BASIC BLOCK");
+			ParserBase::STYPE__ * val = getSval();
+			val->string_value = new std::string(matched());
 			return Parser::BASIC_BLOCK;
     		   }
 

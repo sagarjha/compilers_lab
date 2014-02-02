@@ -40,7 +40,7 @@
 };
 
 %token <integer_value> INTEGER_NUMBER
-%token <Basic_Block> BASIC_BLOCK
+%token <string_value> BASIC_BLOCK
 %token <string_value> NAME
 %token RETURN INTEGER IF ELSE 
 %token <string_value> GOTO 
@@ -56,8 +56,10 @@
 %type <ast_list> executable_statement_list
 %type <ast_list> assignment_statement_list
 %type <ast> assignment_statement
+%type <ast> predicate
 %type <ast> variable
 %type <ast> constant
+%type <ast> modified_variable
 
 %start program
 
@@ -66,57 +68,44 @@
 program:
 	declaration_statement_list procedure_name
 	{
-	#if 0
 		program_object.set_global_table(*$1);
 		return_statement_used_flag = false;				// No return statement in the current procedure till now
-	#endif
 	}
 	procedure_body
 	{
-	#if 0
 		program_object.set_procedure_map(*current_procedure);
 
 		if ($1)
 			$1->global_list_in_proc_map_check(get_line_number());
 
 		delete $1;
-	#endif
 	}
 |
 	procedure_name
 	{
-	#if 0
 		return_statement_used_flag = false;				// No return statement in the current procedure till now
-	#endif
 	}
 	procedure_body
 	{
-	#if 0
 		program_object.set_procedure_map(*current_procedure);
-	#endif
 	}
 ;
 
 procedure_name:
 	NAME '(' ')'
 	{
-	#if 0
 		current_procedure = new Procedure(void_data_type, *$1);
-	#endif
 	}
 ;
 
 procedure_body:
 	'{' declaration_statement_list
 	{
-	#if 0
 		current_procedure->set_local_list(*$2);
 		delete $2;
-	#endif
 	}
 	basic_block_list '}'
 	{
-	#if 0	
 	if (return_statement_used_flag == false)
 		{
 			int line = get_line_number();
@@ -126,12 +115,10 @@ procedure_body:
 		current_procedure->set_basic_block_list(*$4);
 
 		delete $4;
-	#endif
 	}
 |
 	'{' basic_block_list '}'
 	{
-	#if 0
 		if (return_statement_used_flag == false)
 		{
 			int line = get_line_number();
@@ -141,14 +128,12 @@ procedure_body:
 		current_procedure->set_basic_block_list(*$2);
 
 		delete $2;
-	#endif
 	}
 ;
 
 declaration_statement_list:
 	declaration_statement
 	{
-	#if 0
 		int line = get_line_number();
 		program_object.variable_in_proc_map_check($1->get_variable_name(), line);
 
@@ -161,12 +146,10 @@ declaration_statement_list:
 
 		$$ = new Symbol_Table();
 		$$->push_symbol($1);
-	#endif
 	}
 |
 	declaration_statement_list declaration_statement
 	{
-	#if 0
 		// if declaration is local then no need to check in global list
 		// if declaration is global then this list is global list
 
@@ -195,25 +178,21 @@ declaration_statement_list:
 			$$ = new Symbol_Table();
 
 		$$->push_symbol($2);
-	#endif
 	}
 ;
 
 declaration_statement:
 	INTEGER NAME ';'
 	{
-	#if 0
 		$$ = new Symbol_Table_Entry(*$2, int_data_type);
 
 		delete $2;
-	#endif
 	}
 ;
 
 basic_block_list:
 	basic_block_list basic_block
 	{
-	#if 0
 		if (!$2)
 		{
 			int line = get_line_number();
@@ -224,12 +203,10 @@ basic_block_list:
 
 		$$ = $1;
 		$$->push_back($2);
-	#endif
 	}
 |
 	basic_block
 	{
-	#if 0
 		if (!$1)
 		{
 			int line = get_line_number();
@@ -238,7 +215,6 @@ basic_block_list:
 
 		$$ = new list<Basic_Block *>;
 		$$->push_back($1);
-	#endif
 	}
 	
 ;
@@ -246,132 +222,139 @@ basic_block_list:
 basic_block:
 	BASIC_BLOCK ':' executable_statement_list
 	{
-	#if 0
-		else
-		{
-			list<Ast *> * ast_list = new list<Ast *>;
-			$$ = new Basic_Block($3, *ast_list);
-		}
-
-		delete $3;
-		delete $2;
-	#endif
+	  int i = 0;
+	  for (; (*($1))[i] != ' '; ++i) {
+	  
+	}
+	  ++i;
+	  int id = 0;
+	  for (; (*($1))[i] != '>'; ++i) {
+	  id = id *10 +  ((*($1))[i]-'0');
+	}
+	  if ($3 != NULL)
+	    $$ = new Basic_Block (id, *$3);
+	  else {
+	    list<Ast *> * ast_list = new list<Ast *>;
+	    $$ = new Basic_Block (id, *ast_list);
+	  }
+	  delete $3;
 	}
 |
 	BASIC_BLOCK ':' executable_statement_list conditional_statement
 	{
-	#if 0
-		if ($3 != NULL)
-			$$ = new Basic_Block($3, *$3);
-		else
-		{
-			list<Ast *> * ast_list = new list<Ast *>;
-			$$ = new Basic_Block($3, *ast_list);
-		}
+	  int i = 0;
+	  for (; (*($1))[i] != ' '; ++i) {
+	  
+	  }
+	  ++i;
+	  int id = 0;
+	  for (; (*($1))[i] != '>'; ++i) {
+	    id = id *10 +  ((*($1))[i]-'0');
+	  }
+	  // append conditional statement to ast_list by using push_back
+	  if ($3 != NULL)
+	    $$ = new Basic_Block(id, *$3);
+	  else
+	    {
+	      list<Ast *> * ast_list = new list<Ast *>;
+	      $$ = new Basic_Block(id, *ast_list);
+	    }
 
-		delete $3;
-		delete $2;
-	#endif
+	  delete $3;
 	}
 |
 	BASIC_BLOCK ':' executable_statement_list goto_statement
 	{
-	#if 0
-		if ($3 != NULL)
-			$$ = new Basic_Block($3, *$3);
-		else
-		{
-			list<Ast *> * ast_list = new list<Ast *>;
-			$$ = new Basic_Block($3, *ast_list);
-		}
+	  int i = 0;
+	  for (; (*($1))[i] != ' '; ++i) {
+	  
+	  }
+	  ++i;
+	  int id = 0;
+	  for (; (*($1))[i] != '>'; ++i) {
+	    id = id *10 +  ((*($1))[i]-'0');
+	  }
+	  // append goto statement to ast_list by using push_back
+	  if ($3 != NULL)
+	    $$ = new Basic_Block(id, *$3);
+	  else
+	    {
+	      list<Ast *> * ast_list = new list<Ast *>;
+	      $$ = new Basic_Block(id, *ast_list);
+	    }
 
-		delete $3;
-		delete $2;
-	#endif
-	
+	  delete $3;
 	}
 ;
 
 executable_statement_list:
 	assignment_statement_list
 	{
-	#if 0
-		$$ = $1;
-	#endif
+	  $$ = $1;
 	}
 |
 	assignment_statement_list RETURN ';'
 	{
-	#if 0
-		Ast * ret = new Return_Ast();
+	  Ast * ret = new Return_Ast();
 
-		return_statement_used_flag = true;					// Current procedure has an occurrence of return statement
+	  return_statement_used_flag = true;					// Current procedure has an occurrence of return statement
 
-		if ($1 != NULL)
-			$$ = $1;
+	  if ($1 != NULL)
+	    $$ = $1;
 
-		else
-			$$ = new list<Ast *>;
+	  else
+	    $$ = new list<Ast *>;
 
-		$$->push_back(ret);
-	#endif
+	  $$->push_back(ret);
 	}
 ;
 
 assignment_statement_list:
 	{
-	#if 0
-		$$ = NULL;
-	#endif
+	  $$ = NULL;
 	}
 |
 	assignment_statement_list assignment_statement
-	{
-	#if 0
-		if ($1 == NULL)
-			$$ = new list<Ast *>;
+{
+  if ($1 == NULL)
+    $$ = new list<Ast *>;
 
-		else
-			$$ = $1;
+  else
+    $$ = $1;
 
-		$$->push_back($2);
-	#endif
+  $$->push_back($2);
 	}
 ;
 
 assignment_statement:
 	variable ASSIGN_OP variable ';'
 	{
-	#if 0
 		$$ = new Assignment_Ast($1, $3);
 
 		int line = get_line_number();
 		$$->check_ast(line);
-	#endif
 	}
 |
 	variable ASSIGN_OP constant ';'
 	{
-	#if 0
 		$$ = new Assignment_Ast($1, $3);
 
 		int line = get_line_number();
 		$$->check_ast(line);
-	#endif
 	}
 |
 	variable ASSIGN_OP predicate ';'
 	{
-	#if 0
-	std::cout << "arg2" << std::endl;
-	#endif
+		$$ = new Assignment_Ast($1, $3);
+
+		int line = get_line_number();
+		$$->check_ast(line);
 	}
 ;
 
 variable:
 	NAME
 	{
-	#if 0
 		Symbol_Table_Entry var_table_entry;
 
 		if (current_procedure->variable_in_symbol_list_check(*$1))
@@ -389,16 +372,13 @@ variable:
 		$$ = new Name_Ast(*$1, var_table_entry);
 
 		delete $1;
-	#endif
 	}
 ;
 
 constant:
 	INTEGER_NUMBER
 	{
-	#if 0
 		$$ = new Number_Ast<int>($1, int_data_type);
-	#endif
 	}
 ;
 
@@ -440,6 +420,8 @@ modified_variable:
 predicate:
 	predicate ASSIGN_OP modified_variable
 	{
+	// pass an integer instead of '=' according to specification
+	$$ = new Relational_Expr_Ast ($1, '=', $3);
 	#if 0
 	std::cout << "arg6" << std::endl;
 	#endif
@@ -447,6 +429,8 @@ predicate:
 |
 	predicate LE modified_variable
 	{
+	// pass an integer instead of '=' according to specification
+	$$ = new Relational_Expr_Ast ($1, '<' + '=', $3);
 	#if 0
 	std::cout << "arg7" << std::endl;
 	#endif
@@ -454,6 +438,8 @@ predicate:
 |
 	predicate GE modified_variable
 	{
+	// pass an integer instead of '=' according to specification
+	$$ = new Relational_Expr_Ast ($1, '>' + '=', $3);
 	#if 0
 	std::cout << "arg8" << std::endl;
 	#endif
@@ -461,6 +447,8 @@ predicate:
 |
 	predicate LT modified_variable
 	{
+	// pass an integer instead of '=' according to specification
+	$$ = new Relational_Expr_Ast ($1, '<', $3);
 	#if 0
 	std::cout << "arg9" << std::endl;
 	#endif
@@ -468,6 +456,8 @@ predicate:
 |
 	predicate GT modified_variable
 	{
+	// pass an integer instead of '=' according to specification
+	$$ = new Relational_Expr_Ast ($1, '>', $3);
 	#if 0
 	std::cout << "arg10" << std::endl;
 	#endif
@@ -475,6 +465,8 @@ predicate:
 |
 	predicate NOT_EQUAL modified_variable
 	{
+	// pass an integer instead of '=' according to specification
+	$$ = new Relational_Expr_Ast ($1, '!' + '=', $3);
 	#if 0
 	std::cout << "arg11" << std::endl;
 	#endif
@@ -482,6 +474,8 @@ predicate:
 |
 	predicate EQUAL modified_variable
 	{
+	// pass an integer instead of '=' according to specification
+	$$ = new Relational_Expr_Ast ($1, '=' + '=', $3);
 	#if 0
 	std::cout << "arg12" << std::endl;
 	#endif
@@ -489,6 +483,8 @@ predicate:
 |
 	modified_variable ASSIGN_OP modified_variable
 	{
+	// pass an integer instead of '=' according to specification
+	$$ = new Relational_Expr_Ast ($1, '=', $3);
 	#if 0
 	std::cout << "arg13" << std::endl;
 	#endif
@@ -496,6 +492,8 @@ predicate:
 |
 	modified_variable LE  modified_variable
 	{
+	// pass an integer instead of '=' according to specification
+	$$ = new Relational_Expr_Ast ($1, '<' + '=', $3);
 	#if 0
 	std::cout << "arg14" << std::endl;
 	#endif
@@ -503,6 +501,8 @@ predicate:
 |
 	modified_variable GE  modified_variable
 	{
+	// pass an integer instead of '=' according to specification
+	$$ = new Relational_Expr_Ast ($1, '>' + '=', $3);
 	#if 0
 	std::cout << "arg15" << std::endl;
 	#endif
@@ -510,6 +510,8 @@ predicate:
 |
 	modified_variable LT modified_variable
 	{
+	// pass an integer instead of '=' according to specification
+	$$ = new Relational_Expr_Ast ($1, '<', $3);
 	#if 0
 	std::cout << "arg16" << std::endl;
 	#endif
@@ -517,6 +519,8 @@ predicate:
 |
 	modified_variable GT modified_variable
 	{
+	// pass an integer instead of '=' according to specification
+	$$ = new Relational_Expr_Ast ($1, '>', $3);
 	#if 0
 	std::cout << "arg17" << std::endl;
 	#endif
@@ -524,6 +528,8 @@ predicate:
 |
 	modified_variable NOT_EQUAL modified_variable
 	{
+	// pass an integer instead of '=' according to specification
+	$$ = new Relational_Expr_Ast ($1, '!' + '=', $3);
 	#if 0
 	std::cout << "arg18" << std::endl;
 	#endif
@@ -531,6 +537,8 @@ predicate:
 |
 	modified_variable EQUAL modified_variable
 	{
+	// pass an integer instead of '=' according to specification
+	$$ = new Relational_Expr_Ast ($1, '=' + '=', $3);
 	#if 0
 	std::cout << "arg19" << std::endl;
 	#endif
