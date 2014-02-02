@@ -45,6 +45,9 @@
 %token RETURN INTEGER IF ELSE 
 %token <string_value> GOTO 
 %token <integer_value> ASSIGN_OP
+%token <integer_value> NOT_EQUAL
+%token <integer_value> EQUAL
+%token <integer_value> LT LE GT GE
 
 %type <symbol_table> declaration_statement_list
 %type <symbol_entry> declaration_statement
@@ -442,42 +445,42 @@ predicate:
 	#endif
 	}
 |
-	predicate '<' ASSIGN_OP modified_variable
+	predicate LE modified_variable
 	{
 	#if 0
 	std::cout << "arg7" << std::endl;
 	#endif
 	}
 |
-	predicate '>' ASSIGN_OP modified_variable
+	predicate GE modified_variable
 	{
 	#if 0
 	std::cout << "arg8" << std::endl;
 	#endif
 	}
 |
-	predicate '<' modified_variable
+	predicate LT modified_variable
 	{
 	#if 0
 	std::cout << "arg9" << std::endl;
 	#endif
 	}
 |
-	predicate '>' modified_variable
+	predicate GT modified_variable
 	{
 	#if 0
 	std::cout << "arg10" << std::endl;
 	#endif
 	}
 |
-	predicate '!' ASSIGN_OP modified_variable
+	predicate NOT_EQUAL modified_variable
 	{
 	#if 0
 	std::cout << "arg11" << std::endl;
 	#endif
 	}
 |
-	predicate ASSIGN_OP ASSIGN_OP modified_variable
+	predicate EQUAL modified_variable
 	{
 	#if 0
 	std::cout << "arg12" << std::endl;
@@ -491,42 +494,42 @@ predicate:
 	#endif
 	}
 |
-	modified_variable '<' ASSIGN_OP modified_variable
+	modified_variable LE  modified_variable
 	{
 	#if 0
 	std::cout << "arg14" << std::endl;
 	#endif
 	}
 |
-	modified_variable '>' ASSIGN_OP modified_variable
+	modified_variable GE  modified_variable
 	{
 	#if 0
 	std::cout << "arg15" << std::endl;
 	#endif
 	}
 |
-	modified_variable '<' modified_variable
+	modified_variable LT modified_variable
 	{
 	#if 0
 	std::cout << "arg16" << std::endl;
 	#endif
 	}
 |
-	modified_variable '>' modified_variable
+	modified_variable GT modified_variable
 	{
 	#if 0
 	std::cout << "arg17" << std::endl;
 	#endif
 	}
 |
-	modified_variable '!' ASSIGN_OP modified_variable
+	modified_variable NOT_EQUAL modified_variable
 	{
 	#if 0
 	std::cout << "arg18" << std::endl;
 	#endif
 	}
 |
-	modified_variable ASSIGN_OP ASSIGN_OP modified_variable
+	modified_variable EQUAL modified_variable
 	{
 	#if 0
 	std::cout << "arg19" << std::endl;

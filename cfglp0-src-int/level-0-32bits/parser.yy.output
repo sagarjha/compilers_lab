@@ -1,4 +1,4 @@
-[[parser.yy (info)] Line 537: 
+[[parser.yy (info)] Line 540: 
 Production Rules
 (rule precedences determined from %prec or 1st terminal between parentheses):
 1: program ->  declaration_statement_list procedure_name #0001 procedure_body
@@ -31,19 +31,19 @@ Production Rules
 28: modified_variable ->  variable
 29: modified_variable ->  constant
 30: predicate (ASSIGN_OP) ->  predicate ASSIGN_OP modified_variable
-31: predicate ('<') ->  predicate '<' ASSIGN_OP modified_variable
-32: predicate ('>') ->  predicate '>' ASSIGN_OP modified_variable
-33: predicate ('<') ->  predicate '<' modified_variable
-34: predicate ('>') ->  predicate '>' modified_variable
-35: predicate ('!') ->  predicate '!' ASSIGN_OP modified_variable
-36: predicate (ASSIGN_OP) ->  predicate ASSIGN_OP ASSIGN_OP modified_variable
+31: predicate (LE) ->  predicate LE modified_variable
+32: predicate (GE) ->  predicate GE modified_variable
+33: predicate (LT) ->  predicate LT modified_variable
+34: predicate (GT) ->  predicate GT modified_variable
+35: predicate (NOT_EQUAL) ->  predicate NOT_EQUAL modified_variable
+36: predicate (EQUAL) ->  predicate EQUAL modified_variable
 37: predicate (ASSIGN_OP) ->  modified_variable ASSIGN_OP modified_variable
-38: predicate ('<') ->  modified_variable '<' ASSIGN_OP modified_variable
-39: predicate ('>') ->  modified_variable '>' ASSIGN_OP modified_variable
-40: predicate ('<') ->  modified_variable '<' modified_variable
-41: predicate ('>') ->  modified_variable '>' modified_variable
-42: predicate ('!') ->  modified_variable '!' ASSIGN_OP modified_variable
-43: predicate (ASSIGN_OP) ->  modified_variable ASSIGN_OP ASSIGN_OP modified_variable
+38: predicate (LE) ->  modified_variable LE modified_variable
+39: predicate (GE) ->  modified_variable GE modified_variable
+40: predicate (LT) ->  modified_variable LT modified_variable
+41: predicate (GT) ->  modified_variable GT modified_variable
+42: predicate (NOT_EQUAL) ->  modified_variable NOT_EQUAL modified_variable
+43: predicate (EQUAL) ->  modified_variable EQUAL modified_variable
 44: program_$ ->  program
 
 [[parser.yy (info)] 
@@ -59,15 +59,18 @@ Symbolic Terminal tokens:
    263: ELSE
    264: GOTO
    265: ASSIGN_OP
+   266: NOT_EQUAL
+   267: EQUAL
+   268: LT
+   269: LE
+   270: GT
+   271: GE
     40: '('
     41: ')'
    123: '{'
    125: '}'
     59: ';'
     58: ':'
-    60: '<'
-    62: '>'
-    33: '!'
 
 [[parser.yy (info)] 
 Grammar States: 
@@ -346,31 +349,37 @@ State 41:
 State 42:
 26: conditional_statement -> IF '(' predicate  . ')' GOTO BASIC_BLOCK ';' ELSE GOTO BASIC_BLOCK ';' 
 30: predicate -> predicate  . ASSIGN_OP modified_variable 
-31: predicate -> predicate  . '<' ASSIGN_OP modified_variable 
-32: predicate -> predicate  . '>' ASSIGN_OP modified_variable 
-33: predicate -> predicate  . '<' modified_variable 
-34: predicate -> predicate  . '>' modified_variable 
-35: predicate -> predicate  . '!' ASSIGN_OP modified_variable 
-36: predicate -> predicate  . ASSIGN_OP ASSIGN_OP modified_variable 
+31: predicate -> predicate  . LE modified_variable 
+32: predicate -> predicate  . GE modified_variable 
+33: predicate -> predicate  . LT modified_variable 
+34: predicate -> predicate  . GT modified_variable 
+35: predicate -> predicate  . NOT_EQUAL modified_variable 
+36: predicate -> predicate  . EQUAL modified_variable 
   0:   On ')' to state 51
   1:   On ASSIGN_OP to state 52
-  2:   On '<' to state 53
-  3:   On '>' to state 54
-  4:   On '!' to state 55
+  2:   On LE to state 53
+  3:   On GE to state 54
+  4:   On LT to state 55
+  5:   On GT to state 56
+  6:   On NOT_EQUAL to state 57
+  7:   On EQUAL to state 58
 
 
 State 43:
 37: predicate -> modified_variable  . ASSIGN_OP modified_variable 
-38: predicate -> modified_variable  . '<' ASSIGN_OP modified_variable 
-39: predicate -> modified_variable  . '>' ASSIGN_OP modified_variable 
-40: predicate -> modified_variable  . '<' modified_variable 
-41: predicate -> modified_variable  . '>' modified_variable 
-42: predicate -> modified_variable  . '!' ASSIGN_OP modified_variable 
-43: predicate -> modified_variable  . ASSIGN_OP ASSIGN_OP modified_variable 
-  0:   On ASSIGN_OP to state 56
-  1:   On '<' to state 57
-  2:   On '>' to state 58
-  3:   On '!' to state 59
+38: predicate -> modified_variable  . LE modified_variable 
+39: predicate -> modified_variable  . GE modified_variable 
+40: predicate -> modified_variable  . LT modified_variable 
+41: predicate -> modified_variable  . GT modified_variable 
+42: predicate -> modified_variable  . NOT_EQUAL modified_variable 
+43: predicate -> modified_variable  . EQUAL modified_variable 
+  0:   On ASSIGN_OP to state 59
+  1:   On LE to state 60
+  2:   On GE to state 61
+  3:   On LT to state 62
+  4:   On GT to state 63
+  5:   On NOT_EQUAL to state 64
+  6:   On EQUAL to state 65
 
 
 State 44:
@@ -396,141 +405,124 @@ State 47:
 State 48:
 21: assignment_statement -> variable ASSIGN_OP variable  . ';' 
 28: modified_variable -> variable  . 
-  0:   On ';' to state 60
+  0:   On ';' to state 66
   Reduce by 28: modified_variable -> variable  . 
 
 
 State 49:
 22: assignment_statement -> variable ASSIGN_OP constant  . ';' 
 29: modified_variable -> constant  . 
-  0:   On ';' to state 61
+  0:   On ';' to state 67
   Reduce by 29: modified_variable -> constant  . 
 
 
 State 50:
 23: assignment_statement -> variable ASSIGN_OP predicate  . ';' 
 30: predicate -> predicate  . ASSIGN_OP modified_variable 
-31: predicate -> predicate  . '<' ASSIGN_OP modified_variable 
-32: predicate -> predicate  . '>' ASSIGN_OP modified_variable 
-33: predicate -> predicate  . '<' modified_variable 
-34: predicate -> predicate  . '>' modified_variable 
-35: predicate -> predicate  . '!' ASSIGN_OP modified_variable 
-36: predicate -> predicate  . ASSIGN_OP ASSIGN_OP modified_variable 
-  0:   On ';' to state 62
+31: predicate -> predicate  . LE modified_variable 
+32: predicate -> predicate  . GE modified_variable 
+33: predicate -> predicate  . LT modified_variable 
+34: predicate -> predicate  . GT modified_variable 
+35: predicate -> predicate  . NOT_EQUAL modified_variable 
+36: predicate -> predicate  . EQUAL modified_variable 
+  0:   On ';' to state 68
   1:   On ASSIGN_OP to state 52
-  2:   On '<' to state 53
-  3:   On '>' to state 54
-  4:   On '!' to state 55
+  2:   On LE to state 53
+  3:   On GE to state 54
+  4:   On LT to state 55
+  5:   On GT to state 56
+  6:   On NOT_EQUAL to state 57
+  7:   On EQUAL to state 58
 
 
 State 51:
 26: conditional_statement -> IF '(' predicate ')'  . GOTO BASIC_BLOCK ';' ELSE GOTO BASIC_BLOCK ';' 
-  0:   On GOTO to state 63
+  0:   On GOTO to state 69
 
 
 State 52:
 30: predicate -> predicate ASSIGN_OP  . modified_variable 
-36: predicate -> predicate ASSIGN_OP  . ASSIGN_OP modified_variable 
-  0:   On modified_variable to state 64
-  1:   On ASSIGN_OP to state 65
-  2:   On variable to state 44
-  3:   On constant to state 45
-  4:   On NAME to state 37
-  5:   On INTEGER_NUMBER to state 46
+  0:   On modified_variable to state 70
+  1:   On variable to state 44
+  2:   On constant to state 45
+  3:   On NAME to state 37
+  4:   On INTEGER_NUMBER to state 46
 
 
 State 53:
-31: predicate -> predicate '<'  . ASSIGN_OP modified_variable 
-33: predicate -> predicate '<'  . modified_variable 
-  0:   On ASSIGN_OP to state 66
-  1:   On modified_variable to state 67
-  2:   On variable to state 44
-  3:   On constant to state 45
-  4:   On NAME to state 37
-  5:   On INTEGER_NUMBER to state 46
+31: predicate -> predicate LE  . modified_variable 
+  0:   On modified_variable to state 71
+  1:   On variable to state 44
+  2:   On constant to state 45
+  3:   On NAME to state 37
+  4:   On INTEGER_NUMBER to state 46
 
 
 State 54:
-32: predicate -> predicate '>'  . ASSIGN_OP modified_variable 
-34: predicate -> predicate '>'  . modified_variable 
-  0:   On ASSIGN_OP to state 68
-  1:   On modified_variable to state 69
-  2:   On variable to state 44
-  3:   On constant to state 45
-  4:   On NAME to state 37
-  5:   On INTEGER_NUMBER to state 46
+32: predicate -> predicate GE  . modified_variable 
+  0:   On modified_variable to state 72
+  1:   On variable to state 44
+  2:   On constant to state 45
+  3:   On NAME to state 37
+  4:   On INTEGER_NUMBER to state 46
 
 
 State 55:
-35: predicate -> predicate '!'  . ASSIGN_OP modified_variable 
-  0:   On ASSIGN_OP to state 70
+33: predicate -> predicate LT  . modified_variable 
+  0:   On modified_variable to state 73
+  1:   On variable to state 44
+  2:   On constant to state 45
+  3:   On NAME to state 37
+  4:   On INTEGER_NUMBER to state 46
 
 
 State 56:
-37: predicate -> modified_variable ASSIGN_OP  . modified_variable 
-43: predicate -> modified_variable ASSIGN_OP  . ASSIGN_OP modified_variable 
-  0:   On modified_variable to state 71
-  1:   On ASSIGN_OP to state 72
-  2:   On variable to state 44
-  3:   On constant to state 45
-  4:   On NAME to state 37
-  5:   On INTEGER_NUMBER to state 46
+34: predicate -> predicate GT  . modified_variable 
+  0:   On modified_variable to state 74
+  1:   On variable to state 44
+  2:   On constant to state 45
+  3:   On NAME to state 37
+  4:   On INTEGER_NUMBER to state 46
 
 
 State 57:
-38: predicate -> modified_variable '<'  . ASSIGN_OP modified_variable 
-40: predicate -> modified_variable '<'  . modified_variable 
-  0:   On ASSIGN_OP to state 73
-  1:   On modified_variable to state 74
-  2:   On variable to state 44
-  3:   On constant to state 45
-  4:   On NAME to state 37
-  5:   On INTEGER_NUMBER to state 46
+35: predicate -> predicate NOT_EQUAL  . modified_variable 
+  0:   On modified_variable to state 75
+  1:   On variable to state 44
+  2:   On constant to state 45
+  3:   On NAME to state 37
+  4:   On INTEGER_NUMBER to state 46
 
 
 State 58:
-39: predicate -> modified_variable '>'  . ASSIGN_OP modified_variable 
-41: predicate -> modified_variable '>'  . modified_variable 
-  0:   On ASSIGN_OP to state 75
-  1:   On modified_variable to state 76
-  2:   On variable to state 44
-  3:   On constant to state 45
-  4:   On NAME to state 37
-  5:   On INTEGER_NUMBER to state 46
+36: predicate -> predicate EQUAL  . modified_variable 
+  0:   On modified_variable to state 76
+  1:   On variable to state 44
+  2:   On constant to state 45
+  3:   On NAME to state 37
+  4:   On INTEGER_NUMBER to state 46
 
 
 State 59:
-42: predicate -> modified_variable '!'  . ASSIGN_OP modified_variable 
-  0:   On ASSIGN_OP to state 77
+37: predicate -> modified_variable ASSIGN_OP  . modified_variable 
+  0:   On modified_variable to state 77
+  1:   On variable to state 44
+  2:   On constant to state 45
+  3:   On NAME to state 37
+  4:   On INTEGER_NUMBER to state 46
 
 
 State 60:
-21: assignment_statement -> variable ASSIGN_OP variable ';'  . 
-  Reduce by 21: assignment_statement -> variable ASSIGN_OP variable ';'  . 
+38: predicate -> modified_variable LE  . modified_variable 
+  0:   On modified_variable to state 78
+  1:   On variable to state 44
+  2:   On constant to state 45
+  3:   On NAME to state 37
+  4:   On INTEGER_NUMBER to state 46
 
 
 State 61:
-22: assignment_statement -> variable ASSIGN_OP constant ';'  . 
-  Reduce by 22: assignment_statement -> variable ASSIGN_OP constant ';'  . 
-
-
-State 62:
-23: assignment_statement -> variable ASSIGN_OP predicate ';'  . 
-  Reduce by 23: assignment_statement -> variable ASSIGN_OP predicate ';'  . 
-
-
-State 63:
-26: conditional_statement -> IF '(' predicate ')' GOTO  . BASIC_BLOCK ';' ELSE GOTO BASIC_BLOCK ';' 
-  0:   On BASIC_BLOCK to state 78
-
-
-State 64:
-30: predicate -> predicate ASSIGN_OP modified_variable  . 
-  Reduce by 30: predicate -> predicate ASSIGN_OP modified_variable  . 
-
-
-State 65:
-36: predicate -> predicate ASSIGN_OP ASSIGN_OP  . modified_variable 
+39: predicate -> modified_variable GE  . modified_variable 
   0:   On modified_variable to state 79
   1:   On variable to state 44
   2:   On constant to state 45
@@ -538,8 +530,8 @@ State 65:
   4:   On INTEGER_NUMBER to state 46
 
 
-State 66:
-31: predicate -> predicate '<' ASSIGN_OP  . modified_variable 
+State 62:
+40: predicate -> modified_variable LT  . modified_variable 
   0:   On modified_variable to state 80
   1:   On variable to state 44
   2:   On constant to state 45
@@ -547,13 +539,8 @@ State 66:
   4:   On INTEGER_NUMBER to state 46
 
 
-State 67:
-33: predicate -> predicate '<' modified_variable  . 
-  Reduce by 33: predicate -> predicate '<' modified_variable  . 
-
-
-State 68:
-32: predicate -> predicate '>' ASSIGN_OP  . modified_variable 
+State 63:
+41: predicate -> modified_variable GT  . modified_variable 
   0:   On modified_variable to state 81
   1:   On variable to state 44
   2:   On constant to state 45
@@ -561,13 +548,8 @@ State 68:
   4:   On INTEGER_NUMBER to state 46
 
 
-State 69:
-34: predicate -> predicate '>' modified_variable  . 
-  Reduce by 34: predicate -> predicate '>' modified_variable  . 
-
-
-State 70:
-35: predicate -> predicate '!' ASSIGN_OP  . modified_variable 
+State 64:
+42: predicate -> modified_variable NOT_EQUAL  . modified_variable 
   0:   On modified_variable to state 82
   1:   On variable to state 44
   2:   On constant to state 45
@@ -575,13 +557,8 @@ State 70:
   4:   On INTEGER_NUMBER to state 46
 
 
-State 71:
-37: predicate -> modified_variable ASSIGN_OP modified_variable  . 
-  Reduce by 37: predicate -> modified_variable ASSIGN_OP modified_variable  . 
-
-
-State 72:
-43: predicate -> modified_variable ASSIGN_OP ASSIGN_OP  . modified_variable 
+State 65:
+43: predicate -> modified_variable EQUAL  . modified_variable 
   0:   On modified_variable to state 83
   1:   On variable to state 44
   2:   On constant to state 45
@@ -589,109 +566,122 @@ State 72:
   4:   On INTEGER_NUMBER to state 46
 
 
+State 66:
+21: assignment_statement -> variable ASSIGN_OP variable ';'  . 
+  Reduce by 21: assignment_statement -> variable ASSIGN_OP variable ';'  . 
+
+
+State 67:
+22: assignment_statement -> variable ASSIGN_OP constant ';'  . 
+  Reduce by 22: assignment_statement -> variable ASSIGN_OP constant ';'  . 
+
+
+State 68:
+23: assignment_statement -> variable ASSIGN_OP predicate ';'  . 
+  Reduce by 23: assignment_statement -> variable ASSIGN_OP predicate ';'  . 
+
+
+State 69:
+26: conditional_statement -> IF '(' predicate ')' GOTO  . BASIC_BLOCK ';' ELSE GOTO BASIC_BLOCK ';' 
+  0:   On BASIC_BLOCK to state 84
+
+
+State 70:
+30: predicate -> predicate ASSIGN_OP modified_variable  . 
+  Reduce by 30: predicate -> predicate ASSIGN_OP modified_variable  . 
+
+
+State 71:
+31: predicate -> predicate LE modified_variable  . 
+  Reduce by 31: predicate -> predicate LE modified_variable  . 
+
+
+State 72:
+32: predicate -> predicate GE modified_variable  . 
+  Reduce by 32: predicate -> predicate GE modified_variable  . 
+
+
 State 73:
-38: predicate -> modified_variable '<' ASSIGN_OP  . modified_variable 
-  0:   On modified_variable to state 84
-  1:   On variable to state 44
-  2:   On constant to state 45
-  3:   On NAME to state 37
-  4:   On INTEGER_NUMBER to state 46
+33: predicate -> predicate LT modified_variable  . 
+  Reduce by 33: predicate -> predicate LT modified_variable  . 
 
 
 State 74:
-40: predicate -> modified_variable '<' modified_variable  . 
-  Reduce by 40: predicate -> modified_variable '<' modified_variable  . 
+34: predicate -> predicate GT modified_variable  . 
+  Reduce by 34: predicate -> predicate GT modified_variable  . 
 
 
 State 75:
-39: predicate -> modified_variable '>' ASSIGN_OP  . modified_variable 
-  0:   On modified_variable to state 85
-  1:   On variable to state 44
-  2:   On constant to state 45
-  3:   On NAME to state 37
-  4:   On INTEGER_NUMBER to state 46
+35: predicate -> predicate NOT_EQUAL modified_variable  . 
+  Reduce by 35: predicate -> predicate NOT_EQUAL modified_variable  . 
 
 
 State 76:
-41: predicate -> modified_variable '>' modified_variable  . 
-  Reduce by 41: predicate -> modified_variable '>' modified_variable  . 
+36: predicate -> predicate EQUAL modified_variable  . 
+  Reduce by 36: predicate -> predicate EQUAL modified_variable  . 
 
 
 State 77:
-42: predicate -> modified_variable '!' ASSIGN_OP  . modified_variable 
-  0:   On modified_variable to state 86
-  1:   On variable to state 44
-  2:   On constant to state 45
-  3:   On NAME to state 37
-  4:   On INTEGER_NUMBER to state 46
+37: predicate -> modified_variable ASSIGN_OP modified_variable  . 
+  Reduce by 37: predicate -> modified_variable ASSIGN_OP modified_variable  . 
 
 
 State 78:
-26: conditional_statement -> IF '(' predicate ')' GOTO BASIC_BLOCK  . ';' ELSE GOTO BASIC_BLOCK ';' 
-  0:   On ';' to state 87
+38: predicate -> modified_variable LE modified_variable  . 
+  Reduce by 38: predicate -> modified_variable LE modified_variable  . 
 
 
 State 79:
-36: predicate -> predicate ASSIGN_OP ASSIGN_OP modified_variable  . 
-  Reduce by 36: predicate -> predicate ASSIGN_OP ASSIGN_OP modified_variable  . 
+39: predicate -> modified_variable GE modified_variable  . 
+  Reduce by 39: predicate -> modified_variable GE modified_variable  . 
 
 
 State 80:
-31: predicate -> predicate '<' ASSIGN_OP modified_variable  . 
-  Reduce by 31: predicate -> predicate '<' ASSIGN_OP modified_variable  . 
+40: predicate -> modified_variable LT modified_variable  . 
+  Reduce by 40: predicate -> modified_variable LT modified_variable  . 
 
 
 State 81:
-32: predicate -> predicate '>' ASSIGN_OP modified_variable  . 
-  Reduce by 32: predicate -> predicate '>' ASSIGN_OP modified_variable  . 
+41: predicate -> modified_variable GT modified_variable  . 
+  Reduce by 41: predicate -> modified_variable GT modified_variable  . 
 
 
 State 82:
-35: predicate -> predicate '!' ASSIGN_OP modified_variable  . 
-  Reduce by 35: predicate -> predicate '!' ASSIGN_OP modified_variable  . 
+42: predicate -> modified_variable NOT_EQUAL modified_variable  . 
+  Reduce by 42: predicate -> modified_variable NOT_EQUAL modified_variable  . 
 
 
 State 83:
-43: predicate -> modified_variable ASSIGN_OP ASSIGN_OP modified_variable  . 
-  Reduce by 43: predicate -> modified_variable ASSIGN_OP ASSIGN_OP modified_variable  . 
+43: predicate -> modified_variable EQUAL modified_variable  . 
+  Reduce by 43: predicate -> modified_variable EQUAL modified_variable  . 
 
 
 State 84:
-38: predicate -> modified_variable '<' ASSIGN_OP modified_variable  . 
-  Reduce by 38: predicate -> modified_variable '<' ASSIGN_OP modified_variable  . 
+26: conditional_statement -> IF '(' predicate ')' GOTO BASIC_BLOCK  . ';' ELSE GOTO BASIC_BLOCK ';' 
+  0:   On ';' to state 85
 
 
 State 85:
-39: predicate -> modified_variable '>' ASSIGN_OP modified_variable  . 
-  Reduce by 39: predicate -> modified_variable '>' ASSIGN_OP modified_variable  . 
+26: conditional_statement -> IF '(' predicate ')' GOTO BASIC_BLOCK ';'  . ELSE GOTO BASIC_BLOCK ';' 
+  0:   On ELSE to state 86
 
 
 State 86:
-42: predicate -> modified_variable '!' ASSIGN_OP modified_variable  . 
-  Reduce by 42: predicate -> modified_variable '!' ASSIGN_OP modified_variable  . 
+26: conditional_statement -> IF '(' predicate ')' GOTO BASIC_BLOCK ';' ELSE  . GOTO BASIC_BLOCK ';' 
+  0:   On GOTO to state 87
 
 
 State 87:
-26: conditional_statement -> IF '(' predicate ')' GOTO BASIC_BLOCK ';'  . ELSE GOTO BASIC_BLOCK ';' 
-  0:   On ELSE to state 88
+26: conditional_statement -> IF '(' predicate ')' GOTO BASIC_BLOCK ';' ELSE GOTO  . BASIC_BLOCK ';' 
+  0:   On BASIC_BLOCK to state 88
 
 
 State 88:
-26: conditional_statement -> IF '(' predicate ')' GOTO BASIC_BLOCK ';' ELSE  . GOTO BASIC_BLOCK ';' 
-  0:   On GOTO to state 89
+26: conditional_statement -> IF '(' predicate ')' GOTO BASIC_BLOCK ';' ELSE GOTO BASIC_BLOCK  . ';' 
+  0:   On ';' to state 89
 
 
 State 89:
-26: conditional_statement -> IF '(' predicate ')' GOTO BASIC_BLOCK ';' ELSE GOTO  . BASIC_BLOCK ';' 
-  0:   On BASIC_BLOCK to state 90
-
-
-State 90:
-26: conditional_statement -> IF '(' predicate ')' GOTO BASIC_BLOCK ';' ELSE GOTO BASIC_BLOCK  . ';' 
-  0:   On ';' to state 91
-
-
-State 91:
 26: conditional_statement -> IF '(' predicate ')' GOTO BASIC_BLOCK ';' ELSE GOTO BASIC_BLOCK ';'  . 
   Reduce by 26: conditional_statement -> IF '(' predicate ')' GOTO BASIC_BLOCK ';' ELSE GOTO BASIC_BLOCK ';'  . 
 

@@ -51,7 +51,37 @@ return		{
 			return Parser::RETURN; 
 		}
 
-[<>:{}();?!]	{
+[>]		{
+			store_token_name("GT");
+			return Parser::GT;
+		}
+
+[<]		{
+			store_token_name("LT");
+			return Parser::LT;
+		}
+
+[>][=]		{
+			store_token_name("GE");
+			return Parser::GE;
+		}
+
+[<][=]		{
+			store_token_name("LE");
+			return Parser::LE;
+		}
+
+[!][=]		{
+			store_token_name("NE");
+			return Parser::NOT_EQUAL;
+		}
+
+[=][=]		{
+			store_token_name("EQ");
+			return Parser::EQUAL;
+		}
+		
+[:{}();?!]	{
 			store_token_name("META CHAR");
 			return matched()[0];
 		}
