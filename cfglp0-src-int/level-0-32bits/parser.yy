@@ -62,6 +62,10 @@
 %type <ast> modified_variable
 %type <ast> conditional_statement
 %type <ast> goto_statement
+%type <ast> flp
+%type <ast> slp
+%type <ast> tlp
+%type <ast> tlt
 						
 %start program
 
@@ -353,7 +357,7 @@ assignment_statement:
 		$$->check_ast(line);
 	}
 |
-	variable ASSIGN_OP predicate ';'
+	variable ASSIGN_OP flp ';'
 	{
 		$$ = new Assignment_Ast($1, $3);
 
@@ -393,7 +397,7 @@ constant:
 ;
 
 conditional_statement:
-	IF '(' predicate ')'
+	IF '(' flp ')'
 	GOTO BASIC_BLOCK ';'
 	ELSE
 	GOTO BASIC_BLOCK ';'
@@ -441,129 +445,95 @@ goto_statement:
 modified_variable:
 	variable
 	{
-	#if 0
-	std::cout << "arg4" << std::endl;
-	#endif
+	$$ = $1;
 	}
 |
 	constant
 	{
-	#if 0
-	std::cout << "arg5" << std::endl;
-	#endif
+	$$ = $1;
 	}
 ;
 
-predicate:
-	predicate ASSIGN_OP modified_variable
-	{
-	  // pass an integer instead of '=' according to specification
+flp: 
+	flp ASSIGN_OP slp
+	{	
+		// pass an integer instead of '=' according to specification
 		$$ = new Relational_Expr_Ast ($1, 1, $3);
 		int line = get_line_number();
 		$$->check_ast(line);
 	}
 |
-	predicate LE modified_variable
+	slp
 	{
-	  // pass an integer instead of '=' according to specification
-		$$ = new Relational_Expr_Ast ($1, 2, $3);
-		int line = get_line_number();
-		$$->check_ast(line);
+		$$ = $1;
 	}
-|
-	predicate GE modified_variable
+;
+
+slp:
+	slp EQUAL tlp
 	{
-	  // pass an integer instead of '=' according to specification
-		$$ = new Relational_Expr_Ast ($1, 3, $3);
-		int line = get_line_number();
-		$$->check_ast(line);
-	}
-|
-	predicate LT modified_variable
-	{
-	  // pass an integer instead of '=' according to specification
-	  $$ = new Relational_Expr_Ast ($1, 4, $3);
-		int line = get_line_number();
-		$$->check_ast(line);
-		}
-	|
-	predicate GT modified_variable
-	{
-	  // pass an integer instead of '=' according to specification
-		$$ = new Relational_Expr_Ast ($1, 5, $3);
-		int line = get_line_number();
-		$$->check_ast(line);
-	}
-|
-	predicate NOT_EQUAL modified_variable
-	{
-	  // pass an integer instead of '=' according to specification
-		$$ = new Relational_Expr_Ast ($1, 6, $3);
-		int line = get_line_number();
-		$$->check_ast(line);
-	}
-|
-	predicate EQUAL modified_variable
-	{
-	  // pass an integer instead of '=' according to specification
+		// pass an integer instead of '=' according to specification
 		$$ = new Relational_Expr_Ast ($1, 7, $3);
 		int line = get_line_number();
 		$$->check_ast(line);
 	}
 |
-	modified_variable ASSIGN_OP modified_variable
+	slp NOT_EQUAL tlp
 	{
-	  // pass an integer instead of '=' according to specification
-		$$ = new Relational_Expr_Ast ($1, 1, $3);
+		// pass an integer instead of '=' according to specification
+		$$ = new Relational_Expr_Ast ($1, 6, $3);
 		int line = get_line_number();
 		$$->check_ast(line);
 	}
 |
-	modified_variable LE  modified_variable
+	tlp
 	{
-	  // pass an integer instead of '=' according to specification
-		$$ = new Relational_Expr_Ast ($1, 2, $3);
-		int line = get_line_number();
-		$$->check_ast(line);
+		$$ = $1;
 	}
-|
-	modified_variable GE  modified_variable
+;
+
+tlp:
+	tlp GE tlt
 	{
-	  // pass an integer instead of '=' according to specification
+		// pass an integer instead of '=' according to specification
 		$$ = new Relational_Expr_Ast ($1, 3, $3);
 		int line = get_line_number();
 		$$->check_ast(line);
 	}
 |
-	modified_variable LT modified_variable
+	tlp GT tlt
 	{
-	  // pass an integer instead of '=' according to specification
+		// pass an integer instead of '=' according to specification
+		$$ = new Relational_Expr_Ast ($1, 5, $3);
+		int line = get_line_number();
+		$$->check_ast(line);
+	}
+|
+	tlp LE tlt
+	{
+		// pass an integer instead of '=' according to specification
+		$$ = new Relational_Expr_Ast ($1, 2, $3);
+		int line = get_line_number();
+		$$->check_ast(line);
+	}
+|
+	tlp LT tlt
+	{
+		// pass an integer instead of '=' according to specification
 		$$ = new Relational_Expr_Ast ($1, 4, $3);
 		int line = get_line_number();
 		$$->check_ast(line);
 	}
 |
-	modified_variable GT modified_variable
+	tlt
 	{
-	  // pass an integer instead of '=' according to specification
-		$$ = new Relational_Expr_Ast ($1, 5, $3);
-		int line = get_line_number();
-		$$->check_ast(line);
+		$$ = $1;
 	}
-|
-	modified_variable NOT_EQUAL modified_variable
+;
+
+tlt:
+	modified_variable
 	{
-	  // pass an integer instead of '=' according to specification
-		$$ = new Relational_Expr_Ast ($1, 6, $3);
-		int line = get_line_number();
-		$$->check_ast(line);
-	}
-|
-	modified_variable EQUAL modified_variable
-	{
-	  // pass an integer instead of '=' according to specification
-		$$ = new Relational_Expr_Ast ($1, 7, $3);
-		int line = get_line_number();
-		$$->check_ast(line);
+		$$ = $1;
 	}
 ;
