@@ -567,4 +567,3 @@ predicate:
 		$$->check_ast(line);
 	}
 ;
-

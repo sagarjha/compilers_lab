@@ -1,4 +1,4 @@
-[[parser.yy (info)] Line 571: 
+
 Production Rules
 (rule precedences determined from %prec or 1st terminal between parentheses):
 1: program ->  declaration_statement_list procedure_name #0001 procedure_body
@@ -46,7 +46,7 @@ Production Rules
 43: predicate (EQUAL) ->  modified_variable EQUAL modified_variable
 44: program_$ ->  program
 
-[[parser.yy (info)] 
+
 Symbolic Terminal tokens:
        error
        EOF
@@ -72,9 +72,9 @@ Symbolic Terminal tokens:
     59: ';'
     58: ':'
 
-[[parser.yy (info)] 
+
 Grammar States: 
-[[parser.yy (info)] State 0:
+State 0:
 44: program_$ ->  . program 
   0:   On program to state 1
   1:   On declaration_statement_list to state 2
