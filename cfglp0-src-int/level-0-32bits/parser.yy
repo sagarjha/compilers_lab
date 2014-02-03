@@ -1,4 +1,4 @@
-
+			
 /*********************************************************************************************
 
                                 cfglp : A CFG Language Processor
@@ -209,7 +209,7 @@ basic_block_list:
 	{
 		if (!$1)
 		{
-			int line = get_line_number();
+		    int line = get_line_number();
 			report_error("Basic block doesn't exist2", line);
 		}
 
