@@ -1,4 +1,4 @@
-			
+						
 /*********************************************************************************************
 
                                 cfglp : A CFG Language Processor
@@ -60,7 +60,9 @@
 %type <ast> variable
 %type <ast> constant
 %type <ast> modified_variable
-
+%type <ast> conditional_statement
+%type <ast> goto_statement
+						
 %start program
 
 %%
@@ -106,11 +108,11 @@ procedure_body:
 	}
 	basic_block_list '}'
 	{
-	if (return_statement_used_flag == false)
-		{
-			int line = get_line_number();
-			report_error("Atleast 1 basic block should have a return statement", line);
-		}
+	/* if (return_statement_used_flag == false) */
+	/* 	{ */
+	/* 		int line = get_line_number(); */
+	/* 		report_error("Atleast 1 basic block should have a return statement", line); */
+	/* 	} */
 
 		current_procedure->set_basic_block_list(*$4);
 
@@ -119,11 +121,11 @@ procedure_body:
 |
 	'{' basic_block_list '}'
 	{
-		if (return_statement_used_flag == false)
-		{
-			int line = get_line_number();
-			report_error("Atleast 1 basic block should have a return statement", line);
-		}
+		/* if (return_statement_used_flag == false) */
+		/* { */
+		/* 	int line = get_line_number(); */
+		/* 	report_error("Atleast 1 basic block should have a return statement", line); */
+		/* } */
 
 		current_procedure->set_basic_block_list(*$2);
 
@@ -251,12 +253,16 @@ basic_block:
 	  for (; (*($1))[i] != '>'; ++i) {
 	    id = id *10 +  ((*($1))[i]-'0');
 	  }
-	  // append conditional statement to ast_list by using push_back
+		// append conditional statement to executable_statement_list by using push_back
 	  if ($3 != NULL)
-	    $$ = new Basic_Block(id, *$3);
+		{
+		  $3->push_back ($4);
+		  $$ = new Basic_Block(id, *$3);
+		}
 	  else
 	    {
 	      list<Ast *> * ast_list = new list<Ast *>;
+	      ast_list->push_back ($4);
 	      $$ = new Basic_Block(id, *ast_list);
 	    }
 
@@ -276,11 +282,15 @@ basic_block:
 	  }
 	  // append goto statement to ast_list by using push_back
 	  if ($3 != NULL)
-	    $$ = new Basic_Block(id, *$3);
+		{
+		  $3->push_back ($4);
+		  $$ = new Basic_Block(id, *$3);
+		}
 	  else
 	    {
 	      list<Ast *> * ast_list = new list<Ast *>;
-	      $$ = new Basic_Block(id, *ast_list);
+	      ast_list->push_back ($4);
+		$$ = new Basic_Block(id, *ast_list);
 	    }
 
 	  delete $3;
@@ -388,16 +398,43 @@ conditional_statement:
 	ELSE
 	GOTO BASIC_BLOCK ';'
 	{
-	#if 0
-	std::cout << "arg3" << std::endl;	
-	#endif
+	  int i = 0;
+	  for (; (*($6))[i] != ' '; ++i) {
+	  
+	  }
+	  ++i;
+	  int id1 = 0;
+	  for (; (*($6))[i] != '>'; ++i) {
+	    id1 = id1 *10 +  ((*($6))[i]-'0');
+	  }
+
+	  i = 0;
+	  for (; (*($10))[i] != ' '; ++i) {
+	  
+	  }
+	  ++i;
+	  int id2 = 0;
+	  for (; (*($10))[i] != '>'; ++i) {
+	    id2 = id2 *10 +  ((*($10))[i]-'0');
+	  }
+
+	  $$ = new Conditional_Ast ($3, id1, id2);
 	}
 ;
 
 goto_statement:
 	GOTO BASIC_BLOCK ';'
 	{
-
+	  int i = 0;
+	  for (; (*($2))[i] != ' '; ++i) {
+	  
+	  }
+	  ++i;
+	  int id = 0;
+	  for (; (*($2))[i] != '>'; ++i) {
+	    id = id *10 +  ((*($2))[i]-'0');
+	  }
+	  $$ = new Goto_Ast (id);
 	}
 ;
 
@@ -420,128 +457,114 @@ modified_variable:
 predicate:
 	predicate ASSIGN_OP modified_variable
 	{
-	// pass an integer instead of '=' according to specification
-	$$ = new Relational_Expr_Ast ($1, '=', $3);
-	#if 0
-	std::cout << "arg6" << std::endl;
-	#endif
+	  // pass an integer instead of '=' according to specification
+		$$ = new Relational_Expr_Ast ($1, 1, $3);
+		int line = get_line_number();
+		$$->check_ast(line);
 	}
 |
 	predicate LE modified_variable
 	{
-	// pass an integer instead of '=' according to specification
-	$$ = new Relational_Expr_Ast ($1, '<' + '=', $3);
-	#if 0
-	std::cout << "arg7" << std::endl;
-	#endif
+	  // pass an integer instead of '=' according to specification
+		$$ = new Relational_Expr_Ast ($1, 2, $3);
+		int line = get_line_number();
+		$$->check_ast(line);
 	}
 |
 	predicate GE modified_variable
 	{
-	// pass an integer instead of '=' according to specification
-	$$ = new Relational_Expr_Ast ($1, '>' + '=', $3);
-	#if 0
-	std::cout << "arg8" << std::endl;
-	#endif
+	  // pass an integer instead of '=' according to specification
+		$$ = new Relational_Expr_Ast ($1, 3, $3);
+		int line = get_line_number();
+		$$->check_ast(line);
 	}
 |
 	predicate LT modified_variable
 	{
-	// pass an integer instead of '=' according to specification
-	$$ = new Relational_Expr_Ast ($1, '<', $3);
-	#if 0
-	std::cout << "arg9" << std::endl;
-	#endif
-	}
-|
+	  // pass an integer instead of '=' according to specification
+	  $$ = new Relational_Expr_Ast ($1, 4, $3);
+		int line = get_line_number();
+		$$->check_ast(line);
+		}
+	|
 	predicate GT modified_variable
 	{
-	// pass an integer instead of '=' according to specification
-	$$ = new Relational_Expr_Ast ($1, '>', $3);
-	#if 0
-	std::cout << "arg10" << std::endl;
-	#endif
+	  // pass an integer instead of '=' according to specification
+		$$ = new Relational_Expr_Ast ($1, 5, $3);
+		int line = get_line_number();
+		$$->check_ast(line);
 	}
 |
 	predicate NOT_EQUAL modified_variable
 	{
-	// pass an integer instead of '=' according to specification
-	$$ = new Relational_Expr_Ast ($1, '!' + '=', $3);
-	#if 0
-	std::cout << "arg11" << std::endl;
-	#endif
+	  // pass an integer instead of '=' according to specification
+		$$ = new Relational_Expr_Ast ($1, 6, $3);
+		int line = get_line_number();
+		$$->check_ast(line);
 	}
 |
 	predicate EQUAL modified_variable
 	{
-	// pass an integer instead of '=' according to specification
-	$$ = new Relational_Expr_Ast ($1, '=' + '=', $3);
-	#if 0
-	std::cout << "arg12" << std::endl;
-	#endif
+	  // pass an integer instead of '=' according to specification
+		$$ = new Relational_Expr_Ast ($1, 7, $3);
+		int line = get_line_number();
+		$$->check_ast(line);
 	}
 |
 	modified_variable ASSIGN_OP modified_variable
 	{
-	// pass an integer instead of '=' according to specification
-	$$ = new Relational_Expr_Ast ($1, '=', $3);
-	#if 0
-	std::cout << "arg13" << std::endl;
-	#endif
+	  // pass an integer instead of '=' according to specification
+		$$ = new Relational_Expr_Ast ($1, 1, $3);
+		int line = get_line_number();
+		$$->check_ast(line);
 	}
 |
 	modified_variable LE  modified_variable
 	{
-	// pass an integer instead of '=' according to specification
-	$$ = new Relational_Expr_Ast ($1, '<' + '=', $3);
-	#if 0
-	std::cout << "arg14" << std::endl;
-	#endif
+	  // pass an integer instead of '=' according to specification
+		$$ = new Relational_Expr_Ast ($1, 2, $3);
+		int line = get_line_number();
+		$$->check_ast(line);
 	}
 |
 	modified_variable GE  modified_variable
 	{
-	// pass an integer instead of '=' according to specification
-	$$ = new Relational_Expr_Ast ($1, '>' + '=', $3);
-	#if 0
-	std::cout << "arg15" << std::endl;
-	#endif
+	  // pass an integer instead of '=' according to specification
+		$$ = new Relational_Expr_Ast ($1, 3, $3);
+		int line = get_line_number();
+		$$->check_ast(line);
 	}
 |
 	modified_variable LT modified_variable
 	{
-	// pass an integer instead of '=' according to specification
-	$$ = new Relational_Expr_Ast ($1, '<', $3);
-	#if 0
-	std::cout << "arg16" << std::endl;
-	#endif
+	  // pass an integer instead of '=' according to specification
+		$$ = new Relational_Expr_Ast ($1, 4, $3);
+		int line = get_line_number();
+		$$->check_ast(line);
 	}
 |
 	modified_variable GT modified_variable
 	{
-	// pass an integer instead of '=' according to specification
-	$$ = new Relational_Expr_Ast ($1, '>', $3);
-	#if 0
-	std::cout << "arg17" << std::endl;
-	#endif
+	  // pass an integer instead of '=' according to specification
+		$$ = new Relational_Expr_Ast ($1, 5, $3);
+		int line = get_line_number();
+		$$->check_ast(line);
 	}
 |
 	modified_variable NOT_EQUAL modified_variable
 	{
-	// pass an integer instead of '=' according to specification
-	$$ = new Relational_Expr_Ast ($1, '!' + '=', $3);
-	#if 0
-	std::cout << "arg18" << std::endl;
-	#endif
+	  // pass an integer instead of '=' according to specification
+		$$ = new Relational_Expr_Ast ($1, 6, $3);
+		int line = get_line_number();
+		$$->check_ast(line);
 	}
 |
 	modified_variable EQUAL modified_variable
 	{
-	// pass an integer instead of '=' according to specification
-	$$ = new Relational_Expr_Ast ($1, '=' + '=', $3);
-	#if 0
-	std::cout << "arg19" << std::endl;
-	#endif
+	  // pass an integer instead of '=' according to specification
+		$$ = new Relational_Expr_Ast ($1, 7, $3);
+		int line = get_line_number();
+		$$->check_ast(line);
 	}
 ;
 

@@ -28,6 +28,7 @@
 
 #define AST_SPACE "         "
 #define AST_NODE_SPACE "            "
+#define AST_IF_SPACE "               "
 
 using namespace std;
 
@@ -153,6 +154,37 @@ public:
 	void print_ast(ostream & file_buffer);
 
 	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
+};
+
+class Conditional_Ast:public Ast
+{
+
+    Ast * pred;
+    int bb_id1;
+    int bb_id2;
+
+public:
+    Conditional_Ast (Ast*, int, int);
+    ~Conditional_Ast();
+    void print_ast (ostream &);
+
+    Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
+    
+};
+
+class Goto_Ast:public Ast
+{
+
+    int bb_id;
+
+public:
+    Goto_Ast (int);
+    ~Goto_Ast ();
+
+    void print_ast (ostream &);
+
+    Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
+
 };
 
 #endif

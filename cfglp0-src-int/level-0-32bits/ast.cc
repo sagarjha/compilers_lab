@@ -98,7 +98,7 @@ void Assignment_Ast::print_ast(ostream & file_buffer)
 {
 	file_buffer << AST_SPACE << "Asgn:\n";
 
-	file_buffer << AST_NODE_SPACE"LHS (";
+	file_buffer << AST_NODE_SPACE << "LHS (";
 	lhs->print_ast(file_buffer);
 	file_buffer << ")\n";
 
@@ -253,15 +253,42 @@ Data_Type Relational_Expr_Ast::get_data_type()
 // needs to be modified
 void Relational_Expr_Ast::print_ast(ostream & file_buffer)
 {
-	file_buffer << AST_SPACE << "Rel_Expr:\n";
 
-	file_buffer << AST_NODE_SPACE"LHS (";
-	lhs->print_ast(file_buffer);
-	file_buffer << ")\n";
+    string op_str;
 
-	file_buffer << AST_NODE_SPACE << "RHS (";
-	rhs->print_ast(file_buffer);
-	file_buffer << ")\n";
+    switch (op) {
+    case 1:
+	op_str = "=";
+	break;
+    case 2:
+	op_str = "LE";
+	break;
+    case 3:
+	op_str = "GE";
+	break;
+    case 4:
+	op_str = "LT";
+	break;
+    case 5:
+	op_str = "GT";
+	break;
+    case 6:
+	op_str = "NE";
+	break;
+    case 7:
+	op_str = "EQ";
+	break;
+    }
+    
+    file_buffer << "\n" << AST_NODE_SPACE << "Condition: " << op_str << "\n";
+
+    file_buffer << AST_IF_SPACE << "LHS (";
+    lhs->print_ast(file_buffer);
+    file_buffer << ")\n";
+
+    file_buffer << AST_IF_SPACE << "RHS (";
+    rhs->print_ast(file_buffer);
+    file_buffer << ")";
 }
 
 // needs to be defined
@@ -372,3 +399,53 @@ Eval_Result & Return_Ast::evaluate(Local_Environment & eval_env, ostream & file_
 }
 
 template class Number_Ast<int>;
+
+////////////////////////////////////////////////////////////////////////////////
+
+Conditional_Ast::Conditional_Ast(Ast* predicate, int id1, int id2)
+{
+    pred = predicate;
+    bb_id1 = id1;
+    bb_id2 = id2;
+}
+
+Conditional_Ast::~Conditional_Ast()
+{
+    delete pred;
+}
+
+void Conditional_Ast::print_ast (ostream & file_buffer)
+{
+    file_buffer << AST_SPACE << "If_Else statement:";
+    pred->print_ast(file_buffer);
+    file_buffer << endl << AST_NODE_SPACE << "True Successor: " << bb_id1;
+    file_buffer << endl << AST_NODE_SPACE << "False Successor: " << bb_id2 << endl;
+}
+
+Eval_Result & Conditional_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)
+{
+
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////////
+
+Goto_Ast::Goto_Ast (int num)
+{
+    bb_id = num;
+}
+Goto_Ast::~Goto_Ast ()
+{
+
+}
+
+void Goto_Ast::print_ast (ostream & file_buffer)
+{
+    file_buffer << AST_SPACE << "Goto statement:";
+    file_buffer << endl << AST_NODE_SPACE << "Successor: " << bb_id << endl;
+}
+
+Eval_Result & Goto_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)
+{
+
+}
