@@ -56,7 +56,6 @@
 %type <ast_list> executable_statement_list
 %type <ast_list> assignment_statement_list
 %type <ast> assignment_statement
-%type <ast> predicate
 %type <ast> variable
 %type <ast> constant
 %type <ast> modified_variable
@@ -341,22 +340,22 @@ assignment_statement_list:
 ;
 
 assignment_statement:
-	variable ASSIGN_OP variable ';'
-	{
-		$$ = new Assignment_Ast($1, $3);
+/* 	variable ASSIGN_OP variable ';' */
+/* 	{ */
+/* 		$$ = new Assignment_Ast($1, $3); */
 
-		int line = get_line_number();
-		$$->check_ast(line);
-	}
-|
-	variable ASSIGN_OP constant ';'
-	{
-		$$ = new Assignment_Ast($1, $3);
+/* 		int line = get_line_number(); */
+/* 		$$->check_ast(line); */
+/* 	} */
+/* | */
+/* 	variable ASSIGN_OP constant ';' */
+/* 	{ */
+/* 		$$ = new Assignment_Ast($1, $3); */
 
-		int line = get_line_number();
-		$$->check_ast(line);
-	}
-|
+/* 		int line = get_line_number(); */
+/* 		$$->check_ast(line); */
+/* 	} */
+/* | */
 	variable ASSIGN_OP flp ';'
 	{
 		$$ = new Assignment_Ast($1, $3);

@@ -50,6 +50,16 @@ void Eval_Result::set_variable_status(bool def)
 	report_internal_error("Should not reach, Eval_Result : set_variable_status");
 }
 
+int Eval_Result::get_block()
+{
+	report_internal_error("Should not reach, Eval_Result : get_block");
+}
+
+void Eval_Result::set_block_id(int num)
+{
+	report_internal_error("Should not reach, Eval_Result : set_block_id		");
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 
 Eval_Result_Value_Int::Eval_Result_Value_Int()
@@ -91,6 +101,47 @@ void Eval_Result_Value_Int::set_result_enum(Result_Enum res)
 Result_Enum Eval_Result_Value_Int::get_result_enum()
 {
 	return result_type;
+}
+
+/*int Eval_Result_Value_Int::get_block_id()
+{
+	return 0;
+}
+
+void Eval_Result_Value_Int::set_block_id(int num)
+{
+	return;
+}*/
+
+/////////////////////////////////////////////////////////////
+// functions for eval_result_bb
+
+Eval_Result_BB::Eval_Result_BB()
+{
+	block_id = -1;
+	result_type = bb_result;
+}
+
+Eval_Result_BB::~Eval_Result_BB()
+{ }
+
+void Eval_Result_BB::set_block_id(int number)
+{
+	block_id = number;
+}
+
+int Eval_Result_BB::get_block()
+{
+	return block_id;
+}
+
+Result_Enum Eval_Result_BB::get_result_enum()
+{
+	return result_type;
+}
+
+void Eval_Result_BB::set_result_enum(Result_Enum res)
+{
 }
 
 ///////////////////////////////////////////////////////////////////////////////////

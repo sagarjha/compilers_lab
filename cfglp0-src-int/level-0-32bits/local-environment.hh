@@ -26,6 +26,7 @@
 
 #include<string>
 #include<map>
+//#include "basic-block.hh"
 
 #define VAR_SPACE "         "
 
@@ -34,7 +35,8 @@ using namespace std;
 typedef enum
 {
 	int_result,
-	void_result
+	void_result,
+	bb_result
 } Result_Enum;
 
 class Eval_Result;
@@ -54,6 +56,9 @@ public:
 
 	virtual void set_result_enum(Result_Enum res) = 0;
 	virtual Result_Enum get_result_enum() = 0;
+	
+	virtual void set_block_id(int next_block);
+	virtual int get_block();
 };
 
 class Eval_Result_Value:public Eval_Result
@@ -65,9 +70,26 @@ public:
 	virtual bool is_variable_defined() = 0;
 	virtual void set_variable_status(bool def) = 0;
 
-	virtual void set_result_enum(Result_Enum res) = 0;
 	virtual Result_Enum get_result_enum() = 0;
 };
+
+
+// to store goto targets
+class Eval_Result_BB:public Eval_Result
+{
+	int block_id;
+	
+public:	
+	Eval_Result_BB();
+	~Eval_Result_BB();
+
+	virtual void set_block_id(int next_block);
+	virtual int get_block();
+
+	virtual void set_result_enum(Result_Enum res);
+	virtual Result_Enum get_result_enum();
+};
+
 
 class Eval_Result_Value_Int:public Eval_Result_Value
 {

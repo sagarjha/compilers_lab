@@ -131,7 +131,34 @@ Eval_Result & Procedure::evaluate(ostream & file_buffer)
 	while (current_bb)
 	{
 		result = &(current_bb->evaluate(eval_env, file_buffer));
-		current_bb = get_next_bb(*current_bb);		
+		
+		// check if result type is bb_type
+		if ( result -> get_result_enum() == bb_result) // the last AST in the basic block was a goto or a conditional
+		{
+			// wade through the basic block list to find the requisite block with the correct ID
+			list<Basic_Block *>::iterator i;
+			bool found = false;
+			for(i = basic_block_list.begin(); i != basic_block_list.end(); i++)
+			{
+				// found the block with the id stored in the result (ie the id of the block to go to next)
+				if( (*i)->get_bb_number() == result -> get_block() )
+				{
+					current_bb = (*i);
+					found = true;
+					break;
+				}
+			}
+			
+			if (!found) 
+			{
+				current_bb = get_next_bb(*current_bb);
+			}
+		}
+		
+		else // the last AST was not a control statement
+		{
+			current_bb = get_next_bb(*current_bb);		
+		}
 	}
 
 	file_buffer << "\n\n";

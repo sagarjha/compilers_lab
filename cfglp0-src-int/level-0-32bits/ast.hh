@@ -184,6 +184,7 @@ public:
     void print_ast (ostream &);
 
     Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
+  Eval_Result & evaluate_without_print(Local_Environment & eval_env, ostream & file_buffer);
 
 };
 

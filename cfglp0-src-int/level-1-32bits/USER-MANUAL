@@ -25,8 +25,10 @@
 
     To generate test cases which can be used as input to cfglp Level-1
     Interpreter:
+    (Replace {cfglp} with cfglp32 or cfglp64 depending on the configuration
+    of your machine)
 
-    -- Make your current directory as level-1-32bits/
+    -- Make your current directory as level-1-32bits/ or level-1-64bits/
 
     -- To generate .cfg file for valid test.c file in test_files:
          - Run
@@ -35,27 +37,33 @@
 
     To run the cfglp Level-1 Interpreter, follow the steps given below:
 
-    -- Make your current directory as level-1-32bits/
+    -- Make your current directory as level-1-32bits/ or level-1-64bits
 
     -- To test the cfglp Level-1 Interpreter using a valid test.cs306.cfg
        (generated using the above steps) in test_files:
          - Run
-              ./cfglp32 test_files/test.cs306.cfg [options]
-         - To see the command line options that cfglp32 executable accepts,
+              make -f Makefile.cfglp
+	 - {cfglp} executable is generated in the current directory
+         - Run
+              ./{cfglp} test_files/test.cs306.cfg [options]
+         - To see the command line options that {cfglp} executable accepts,
            run
-              ./cfglp32 --help
+              ./{cfglp} --help
          - Observe the output
 
     -- To test the cfglp Level-1 Interpreter using an invalid test.ecfg 
        (pre-existing) in test_files:
          - Run
-             ./cfglp32 test_files/test.ecfg [options]
-         - To see the command line options that cfglp32 executable accepts,
+              make -f Makefile.cfglp
+	 - {cfglp} executable is generated in the current directory
+         - Run
+             ./{cfglp} test_files/test.ecfg [options]
+         - To see the command line options that {cfglp} executable accepts,
            run
-             ./cfglp32 --help
+             ./{cfglp} --help
          - Observe the output
 
-    To restore the original files in level-1-32bits/ directory:
+    To restore the original files in level-1-32bits/ or level-1-64bits/ directory:
 
     -- Run
          make -f Makefile.cfglp clean
