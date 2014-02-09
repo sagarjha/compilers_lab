@@ -37,110 +37,129 @@ class Ast;
 class Ast
 {
 protected:
-	Data_Type node_data_type;
+    Data_Type node_data_type;
 public:
-	Ast();
-	~Ast();
+    Ast();
+    ~Ast();
 
-	virtual Data_Type get_data_type();
-	virtual bool check_ast(int line);
+    virtual Data_Type get_data_type();
+    virtual bool check_ast(int line);
 
-	virtual void print_ast(ostream & file_buffer) = 0;
-	virtual void print_value(Local_Environment & eval_env, ostream & file_buffer);
+    virtual void print_ast(ostream & file_buffer) = 0;
+    virtual void print_value(Local_Environment & eval_env, ostream & file_buffer);
 
-	virtual Eval_Result & get_value_of_evaluation(Local_Environment & eval_env);
-	virtual void set_value_of_evaluation(Local_Environment & eval_env, Eval_Result & result);
-	virtual Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer) = 0;
+    virtual Eval_Result & get_value_of_evaluation(Local_Environment & eval_env);
+    virtual void set_value_of_evaluation(Local_Environment & eval_env, Eval_Result & result);
+    virtual Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer) = 0;
 };
 
 class Assignment_Ast:public Ast
 {
-	Ast * lhs;
-	Ast * rhs;
+    Ast * lhs;
+    Ast * rhs;
 
 public:
-	Assignment_Ast(Ast * temp_lhs, Ast * temp_rhs);
-	~Assignment_Ast();
+    Assignment_Ast(Ast * temp_lhs, Ast * temp_rhs);
+    ~Assignment_Ast();
 
-	Data_Type get_data_type();
-	bool check_ast(int line);
+    Data_Type get_data_type();
+    bool check_ast(int line);
 
-	void print_ast(ostream & file_buffer);
+    void print_ast(ostream & file_buffer);
 
-	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
+    Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
+};
+
+class Cast_Assignment_Ast:public Ast
+{
+    Ast * lhs;
+    Ast * rhs;
+    Data_Type data_type;
+
+public:
+    Cast_Assignment_Ast(Ast * temp_lhs, Ast * temp_rhs, Data_Type);
+    ~Cast_Assignment_Ast();
+
+    Data_Type get_data_type();
+    bool check_ast(int line);
+
+    void print_ast(ostream & file_buffer);
+
+    Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
 };
 
 class Name_Ast:public Ast
 {
-	string variable_name;
-	Symbol_Table_Entry variable_symbol_entry;
+    string variable_name;
+    Symbol_Table_Entry variable_symbol_entry;
 
 public:
-	Name_Ast(string & name, Symbol_Table_Entry & var_entry);
-	~Name_Ast();
+    Name_Ast(string & name, Symbol_Table_Entry & var_entry);
+    ~Name_Ast();
 
-	Data_Type get_data_type();
+    Data_Type get_data_type();
+    
+    void print_ast(ostream & file_buffer);
 
-	void print_ast(ostream & file_buffer);
-
-	void print_value(Local_Environment & eval_env, ostream & file_buffer);
-	Eval_Result & get_value_of_evaluation(Local_Environment & eval_env);
-	void set_value_of_evaluation(Local_Environment & eval_env, Eval_Result & result);
-	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
+    void print_value(Local_Environment & eval_env, ostream & file_buffer);
+    Eval_Result & get_value_of_evaluation(Local_Environment & eval_env);
+    void set_value_of_evaluation(Local_Environment & eval_env, Eval_Result & result);
+    Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
 };
 
 template <class T>
 class Number_Ast:public Ast
 {
-	T constant;
+    T constant;
 
 public:
-	Number_Ast(T number, Data_Type constant_data_type);
-	~Number_Ast();
+    Number_Ast(T number, Data_Type constant_data_type);
+    ~Number_Ast();
 
-	Data_Type get_data_type();
+    Data_Type get_data_type();
+    void print_ast(ostream & file_buffer);
 
-	void print_ast(ostream & file_buffer);
-
-	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
+    Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
 };
 
 // class definition of relational_expr_ast
 class Relational_Expr_Ast:public Ast
 {
-  Ast *lhs;
-  Ast *rhs;
-  int op;
+    Ast *lhs;
+    Ast *rhs;
+    int op;
 
 public:
-  Relational_Expr_Ast (Ast*, int, Ast*);
-  ~Relational_Expr_Ast();
+    Relational_Expr_Ast (Ast*, int, Ast*);
+    ~Relational_Expr_Ast();
 
-  Data_Type get_data_type();
-  bool check_ast(int line);
+    Data_Type get_data_type();
+    
+    bool check_ast(int line);
   
-  void print_ast (ostream&);
+    void print_ast (ostream&);
 
-  Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
+    Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
 };
 
 // class definition of boolean_expr_ast
 class Boolean_Expr_Ast: public Ast
 {
-  Ast* lhs;
-  Ast* rhs;
-  int op;
+    Ast* lhs;
+    Ast* rhs;
+    int op;
 
 public:
-  Boolean_Expr_Ast(Ast*, int, Ast*);
-  ~Boolean_Expr_Ast();
+    Boolean_Expr_Ast(Ast*, int, Ast*);
+    ~Boolean_Expr_Ast();
 
-  Data_Type get_data_type();
-  bool check_ast(int line);
+    Data_Type get_data_type();
+    
+    bool check_ast(int line);
   
-  void print_ast (ostream &);
+    void print_ast (ostream &);
 
-  Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
+    Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
 };
 
 
@@ -148,12 +167,12 @@ class Return_Ast:public Ast
 {
 
 public:
-	Return_Ast();
-	~Return_Ast();
+    Return_Ast();
+    ~Return_Ast();
 
-	void print_ast(ostream & file_buffer);
+    void print_ast(ostream & file_buffer);
 
-	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
+    Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
 };
 
 class Conditional_Ast:public Ast
@@ -184,7 +203,7 @@ public:
     void print_ast (ostream &);
 
     Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
-  Eval_Result & evaluate_without_print(Local_Environment & eval_env, ostream & file_buffer);
+    Eval_Result & evaluate_without_print(Local_Environment & eval_env, ostream & file_buffer);
 
 };
 
