@@ -63,11 +63,11 @@
 %type <ast> modified_variable
 %type <ast> conditional_statement
 %type <ast> goto_statement
-%type <ast> flp
-%type <ast> slp
-%type <ast> tlp
+%type <ast> exp_assign_op
+%type <ast> exp_eq_ne
+%type <ast> exp_le_lt_ge_gt
 %type <ast> tlt
-%type <ast> exp1
+%type <ast> exp_mul_div
 %type <ast> singleton
 						
 %start program
@@ -437,7 +437,7 @@ assignment_statement_list:
 		;
 
 assignment_statement:
-		variable ASSIGN_OP flp ';'
+		variable ASSIGN_OP exp_assign_op ';'
 		{
 		#if 0
 		$$ = new Assignment_Ast($1, $3);
@@ -513,7 +513,7 @@ constant:
 		;
 
 conditional_statement:
-		IF '(' flp ')'
+		IF '(' exp_assign_op ')'
 		GOTO BASIC_BLOCK ';'
 		ELSE
 		GOTO BASIC_BLOCK ';'
@@ -579,8 +579,8 @@ modified_variable:
 		}
 		;
 
-flp: 
-		flp ASSIGN_OP slp
+exp_assign_op: 
+		exp_assign_op ASSIGN_OP exp_eq_ne
 		{
 		#if 0
 		
@@ -590,7 +590,7 @@ flp:
 		#endif
 		}
 	|
-		slp
+		exp_eq_ne
 		{
 		#if 0
 
@@ -599,8 +599,8 @@ flp:
 		}
 		;
 
-slp:
-		slp EQUAL tlp
+exp_eq_ne:
+		exp_eq_ne EQUAL exp_le_lt_ge_gt
 		{
 		#if 0
 		
@@ -610,7 +610,7 @@ slp:
 		#endif
 		}
 	|
-		slp NOT_EQUAL tlp
+		exp_eq_ne NOT_EQUAL exp_le_lt_ge_gt
 		{
 		#if 0
 
@@ -620,7 +620,7 @@ slp:
 		#endif
 		}
 	|
-		tlp
+		exp_le_lt_ge_gt
 		{
 		#if 0
 
@@ -629,8 +629,8 @@ slp:
 		}
 		;
 
-tlp:
-		tlp GE tlt
+exp_le_lt_ge_gt:
+		exp_le_lt_ge_gt GE exp_add_sub
 		{
 		#if 0
 		$$ = new Relational_Expr_Ast ($1, 3, $3);
@@ -639,7 +639,7 @@ tlp:
 		#endif
 		}
 	|
-		tlp GT tlt
+		exp_le_lt_ge_gt GT exp_add_sub
 		{
 		#if 0
 		$$ = new Relational_Expr_Ast ($1, 5, $3);
@@ -648,7 +648,7 @@ tlp:
 		#endif
 		}
 	|
-		tlp LE tlt
+		exp_le_lt_ge_gt LE exp_add_sub
 		{
 		#if 0
 		$$ = new Relational_Expr_Ast ($1, 2, $3);
@@ -657,7 +657,7 @@ tlp:
 		#endif
 		}
 	|
-		tlp LT tlt
+		exp_le_lt_ge_gt LT exp_add_sub
 		{
 		#if 0
 		$$ = new Relational_Expr_Ast ($1, 4, $3);
@@ -666,7 +666,7 @@ tlp:
 		#endif
 		}
 	|
-		tlt
+		exp_add_sub
 		{
 		#if 0
 		$$ = $1;
@@ -674,8 +674,8 @@ tlp:
 		}
 		;
 
-tlt:
-		tlt '+' exp1
+exp_add_sub:
+		exp_add_sub '+' exp_mul_div
 		{
 		#if 0
 		$$ = new Relational_Expr_Ast ($1, 4, $3);
@@ -684,7 +684,7 @@ tlt:
 		#endif
 		}
 	|
-		tlt '-' exp1
+		exp_add_sub '-' exp_mul_div
 		{
 		#if 0
 		$$ = new Relational_Expr_Ast ($1, 4, $3);
@@ -693,7 +693,7 @@ tlt:
 		#endif
 		}
 	|
-		exp1
+		exp_mul_div
 		{
 		#if 0
 		$$ = $1;
@@ -701,8 +701,8 @@ tlt:
 		}
 		;
 
-exp1:
-     		exp1 '*' singleton
+exp_mul_div:
+     		exp_mul_div '*' singleton
 		{
 		#if 0
 		$$ = new Relational_Expr_Ast ($1, 4, $3);
@@ -711,7 +711,7 @@ exp1:
 		#endif
 		}
 	|
-		exp1 '/' singleton
+		exp_mul_div '/' singleton
 		{
 		#if 0
 		$$ = new Relational_Expr_Ast ($1, 4, $3);
@@ -743,28 +743,35 @@ singleton:
 		#endif
 		}
 	|
-		'(' flp ')'
+		'(' exp_assign_op ')'
+		{
+		#if 0
+		$$ = $2; 
+		#endif
+		}
+	|
+		'-' '(' exp_assign_op ')'
 		{
 		#if 0
 		$$ = $2; 
 		#endif
 		}
 	|	
-		'(' INTEGER ')' '(' flp ')'
+		'(' INTEGER ')' '(' exp_assign_op ')'
 		{
 		#if 0
 		$$ = $2; 
 		#endif
 		}
 	|	
-		'(' FLOAT ')' '(' flp ')'
+		'(' FLOAT ')' '(' exp_assign_op ')'
 		{
 		#if 0
 		$$ = $2; 
 		#endif
 		}
 	|	
-		'('DOUBLE ')' '(' flp ')'
+		'('DOUBLE ')' '(' exp_assign_op ')'
 		{
 		#if 0
 		$$ = $2; 

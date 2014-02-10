@@ -1,8 +1,7 @@
 main ()
 {
 
-    int a;
-    float b;
-    float c;
-    c = a + b;
+    float b = 7.5;
+    float c = 9.6;
+    b = (int) c;
 }
