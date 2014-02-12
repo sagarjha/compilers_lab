@@ -55,7 +55,7 @@ float  {
 
 double  {
   store_token_name("DOUBLE");
-  return Parser::FLOAT;
+  return Parser::DOUBLE;
 }
 
 return		{ 

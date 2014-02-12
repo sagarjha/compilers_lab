@@ -66,7 +66,6 @@
 %type <ast> exp_assign_op
 %type <ast> exp_eq_ne
 %type <ast> exp_le_lt_ge_gt
-%type <ast> tlt
 %type <ast> exp_mul_div
 %type <ast> singleton
 						
