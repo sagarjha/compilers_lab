@@ -38,7 +38,8 @@ typedef enum
 	void_result,
 	bb_result,
 	float_result,
-	double_result
+	double_result,
+	return_result
     } Result_Enum;
 
 class Eval_Result;
@@ -50,8 +51,9 @@ protected:
     Result_Enum result_type;
 
 public:
-    int get_value();
-    void set_value(int value);
+    virtual float get_value();
+    virtual void set_value(int value);
+    virtual void set_value(float value);
 
     virtual bool is_variable_defined();
     virtual void set_variable_status(bool def);
@@ -66,8 +68,10 @@ public:
 class Eval_Result_Value:public Eval_Result
 {
 public:
-    void set_value(int number);
-    int get_value();
+    virtual void set_value(int number);
+    virtual void set_value(float value);
+
+    virtual float get_value();
 
     virtual bool is_variable_defined() = 0;
     virtual void set_variable_status(bool def) = 0;
@@ -102,7 +106,7 @@ public:
     ~Eval_Result_Value_Int();
 
     void set_value(int number);
-    int get_value();
+    float get_value();
 
     void set_variable_status(bool def);
     bool is_variable_defined();
@@ -137,8 +141,8 @@ public:
     Eval_Result_Value_Double();
     ~Eval_Result_Value_Double();
 
-    void set_value(double number);
-    double get_value();
+    void set_value(float number);
+    float get_value();
 
     void set_variable_status(bool def);
     bool is_variable_defined();

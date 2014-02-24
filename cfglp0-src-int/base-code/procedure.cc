@@ -158,7 +158,11 @@ Eval_Result & Procedure::evaluate(ostream & file_buffer)
 		
 		else // the last AST was not a control statement
 		{
-			current_bb = get_next_bb(*current_bb);		
+		    // check if the last ast was a return statement
+		    if (result->get_result_enum() == return_result) {
+			break;
+		    }
+		    current_bb = get_next_bb(*current_bb);		
 		}
 	}
 

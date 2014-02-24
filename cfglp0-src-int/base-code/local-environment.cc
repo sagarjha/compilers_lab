@@ -29,13 +29,19 @@ using namespace std;
 #include"local-environment.hh"
 #include"error-display.hh"
 #include"user-options.hh"
+#include<iomanip>
 
-int Eval_Result::get_value()
+float Eval_Result::get_value()
 {
     report_internal_error("Should not reach, Eval_Result : get_value");
 }
 
 void Eval_Result::set_value(int number)
+{
+    report_internal_error("Should not reach, Eval_Result : set_value");
+}
+
+void Eval_Result::set_value(float number)
 {
     report_internal_error("Should not reach, Eval_Result : set_value");
 }
@@ -60,12 +66,17 @@ void Eval_Result::set_block_id(int num)
     report_internal_error("Should not reach, Eval_Result : set_block_id		");
 }
 
-int Eval_Result_Value::get_value()
+float Eval_Result_Value::get_value()
 {
     report_internal_error("Should not reach, Eval_Result : get_value");
 }
 
 void Eval_Result_Value::set_value(int number)
+{
+    report_internal_error("Should not reach, Eval_Result : set_value");
+}
+
+void Eval_Result_Value::set_value(float number)
 {
     report_internal_error("Should not reach, Eval_Result : set_value");
 }
@@ -88,7 +99,7 @@ void Eval_Result_Value_Int::set_value(int number)
     defined = true;
 }
 
-int Eval_Result_Value_Int::get_value()
+float Eval_Result_Value_Int::get_value()
 {
     return value;
 }
@@ -168,13 +179,13 @@ Eval_Result_Value_Double::Eval_Result_Value_Double()
 Eval_Result_Value_Double::~Eval_Result_Value_Double()
 { }
 
-void Eval_Result_Value_Double::set_value(double number)
+void Eval_Result_Value_Double::set_value(float number)
 {
     value = number;
     defined = true;
 }
 
-double Eval_Result_Value_Double::get_value()
+float Eval_Result_Value_Double::get_value()
 {
     return value;
 }
@@ -251,7 +262,14 @@ void Local_Environment::print(ostream & file_buffer)
 			file_buffer << VAR_SPACE << (*i).first << " : undefined" << "\n";
 		
 		    else
-			file_buffer << VAR_SPACE << (*i).first << " : " << vi->get_value() << "\n";
+			{
+			    if (vi->get_result_enum() == int_result) {
+				file_buffer << VAR_SPACE << (*i).first << " : " << (int) vi->get_value() << "\n";
+			    }
+			    else if (vi->get_result_enum() == float_result || vi->get_result_enum() == double_result) {
+				file_buffer << VAR_SPACE << (*i).first << " : " << fixed << setprecision(2) << vi->get_value() << "\n";
+			    }
+			}
 		}
 	}
 }

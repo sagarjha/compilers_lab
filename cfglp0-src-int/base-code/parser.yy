@@ -492,7 +492,7 @@ constant:
 	|
 		FLOATING_POINT_NUMBER
 		{
-		$$ = new Number_Ast<double>($1, double_data_type);
+		$$ = new Number_Ast<float>($1, float_data_type);
 		}
 		;
 
