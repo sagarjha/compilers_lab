@@ -147,9 +147,14 @@ void Name_Ast::print_ast(ostream & file_buffer)
 
 void Name_Ast::print_value(Local_Environment & eval_env, ostream & file_buffer)
 {
+    cout << " In this function" << endl;
 	Eval_Result_Value * loc_var_val = eval_env.get_variable_value(variable_name);
 	Eval_Result_Value * glob_var_val = interpreter_global_table.get_variable_value(variable_name);
 
+	cout << "loc_var_val is " << (loc_var_val ? "NOT NULL" : "NULL") << endl;
+
+	cout << "glob_var_val is " << (glob_var_val ? "NOT NULL" : "NULL") << endl;
+	
 	file_buffer << "\n" << AST_SPACE << variable_name << " : ";
 
 	if (!eval_env.is_variable_defined(variable_name) && !interpreter_global_table.is_variable_defined(variable_name))

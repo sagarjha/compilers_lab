@@ -107,6 +107,24 @@ public:
     Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
 };
 
+class Cast_Name_Ast:public Ast
+{
+    Ast *name;
+    Data_Type data_type;
+
+public:
+    Cast_Name_Ast(Ast *, Data_Type);
+    ~Cast_Name_Ast();
+
+    Data_Type get_data_type();
+    
+    void print_ast(ostream & file_buffer);
+
+    void print_value(Local_Environment & eval_env, ostream & file_buffer);
+    Eval_Result & get_value_of_evaluation(Local_Environment & eval_env);
+    Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
+};
+
 template <class T>
 class Number_Ast:public Ast
 {
@@ -122,16 +140,16 @@ public:
     Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
 };
 
-// class definition of relational_expr_ast
-class Relational_Expr_Ast:public Ast
+// class definition of expr_ast
+class Expr_Ast:public Ast
 {
     Ast *lhs;
     Ast *rhs;
     int op;
 
 public:
-    Relational_Expr_Ast (Ast*, int, Ast*);
-    ~Relational_Expr_Ast();
+    Expr_Ast (Ast*, int, Ast*);
+    ~Expr_Ast();
 
     Data_Type get_data_type();
     
@@ -139,6 +157,24 @@ public:
   
     void print_ast (ostream&);
 
+    Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
+};
+
+class Cast_Expr_Ast:public Ast
+{
+    Ast *expr;
+    Data_Type data_type;
+
+public:
+    Cast_Expr_Ast(Ast *, Data_Type);
+    ~Cast_Expr_Ast();
+
+    Data_Type get_data_type();
+
+    void print_ast(ostream & file_buffer);
+
+    void print_value(Local_Environment & eval_env, ostream & file_buffer);
+    Eval_Result & get_value_of_evaluation(Local_Environment & eval_env);
     Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
 };
 
