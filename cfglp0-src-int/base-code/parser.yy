@@ -44,7 +44,7 @@
 %token <string_value> BASIC_BLOCK
 %token <float_value> FLOATING_POINT_NUMBER			
 %token <string_value> NAME
-%token RETURN INTEGER FLOAT DOUBLE IF ELSE			
+%token RETURN VOID INTEGER FLOAT DOUBLE IF ELSE			
 %token <string_value> GOTO
 %token <integer_value> ASSIGN_OP
 %token <integer_value> NOT_EQUAL
@@ -56,7 +56,7 @@
 %type <basic_block_list> basic_block_list
 %type <basic_block> basic_block
 %type <ast_list> executable_statement_list
-%type <ast_list> assignment_statement_list
+%type <ast_list> statement_list
 %type <ast> assignment_statement
 %type <ast> variable
 %type <ast> constant
@@ -69,61 +69,144 @@
 %type <ast> exp_add_sub
 %type <ast> exp_mul_div
 %type <ast> singleton
+%type <ast> function_call_statement
 						
 %start program
 
 %%
 
 program:
-		declaration_statement_list procedure_name
+		declaration_statement_list function_declaration_list 
 		{
-		
+		#if 0
+		  
 		program_object.set_global_table(*$1);
 		return_statement_used_flag = false;				// No return statement in the current procedure till now
 
+		#endif
 		}
-		procedure_body
+		procedure_list
 		{
-
+		#if 0
+		  
 		program_object.set_procedure_map(*current_procedure);
 
 		if ($1)
 		$1->global_list_in_proc_map_check(get_line_number());
 
 		delete $1;
+		#endif
 		}
 	|
 		procedure_name
 		{
-
+		#if 0
+		  
 		return_statement_used_flag = false;				// No return statement in the current procedure till now
+		#endif
 		}
 		procedure_body
 		{
-
+		#if 0
+		  
 		program_object.set_procedure_map(*current_procedure);
+		#endif
+		}
+	|
+		declaration_statement_list procedure_name
+		{
+		#if 0
+		  
+		return_statement_used_flag = false;				// No return statement in the current procedure till now
+		#endif
+		}
+		procedure_body
+		{
+		#if 0
+		  
+		program_object.set_procedure_map(*current_procedure);
+		#endif
+		}
+	|
+		function_declaration_list procedure_list
+		{
+
 		}
 		;
 
+function_declaration_list:
+		function_declaration_list function_declaration
+	|
+		function_declaration
+		;
+
+function_declaration:
+		type
+		NAME '(' declaration_argument_list ')' ';'
+	|
+		VOID
+		NAME '(' declaration_argument_list ')' ';'
+		;
+
+declaration_argument_list:
+		declaration_argument_list ',' declaration_argument
+	|
+		;
+
+declaration_argument:
+		type NAME | type
+		;
+
 procedure_name:
-		NAME '(' ')'
+		NAME '(' argument_list ')'
 		{
-		
+		#if 0
+		  
 		current_procedure = new Procedure(void_data_type, *$1);
+		#endif
 		}
+		;
+
+
+argument_list:
+		argument_list ',' argument
+	|
+		{}	
+;
+
+argument:
+		type NAME
+		;
+
+type:
+		INTEGER | FLOAT | DOUBLE
+		;
+
+procedure_list:
+		procedure
+	|
+		procedure_list procedure
+		;
+
+procedure:
+		NAME '(' argument_list ')'
+		procedure_body
 		;
 
 procedure_body:
 		'{'
 		declaration_statement_list
 		{
-		
+		#if 0
+		  
 		current_procedure->set_local_list(*$2);
 		delete $2;
+		#endif
 		}
 		basic_block_list '}'
 		{
-
+		#if 0
+		  
 		    // no return statement necessary
 		/* if (return_statement_used_flag == false) */
 		/* 	{ */
@@ -142,11 +225,13 @@ procedure_body:
 		current_procedure->set_basic_block_list(*$4);
 
 		delete $4;
+		#endif
 		}
 	|
 		'{' basic_block_list '}'
 		{
-
+		#if 0
+		  
 		/* if (return_statement_used_flag == false) */
 		/* { */
 		/* 	int line = get_line_number(); */
@@ -162,13 +247,15 @@ procedure_body:
 		current_procedure->set_basic_block_list(*$2);
 
 		delete $2;
+		#endif
 		}
 		;
 
 declaration_statement_list:
 		declaration_statement
 		{
-		
+		#if 0
+		  
 		int line = get_line_number();
 		program_object.variable_in_proc_map_check($1->get_variable_name(), line);
 
@@ -181,11 +268,13 @@ declaration_statement_list:
 
 		$$ = new Symbol_Table();
 		$$->push_symbol($1);
+		#endif
 		}
 	|
 		declaration_statement_list declaration_statement
 		{
-
+		#if 0
+		  
 		// if declaration is local then no need to check in global list
 		// if declaration is global then this list is global list
 		    
@@ -214,33 +303,25 @@ declaration_statement_list:
 		$$ = new Symbol_Table();
 
 		$$->push_symbol($2);
+		#endif
 		}
 		;
 
 declaration_statement:
-		INTEGER NAME ';'
+		type NAME ';'
 		{
-		$$ = new Symbol_Table_Entry(*$2, int_data_type);
+		#if 0
+		  $$ = new Symbol_Table_Entry(*$2, int_data_type);
 		delete $2;
-		}
-	|
-		FLOAT NAME ';'
-		{
-		$$ = new Symbol_Table_Entry (*$2, float_data_type);
-		delete $2;
-		}
-	|
-		DOUBLE NAME ';'
-		{
-		$$ = new Symbol_Table_Entry (*$2, double_data_type);
-		delete $2;
+		#endif
 		}
 		;
 
 basic_block_list:
 		basic_block_list basic_block
 		{
-		
+		#if 0
+		  
 		if (!$2)
 		{
 		int line = get_line_number();
@@ -252,11 +333,13 @@ basic_block_list:
 		$$ = $1;
 		$$->push_back($2);
 		max_bb_num = max ($2->get_bb_number(), max_bb_num);
+		#endif
 		}
 	|
 		basic_block
 		{
-
+		#if 0
+		  
 		if (!$1)
 		{
 		  int line = get_line_number();
@@ -269,6 +352,7 @@ basic_block_list:
 
 		$$ = new list<Basic_Block *>;
 		$$->push_back($1);
+		#endif
 		}
 	
 		;
@@ -276,7 +360,8 @@ basic_block_list:
 basic_block:
 		BASIC_BLOCK ':' executable_statement_list
 		{
-		
+		#if 0
+		  
 		int i = 0;
 		for (; (*($1))[i] != ' '; ++i) {
 		  
@@ -293,11 +378,13 @@ basic_block:
 		$$ = new Basic_Block (id, *ast_list);
 		}
 		delete $3;
+		#endif
 		}
 	|
 		BASIC_BLOCK ':' executable_statement_list conditional_statement
 		{
-
+		#if 0
+		  
 		int i = 0;
 		for (; (*($1))[i] != ' '; ++i) {
 		  
@@ -321,11 +408,13 @@ basic_block:
 		}
 
 		delete $3;
+		#endif
 		}
 	|
 		BASIC_BLOCK ':' executable_statement_list goto_statement
 		  {
-
+		#if 0
+		    
 		int i = 0;
 		for (; (*($1))[i] != ' '; ++i) {
 		  
@@ -349,19 +438,23 @@ basic_block:
 		}
 
 		delete $3;
+		#endif
 		}
 		;
 
 executable_statement_list:
-		assignment_statement_list
+		statement_list
 		{
-		
+		#if 0
+		  
 		$$ = $1;
+		#endif
 		}
 	|
-		assignment_statement_list RETURN ';'
+		statement_list RETURN ';'
 		{
-		Ast * ret = new Return_Ast();
+		#if 0
+		  Ast * ret = new Return_Ast();
 
 		return_statement_used_flag = true;					// Current procedure has an occurrence of return statement
 
@@ -372,39 +465,74 @@ executable_statement_list:
 		$$ = new list<Ast *>;
 
 		$$->push_back(ret);
+		#endif
 		}
 		;
 
-assignment_statement_list:
+statement_list:
 		{
-		$$ = NULL;
+		#if 0
+		  $$ = NULL;
+		#endif
 		}
 	|
-		assignment_statement_list assignment_statement
+		statement_list assignment_statement
 		{
-		if ($1 == NULL)
+		#if 0
+		  if ($1 == NULL)
 		$$ = new list<Ast *>;
 
 		else
 		$$ = $1;
 
 		$$->push_back($2);
+		#endif
+		}
+	|
+		statement_list function_call_statement
+		{
+		  
 		}
 		;
 
 assignment_statement:
 		variable ASSIGN_OP exp_assign_op ';'
 		{
-		$$ = new Assignment_Ast($1, $3);
+		#if 0
+		  $$ = new Assignment_Ast($1, $3);
 		int line = get_line_number();
 		$$->check_ast(line);
+		#endif
 		}
+		;
+
+function_call_statement:
+		NAME '(' exp_assign_op_list ')' ';'
+		{
+                #if 0
+		$$ = new Assignment_Ast();
+		#endif
+		}
+	|
+		NAME '(' ')' ';'
+		{
+                #if 0
+		$$ = new Assignment_Ast();
+		#endif
+		}
+		;
+
+exp_assign_op_list:
+		exp_assign_op_list ',' exp_assign_op
+	|
+		exp_assign_op
 		;
 
 variable:
 		NAME
 		{
-		Symbol_Table_Entry var_table_entry;
+		#if 0
+		  Symbol_Table_Entry var_table_entry;
 
 		if (current_procedure->variable_in_symbol_list_check(*$1))
 		var_table_entry = current_procedure->get_symbol_table_entry(*$1);
@@ -421,11 +549,13 @@ variable:
 		$$ = new Name_Ast(*$1, var_table_entry);
 
 		delete $1;
+		#endif
 		}
 	|
 		'(' INTEGER ')' NAME
 		{
-		Symbol_Table_Entry var_table_entry;
+		#if 0
+		  Symbol_Table_Entry var_table_entry;
 
 		if (current_procedure->variable_in_symbol_list_check(*$4))
 		var_table_entry = current_procedure->get_symbol_table_entry(*$4);
@@ -441,11 +571,13 @@ variable:
 		Name_Ast * toCast = new Name_Ast(*$4, var_table_entry);
 		$$ = new Cast_Name_Ast(toCast, int_data_type);
 		delete $4;
+		#endif
 		}
 	|
 		'(' FLOAT ')' NAME
 		{
-		Symbol_Table_Entry var_table_entry;
+		#if 0
+		  Symbol_Table_Entry var_table_entry;
 
 		if (current_procedure->variable_in_symbol_list_check(*$4))
 		var_table_entry = current_procedure->get_symbol_table_entry(*$4);
@@ -461,11 +593,13 @@ variable:
 		Name_Ast * toCast = new Name_Ast(*$4, var_table_entry);
 		$$ = new Cast_Name_Ast(toCast, float_data_type);
 		delete $4;
+		#endif
 		}
 	|
 		'(' DOUBLE ')' NAME
 		{
-		Symbol_Table_Entry var_table_entry;
+		#if 0
+		  Symbol_Table_Entry var_table_entry;
 
 		if (current_procedure->variable_in_symbol_list_check(*$4))
 		var_table_entry = current_procedure->get_symbol_table_entry(*$4);
@@ -481,18 +615,23 @@ variable:
 		Name_Ast * toCast = new Name_Ast(*$4, var_table_entry);
 		$$ = new Cast_Name_Ast(toCast, double_data_type);
 		delete $4;
+		#endif
 		}
 		;
 
 constant:
 		INTEGER_NUMBER
 		{
-		$$ = new Number_Ast<int>($1, int_data_type);
+		#if 0
+		  $$ = new Number_Ast<int>($1, int_data_type);
+		#endif
 		}
 	|
 		FLOATING_POINT_NUMBER
 		{
-		$$ = new Number_Ast<float>($1, float_data_type);
+		#if 0
+		  $$ = new Number_Ast<float>($1, float_data_type);
+		#endif
 		}
 		;
 
@@ -502,7 +641,8 @@ conditional_statement:
 		ELSE
 		GOTO BASIC_BLOCK ';'
 		{
-		int i = 0;
+		#if 0
+		  int i = 0;
 		for (; (*($6))[i] != ' '; ++i) {
 		  
 		}
@@ -523,13 +663,15 @@ conditional_statement:
 		}
 
 		$$ = new Conditional_Ast ($3, id1, id2);
+		#endif
 		}
 		;
 
 goto_statement:
 		GOTO BASIC_BLOCK ';'
 		{
-		int i = 0;
+		#if 0
+		  int i = 0;
 		for (; (*($2))[i] != ' '; ++i) {
 		  
 		}
@@ -540,177 +682,230 @@ goto_statement:
 		}
 		max_goto_bb_num = max (max_goto_bb_num, id);
 		$$ = new Goto_Ast (id);
+		#endif
 		}
 		;
 
 modified_variable:
 		variable
 		{
-		$$ = $1;
+		#if 0
+		  $$ = $1;
+		#endif
 		}
 	|
 		constant
 		{
-		$$ = $1;
+		#if 0
+		  $$ = $1;
+		#endif
 		}
 		;
 
 exp_assign_op: 
 		exp_assign_op ASSIGN_OP exp_eq_ne
 		{
-		
+		#if 0
+		  
 		$$ = new Expr_Ast ($1, 1, $3);
 		int line = get_line_number();
 		$$->check_ast(line);
+		#endif
 		}
 	|
 		exp_eq_ne
 		{
-
+		#if 0
+		  
 		$$ = $1;
+		#endif
 		}
 		;
 
 exp_eq_ne:
 		exp_eq_ne EQUAL exp_le_lt_ge_gt
 		{
-		
+		#if 0
+		  
 		$$ = new Expr_Ast ($1, 7, $3);
 		int line = get_line_number();
 		$$->check_ast(line);
+		#endif
 		}
 	|
 		exp_eq_ne NOT_EQUAL exp_le_lt_ge_gt
 		{
-
+		#if 0
+		  
 		$$ = new Expr_Ast ($1, 6, $3);
 		int line = get_line_number();
 		$$->check_ast(line);
+		#endif
 		}
 	|
 		exp_le_lt_ge_gt
 		{
-		$$ = $1;
+		#if 0
+		  $$ = $1;
+		#endif
 		}
 		;
 
 exp_le_lt_ge_gt:
 		exp_le_lt_ge_gt GE exp_add_sub
 		{
-		$$ = new Expr_Ast ($1, 3, $3);
+		#if 0
+		  $$ = new Expr_Ast ($1, 3, $3);
 		int line = get_line_number();
 		$$->check_ast(line);
+		#endif
 		}
 	|
 		exp_le_lt_ge_gt GT exp_add_sub
 		{
-		$$ = new Expr_Ast ($1, 5, $3);
+		#if 0
+		  $$ = new Expr_Ast ($1, 5, $3);
 		int line = get_line_number();
 		$$->check_ast(line);
+		#endif
 		}
 	|
 		exp_le_lt_ge_gt LE exp_add_sub
 		{
-		$$ = new Expr_Ast ($1, 2, $3);
+		#if 0
+		  $$ = new Expr_Ast ($1, 2, $3);
 		int line = get_line_number();
 		$$->check_ast(line);
+		#endif
 		}
 	|
 		exp_le_lt_ge_gt LT exp_add_sub
 		{
-		$$ = new Expr_Ast ($1, 4, $3);
+		#if 0
+		  $$ = new Expr_Ast ($1, 4, $3);
 		int line = get_line_number();
 		$$->check_ast(line);
+		#endif
 		}
 	|
 		exp_add_sub
 		{
-		$$ = $1;
+		#if 0
+		  $$ = $1;
+		#endif
 		}
 		;
 
 exp_add_sub:
 		exp_add_sub '+' exp_mul_div
 		{
-		$$ = new Expr_Ast ($1, 8, $3);
+		#if 0
+		  $$ = new Expr_Ast ($1, 8, $3);
 		int line = get_line_number();
 		$$->check_ast(line);
+		#endif
 		}
 	|
 		exp_add_sub '-' exp_mul_div
 		{
-		$$ = new Expr_Ast ($1, 9, $3);
+		#if 0
+		  $$ = new Expr_Ast ($1, 9, $3);
 		int line = get_line_number();
 		$$->check_ast(line);
+		#endif
 		}
 	|
 		exp_mul_div
 		{
-		$$ = $1;
+		#if 0
+		  $$ = $1;
+		#endif
 		}
 		;
 
 exp_mul_div:
      		exp_mul_div '*' singleton
 		{
-		$$ = new Expr_Ast ($1, 10, $3);
+		#if 0
+		  $$ = new Expr_Ast ($1, 10, $3);
 		int line = get_line_number();
 		$$->check_ast(line);
+		#endif
 		}
 	|
 		exp_mul_div '/' singleton
 		{
-		$$ = new Expr_Ast ($1, 11, $3);
+		#if 0
+		  $$ = new Expr_Ast ($1, 11, $3);
 		int line = get_line_number();
-		$$->check_ast(line);	  
+		$$->check_ast(line);
+		#endif
 		}
 	|
 		singleton
 		{
-		$$ = $1;
+		#if 0
+		  $$ = $1;
+		#endif
 		}
 		;
 
 singleton:
+		function_call_statement
+	|	
 		modified_variable
 		{
-		$$ = $1;
+		#if 0
+		  $$ = $1;
+		#endif
 		}
 	|
 		'-' modified_variable
 		{
-		$$ = new Expr_Ast ($2, 12, NULL);
+		#if 0
+		  $$ = new Expr_Ast ($2, 12, NULL);
 		int line = get_line_number();
 		$$->check_ast(line);
+		#endif
 		}
 	|
 		'(' exp_assign_op ')'
 		{
-		$$ = $2; 
+		#if 0
+		  $$ = $2;
+		#endif
 		}
 	|
 		'-' '(' exp_assign_op ')'
 		{
-		$$ = new Expr_Ast ($3, 12, NULL);
+		#if 0
+		  $$ = new Expr_Ast ($3, 12, NULL);
 		int line = get_line_number();
 		$$->check_ast(line);
+		#endif
 		}
 	|	
 		'(' INTEGER ')' '(' exp_assign_op ')'
 		{
+		#if 0
 		  // make a new cast expression ast object pointer
 		 $$ = new Cast_Expr_Ast ($5, int_data_type);
+		#endif
 		}
 	|	
 		'(' FLOAT ')' '(' exp_assign_op ')'
 		{
+		#if 0
 		  // make a new cast expression ast object pointer
 		 $$ = new Cast_Expr_Ast ($5, float_data_type);
+		#endif
 		}
 	|	
 		'('DOUBLE ')' '(' exp_assign_op ')'
 		{
+		#if 0
 		  // make a new cast expression ast object pointer
 		 $$ = new Cast_Expr_Ast ($5, double_data_type);
+		#endif
 		}
 		;

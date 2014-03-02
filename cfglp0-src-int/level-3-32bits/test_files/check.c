@@ -1,14 +1,17 @@
 int a;
 
 int g() {
-  return a;
+  main();
+  return 1;
 }
 
-int f() {
+int f(int b) {
   return g();
 }
 
 main () {
   a = 3;
-  return f();
+  int b;
+  f(b);
+  return 2.09;
 }

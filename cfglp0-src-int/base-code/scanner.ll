@@ -43,6 +43,11 @@
      return Parser::ASSIGN_OP;
    }
 
+void {
+    store_token_name("VOID");
+    return Parser::VOID; 
+}
+
 int		{
   store_token_name("INTEGER");
   return Parser::INTEGER; 

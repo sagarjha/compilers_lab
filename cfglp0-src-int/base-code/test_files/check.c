@@ -1,6 +1,17 @@
-main ()
-{
-    int a = 5;
-    int b = 0;
-    int c = a/b;
+int a;
+
+int g() {
+  main();
+  return 1;
+}
+
+int f(int b) {
+  return g();
+}
+
+main () {
+  a = 3;
+  int b;
+  f(b);
+  return 2.09;
 }
