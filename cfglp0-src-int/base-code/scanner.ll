@@ -98,7 +98,7 @@ return		{
   return Parser::EQUAL;
 }
 
-[:{}();?!]	{
+[:{}();?!,]	{
   store_token_name("META CHAR");
   return matched()[0];
 }

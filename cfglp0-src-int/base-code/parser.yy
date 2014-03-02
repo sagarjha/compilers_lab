@@ -146,11 +146,18 @@ function_declaration:
 	|
 		VOID
 		NAME '(' declaration_argument_list ')' ';'
+	|
+		type
+		NAME '(' ')' ';'
+	|
+		VOID
+		NAME '(' ')' ';'
 		;
 
 declaration_argument_list:
 		declaration_argument_list ',' declaration_argument
 	|
+		declaration_argument
 		;
 
 declaration_argument:
@@ -165,13 +172,21 @@ procedure_name:
 		current_procedure = new Procedure(void_data_type, *$1);
 		#endif
 		}
+	|
+		NAME '(' ')'
+		{
+		#if 0
+		  
+		current_procedure = new Procedure(void_data_type, *$1);
+		#endif
+		}
 		;
 
 
 argument_list:
 		argument_list ',' argument
 	|
-		{}	
+		argument
 ;
 
 argument:
@@ -190,6 +205,9 @@ procedure_list:
 
 procedure:
 		NAME '(' argument_list ')'
+		procedure_body
+	|
+		NAME '(' ')'
 		procedure_body
 		;
 
@@ -451,7 +469,7 @@ executable_statement_list:
 		#endif
 		}
 	|
-		statement_list RETURN ';'
+		statement_list return_statement ';'
 		{
 		#if 0
 		  Ast * ret = new Return_Ast();
@@ -468,6 +486,12 @@ executable_statement_list:
 		#endif
 		}
 		;
+
+return_statement:
+		RETURN
+	|
+		RETURN exp_assign_op
+	;
 
 statement_list:
 		{
@@ -489,7 +513,7 @@ statement_list:
 		#endif
 		}
 	|
-		statement_list function_call_statement
+		statement_list function_call_statement ';'
 		{
 		  
 		}
@@ -507,14 +531,14 @@ assignment_statement:
 		;
 
 function_call_statement:
-		NAME '(' exp_assign_op_list ')' ';'
+		NAME '(' exp_assign_op_list ')'
 		{
                 #if 0
 		$$ = new Assignment_Ast();
 		#endif
 		}
 	|
-		NAME '(' ')' ';'
+		NAME '(' ')'
 		{
                 #if 0
 		$$ = new Assignment_Ast();
@@ -552,7 +576,7 @@ variable:
 		#endif
 		}
 	|
-		'(' INTEGER ')' NAME
+		'(' type ')' NAME
 		{
 		#if 0
 		  Symbol_Table_Entry var_table_entry;
@@ -570,50 +594,6 @@ variable:
 		}
 		Name_Ast * toCast = new Name_Ast(*$4, var_table_entry);
 		$$ = new Cast_Name_Ast(toCast, int_data_type);
-		delete $4;
-		#endif
-		}
-	|
-		'(' FLOAT ')' NAME
-		{
-		#if 0
-		  Symbol_Table_Entry var_table_entry;
-
-		if (current_procedure->variable_in_symbol_list_check(*$4))
-		var_table_entry = current_procedure->get_symbol_table_entry(*$4);
-
-		else if (program_object.variable_in_symbol_list_check(*$4))
-		var_table_entry = program_object.get_symbol_table_entry(*$4);
-
-		else
-		{
-		int line = get_line_number();
-		report_error("Variable has not been declared", line);
-		}
-		Name_Ast * toCast = new Name_Ast(*$4, var_table_entry);
-		$$ = new Cast_Name_Ast(toCast, float_data_type);
-		delete $4;
-		#endif
-		}
-	|
-		'(' DOUBLE ')' NAME
-		{
-		#if 0
-		  Symbol_Table_Entry var_table_entry;
-
-		if (current_procedure->variable_in_symbol_list_check(*$4))
-		var_table_entry = current_procedure->get_symbol_table_entry(*$4);
-
-		else if (program_object.variable_in_symbol_list_check(*$4))
-		var_table_entry = program_object.get_symbol_table_entry(*$4);
-
-		else
-		{
-		  int line = get_line_number();
-		report_error("Variable has not been declared", line);
-		}
-		Name_Ast * toCast = new Name_Ast(*$4, var_table_entry);
-		$$ = new Cast_Name_Ast(toCast, double_data_type);
 		delete $4;
 		#endif
 		}
@@ -852,6 +832,13 @@ exp_mul_div:
 
 singleton:
 		function_call_statement
+	|
+		'(' type ')' function_call_statement
+		{
+		#if 0
+		$$ = $4;
+		#endif
+		}
 	|	
 		modified_variable
 		{
@@ -885,27 +872,11 @@ singleton:
 		#endif
 		}
 	|	
-		'(' INTEGER ')' '(' exp_assign_op ')'
+		'(' type ')' '(' exp_assign_op ')'
 		{
 		#if 0
 		  // make a new cast expression ast object pointer
 		 $$ = new Cast_Expr_Ast ($5, int_data_type);
-		#endif
-		}
-	|	
-		'(' FLOAT ')' '(' exp_assign_op ')'
-		{
-		#if 0
-		  // make a new cast expression ast object pointer
-		 $$ = new Cast_Expr_Ast ($5, float_data_type);
-		#endif
-		}
-	|	
-		'('DOUBLE ')' '(' exp_assign_op ')'
-		{
-		#if 0
-		  // make a new cast expression ast object pointer
-		 $$ = new Cast_Expr_Ast ($5, double_data_type);
 		#endif
 		}
 		;
