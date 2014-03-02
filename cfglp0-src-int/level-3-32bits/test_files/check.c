@@ -12,6 +12,7 @@ int f(int b) {
 main () {
   a = 3;
   int b;
+  g();
   f(b);
   return 2.09;
 }
