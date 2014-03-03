@@ -36,10 +36,23 @@ using namespace std;
 #include"procedure.hh"
 #include"program.hh"
 
-Procedure::Procedure(Data_Type proc_return_type, string proc_name)
+Data_Type argument::get_type() {
+    return type;
+}
+
+string argument::get_name() {
+    return name;
+}
+
+void argument::set_name(string arg_name) {
+    name = arg_name;
+}
+
+Procedure::Procedure(Data_Type proc_return_type, string proc_name, list <argument> arg_list)
 {
 	return_type = proc_return_type;
 	name = proc_name;
+	args = arg_list;
 }
 
 Procedure::~Procedure()
@@ -68,6 +81,18 @@ void Procedure::set_local_list(Symbol_Table & new_list)
 Data_Type Procedure::get_return_type()
 {
 	return return_type;
+}
+
+bool Procedure::match_argument_list(list<argument> arg_list) {
+    if (arg_list.size() != args.size()) {
+	return false;
+    }
+    for (int i = 0; i < args.size(); ++i) {
+	if (args[i].get_type() != arg_list[i].get_type()) {
+	    return false;
+	}
+	args[i].set_name(arg_list[i].get_name());
+    }
 }
 
 bool Procedure::variable_in_symbol_list_check(string variable)

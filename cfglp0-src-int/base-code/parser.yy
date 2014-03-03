@@ -161,8 +161,20 @@ declaration_argument_list:
 		;
 
 declaration_argument:
-		type NAME | type
-		;
+		type NAME
+		{
+		#if 0
+		$$ = new argument ($1, *$2);
+		#endif
+		}
+	|
+		type
+		{
+		#if 0
+		$$ = new argument ($1, "dummy");
+		#endif
+		}
+;
 
 procedure_name:
 		NAME '(' argument_list ')'
@@ -187,14 +199,44 @@ argument_list:
 		argument_list ',' argument
 	|
 		argument
+		{
+		#if 0
+		$$ = new (list <argument>);
+		$$.push(*$1);
+		#endif
+		}
 ;
 
 argument:
 		type NAME
+		{
+		#if 0
+		$$ = new argument ($1, *$2);
+		#endif
+		}
 		;
 
 type:
-		INTEGER | FLOAT | DOUBLE
+		INTEGER
+		{
+		#if 0
+		$$ = int_data_type;
+		#endif
+		}
+	|
+		FLOAT
+		{
+		#if 0
+		$$ = float_data_type;
+		#endif
+		}
+	|
+		DOUBLE
+		{
+		#if 0
+		$$ = double_data_type;
+		#endif
+		}
 		;
 
 procedure_list:
