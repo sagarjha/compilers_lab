@@ -2,7 +2,6 @@ int add(int);
 main()
 {
 	int f,b=1,n=5;
-	b = add(n);
 	f=fact(n);
 
 }
