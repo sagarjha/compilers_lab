@@ -1,3 +1,5 @@
+int fn(int a);
+
 main()
 {
 	int a;

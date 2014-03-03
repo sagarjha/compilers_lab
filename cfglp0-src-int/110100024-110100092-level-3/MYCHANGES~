@@ -1,0 +1,12 @@
+110100024 - Sagar Jha
+110100092 - Raghav Gupta
+
+CS306 - Interpretation of Programming Languages Lab
+
+Assignment 4a) (parser for level 3)
+
+a) parser.yy
+   We added the rules for recognizing function declarations and definitions. We allowed for the possibility of expressions containing functional calls as well as expressions as arguments of functional calls. Also, made arrangements so that statements can consist solely of functional calls. We made return statements more general (allowing the possibility of them returning expressions).
+
+b) scanner.ll
+   We added rule to recognize the keyword void and added ',' in META_CHAR
