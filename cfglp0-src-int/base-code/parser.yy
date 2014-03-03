@@ -44,7 +44,7 @@
 %token <string_value> BASIC_BLOCK
 %token <float_value> FLOATING_POINT_NUMBER			
 %token <string_value> NAME
-%token RETURN VOID INTEGER FLOAT DOUBLE IF ELSE			
+%token RETURN INTEGER FLOAT DOUBLE VOID IF ELSE			
 %token <string_value> GOTO
 %token <integer_value> ASSIGN_OP
 %token <integer_value> NOT_EQUAL

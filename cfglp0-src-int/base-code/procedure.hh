@@ -41,16 +41,15 @@ class argument
 {
     Data_Type type;
     string name;
+public:
     argument (Data_Type given_type, string arg_name) {
 	type = given_type;
 	name = arg_name;
     }
-    Data_Type get_type() {
-	return type;
-    }
+    Data_Type get_type();
     string get_name();
-    string set_name();
-}
+    void set_name(string);
+};
 
 class Procedure
 {
@@ -58,7 +57,7 @@ class Procedure
     string name;
     Symbol_Table local_symbol_table;
     list<Basic_Block *> basic_block_list;
-    list <arguments> args;
+    list <argument> args;
 
 	public:
     Procedure(Data_Type proc_return_type, string proc_name, list <argument> arg_list);

@@ -87,11 +87,12 @@ bool Procedure::match_argument_list(list<argument> arg_list) {
     if (arg_list.size() != args.size()) {
 	return false;
     }
-    for (int i = 0; i < args.size(); ++i) {
-	if (args[i].get_type() != arg_list[i].get_type()) {
+    list<argument>::iterator i,j;
+    for (i = args.begin(), j = arg_list.begin(); i != args.end(); ++i, ++j) {
+	if ((*i).get_type() != (*j).get_type()) {
 	    return false;
 	}
-	args[i].set_name(arg_list[i].get_name());
+	(*i).set_name((*j).get_name());
     }
 }
 
