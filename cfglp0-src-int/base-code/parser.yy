@@ -76,7 +76,8 @@
 %%
 
 program:
-		declaration_statement_list function_declaration_list 
+		declaration_statement_list
+		function_declaration_list
 		{
 		#if 0
 		  
@@ -88,9 +89,6 @@ program:
 		procedure_list
 		{
 		#if 0
-		  
-		program_object.set_procedure_map(*current_procedure);
-
 		if ($1)
 		$1->global_list_in_proc_map_check(get_line_number());
 
@@ -113,7 +111,16 @@ program:
 		#endif
 		}
 	|
-		declaration_statement_list procedure_name
+		declaration_statement_list
+		{
+		#if 0
+		  
+		program_object.set_global_table(*$1);
+		return_statement_used_flag = false;				// No return statement in the current procedure till now
+
+		#endif
+		}
+		procedure_name
 		{
 		#if 0
 		  
@@ -130,34 +137,83 @@ program:
 	|
 		function_declaration_list procedure_list
 		{
-
+		  
 		}
 		;
 
 function_declaration_list:
 		function_declaration_list function_declaration
+		{
+		#if 0
+		#endif
+		}
 	|
 		function_declaration
+		{
+		#if 0
+		#endif
+		}
 		;
 
 function_declaration:
 		type
 		NAME '(' declaration_argument_list ')' ';'
+		{
+		#if 0
+		Procedure current_procedure = new Procedure ($1, *$2, *$4);
+		// push to procedure_map of program object
+		program_object.set_procedure_map(*current_procedure);
+
+		#endif
+		}
 	|
 		VOID
 		NAME '(' declaration_argument_list ')' ';'
+		{
+		#if 0
+		Procedure current_procedure = new Procedure (void_data_type, *$2, *$4);
+		// push to procedure_map of program object
+		program_object.set_procedure_map(*current_procedure);
+		#endif
+		}
 	|
 		type
 		NAME '(' ')' ';'
+		{
+		#if 0
+		Procedure current_procedure = new Procedure ($1, *$2, *(new (list <argument>)));
+		// push to procedure_map of program object
+		program_object.set_procedure_map(*current_procedure);
+		#endif
+		}
 	|
 		VOID
 		NAME '(' ')' ';'
+		{
+		#if 0
+		Procedure current_procedure = new Procedure (void_data_type, *$2, *(new (list <argument>)));
+		// push to procedure_map of program object
+		program_object.set_procedure_map(*current_procedure);
+		#endif
+		}
 		;
 
 declaration_argument_list:
 		declaration_argument_list ',' declaration_argument
+		{
+		#if 0
+		$$ = $1;
+		$$->push (*$3);
+		#endif
+		}
 	|
 		declaration_argument
+		{
+		#if 0
+		$$ = new (list <argument>);
+		$$->push(*$1);
+		#endif
+		}
 		;
 
 declaration_argument:
@@ -171,7 +227,7 @@ declaration_argument:
 		type
 		{
 		#if 0
-		$$ = new argument ($1, "dummy");
+		$$ = new argument ($1, "");
 		#endif
 		}
 ;
@@ -180,16 +236,17 @@ procedure_name:
 		NAME '(' argument_list ')'
 		{
 		#if 0
-		  
-		current_procedure = new Procedure(void_data_type, *$1);
+		// create a new procedure
+		$$ = new Procedure(void_data_type, *$1, *$3);
+		// check that its name is main
 		#endif
 		}
 	|
 		NAME '(' ')'
 		{
 		#if 0
-		  
-		current_procedure = new Procedure(void_data_type, *$1);
+		// create a new procedure
+		$$ = new Procedure(void_data_type, *$1, *(new  (list <argument>)));
 		#endif
 		}
 		;
@@ -197,12 +254,18 @@ procedure_name:
 
 argument_list:
 		argument_list ',' argument
+		{
+		#if 0
+		$$ = $1;
+		$$->push (*$3);
+		#endif
+		}
 	|
 		argument
 		{
 		#if 0
 		$$ = new (list <argument>);
-		$$.push(*$1);
+		$$->push(*$1);
 		#endif
 		}
 ;
@@ -241,16 +304,41 @@ type:
 
 procedure_list:
 		procedure
+		{
+		#if 0
+		#endif
+		}
 	|
 		procedure_list procedure
+		{
+		#if 0
+		#endif
+		}
 		;
 
 procedure:
 		NAME '(' argument_list ')'
 		procedure_body
+		{
+		#if 0
+		// find the corresponding program object from the declaration
+		// Procedure procedure = ;
+		// $$ = &procedure;
+		#endif
+		}
 	|
 		NAME '(' ')'
 		procedure_body
+		{
+		#if 0
+		// find the corresponding program object from the declaration
+		// Procedure procedure = ;
+		// set some attributes of the procedure
+		// i.e. set the names of all the arguments
+		// also check if the definition matches the declaration
+		// $$ = &procedure;
+		#endif
+		}
 		;
 
 procedure_body:
