@@ -33,49 +33,51 @@ class Symbol_Table;
 class Symbol_Table_Entry;
 
 typedef enum
-{
+    {
 	void_data_type,
 	int_data_type
-} Data_Type;
+    } Data_Type;
 
 typedef enum
-{
+    {
 	global,
 	local
-} Table_Scope;
+    } Table_Scope;
 
 class Symbol_Table
 {
-	list<Symbol_Table_Entry *> variable_table;
-	Table_Scope scope;
+    list<Symbol_Table_Entry *> variable_table;
+    Table_Scope scope;
+
 public:
-	Symbol_Table();
-	~Symbol_Table();
+    Symbol_Table();
+    ~Symbol_Table();
 
-	Table_Scope get_table_scope();
-	void set_table_scope(Table_Scope list_scope);
+    Table_Scope get_table_scope();
+    void set_table_scope(Table_Scope list_scope);
 
-	void push_symbol(Symbol_Table_Entry * variable);
+    void push_symbol(Symbol_Table_Entry * variable);
 
-	bool variable_in_symbol_list_check(string variable);
-	Symbol_Table_Entry & get_symbol_table_entry(string variable_name);
-	void global_list_in_proc_map_check(int line);
+    bool variable_in_symbol_list_check(string variable);
+    Symbol_Table_Entry & get_symbol_table_entry(string variable_name);
+    void global_list_in_proc_map_check(int line);
 
-	void create(Local_Environment & local_global_variables_table);
+    void create(Local_Environment & local_global_variables_table);
+    int get_variable_table_size();
 };
 
 class Symbol_Table_Entry
 {
-	string variable_name;
-	Data_Type variable_data_type;
+    string variable_name;
+    Data_Type variable_data_type;
 
 public:
-	Symbol_Table_Entry();
-	Symbol_Table_Entry(string & name, Data_Type new_data_type);
-	~Symbol_Table_Entry();
+    Symbol_Table_Entry();
+    Symbol_Table_Entry(string & name, Data_Type new_data_type);
+    ~Symbol_Table_Entry();
 
-	Data_Type get_data_type();
-	string get_variable_name();
+    Data_Type get_data_type();
+    string get_variable_name();
 };
 
 #endif

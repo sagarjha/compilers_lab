@@ -38,27 +38,31 @@ extern Program program_object;
 
 class Program
 {
-	Symbol_Table global_symbol_table;
-	map<string, Procedure *> procedure_map;
+    Symbol_Table global_symbol_table;
+    map<string, Procedure *> procedure_map;
 
 public:
-	Program();
-	~Program();
-	void delete_all();
+    Program();
+    ~Program();
+    void delete_all();
 
-	void set_procedure_map(Procedure & proc);
-	void set_global_table(Symbol_Table & new_global_table);
+    void set_procedure_map(Procedure & proc);
+    void set_global_table(Symbol_Table & new_global_table);
 
-	Symbol_Table_Entry & get_symbol_table_entry(string variable);
+    Symbol_Table_Entry & get_symbol_table_entry(string variable);
 
-	void print_ast();
+    void print_ast();
 
-	Procedure * get_main_procedure(ostream & file_buffer);
+    Procedure * get_main_procedure(ostream & file_buffer);
 
-	Eval_Result & evaluate();
+    Eval_Result & evaluate();
 
-	bool variable_in_symbol_list_check(string variable);
-	void variable_in_proc_map_check(string symbol, int line);
+    bool variable_in_symbol_list_check(string variable);
+    void variable_in_proc_map_check(string symbol, int line);
+
+    void print_global_symbol_table () {
+	global_symbol_table.print_table();
+    }
 };
 
 #endif

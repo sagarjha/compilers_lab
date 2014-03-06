@@ -1,13 +1,15 @@
 int a;
 
-int f();
-
 main ()
 {
     int k;
+    int l;
 }
 
-f ()
+int f ()
 {
     int s;
+    int t;
+    int p;
+    return 1;
 }

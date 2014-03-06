@@ -48,11 +48,14 @@ void argument::set_name(string arg_name) {
     name = arg_name;
 }
 
-Procedure::Procedure(Data_Type proc_return_type, string proc_name, list <argument> arg_list)
+Procedure::Procedure(Data_Type proc_return_type, string proc_name, list <argument*> arg_list)
 {
 	return_type = proc_return_type;
 	name = proc_name;
-	args = arg_list;
+	list <argument *>::iterator i;
+	for (i = arg_list.begin(); i != arg_list.end(); ++i) {
+	    args.push_back(*(*i));
+	}
 }
 
 Procedure::~Procedure()

@@ -46,6 +46,8 @@ public:
 	type = given_type;
 	name = arg_name;
     }
+    ~argument () {
+    }
     Data_Type get_type();
     string get_name();
     void set_name(string);
@@ -59,8 +61,8 @@ class Procedure
     list<Basic_Block *> basic_block_list;
     list <argument> args;
 
-	public:
-    Procedure(Data_Type proc_return_type, string proc_name, list <argument> arg_list);
+public:
+    Procedure(Data_Type proc_return_type, string proc_name, list <argument*> arg_list);
     ~Procedure();
 
     string get_proc_name();
@@ -78,6 +80,9 @@ class Procedure
     Eval_Result & evaluate(ostream & file_buffer);
 
     bool variable_in_symbol_list_check(string variable);
+    void print_local_symbol_table() {
+	local_symbol_table.print_table();
+    }
 };
 
 #endif
