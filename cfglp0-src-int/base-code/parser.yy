@@ -273,6 +273,10 @@ procedure_list:
 
 procedure:
 		NAME '(' argument_list ')'
+		{
+		// check that function has been declared at the definition time
+		current_procedure = program_object.get_procedure(*$1);
+		}
 		procedure_body
 		{
 		// find the corresponding program object from the declaration
@@ -281,6 +285,10 @@ procedure:
 		}
 	|
 		NAME '(' ')'
+		{
+		// check that function has been declared at the definition time
+		current_procedure = program_object.get_procedure(*$1);
+		}
 		procedure_body
 		{
 		// find the corresponding program object from the declaration

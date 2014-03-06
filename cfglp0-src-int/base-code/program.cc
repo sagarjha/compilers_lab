@@ -47,85 +47,90 @@ Program::~Program()
 
 void Program::delete_all()
 {
-	map<string, Procedure *>::iterator i;
-	for (i = procedure_map.begin(); i != procedure_map.end(); i++)
-		delete i->second;
+    map<string, Procedure *>::iterator i;
+    for (i = procedure_map.begin(); i != procedure_map.end(); i++)
+	delete i->second;
 }
 
 void Program::set_global_table(Symbol_Table & new_global_table)
 {
-	global_symbol_table = new_global_table;
-	global_symbol_table.set_table_scope(global);
+    global_symbol_table = new_global_table;
+    global_symbol_table.set_table_scope(global);
 }
 
 void Program::set_procedure_map(Procedure & proc)
 {
-	procedure_map[proc.get_proc_name()] = &proc;
+    procedure_map[proc.get_proc_name()] = &proc;
+}
+
+Procedure * Program::get_procedure(string name)
+{
+    return procedure_map[name];
 }
 
 bool Program::variable_in_symbol_list_check(string variable)
 {
-	return global_symbol_table.variable_in_symbol_list_check(variable);
+    return global_symbol_table.variable_in_symbol_list_check(variable);
 }
 
 Symbol_Table_Entry & Program::get_symbol_table_entry(string variable_name)
 {
-	return global_symbol_table.get_symbol_table_entry(variable_name);
+    return global_symbol_table.get_symbol_table_entry(variable_name);
 }
 
 void Program::variable_in_proc_map_check(string variable, int line)
 {
-	if(procedure_map[variable] != NULL)
-		report_error("Variable name cannot be same as procedure name", line);
+    if(procedure_map[variable] != NULL)
+	report_error("Variable name cannot be same as procedure name", line);
 }
 
 Procedure * Program::get_main_procedure(ostream & file_buffer)
 {
-	map<string, Procedure *>::iterator i;
-	for(i = procedure_map.begin(); i != procedure_map.end(); i++)
+    map<string, Procedure *>::iterator i;
+    for(i = procedure_map.begin(); i != procedure_map.end(); i++)
 	{
-		if (i->second != NULL && i->second->get_proc_name() == "main")
-				return i->second;
+	    if (i->second != NULL && i->second->get_proc_name() == "main")
+		return i->second;
 	}
 	
-	return NULL;
+    return NULL;
 }
 
 void Program::print_ast()
 {
-	command_options.create_ast_buffer();
-	ostream & ast_buffer = command_options.get_ast_buffer();
+    command_options.create_ast_buffer();
+    ostream & ast_buffer = command_options.get_ast_buffer();
 
-	ast_buffer << "Program:\n";
+    ast_buffer << "Program:\n";
 
-	Procedure * main = get_main_procedure(ast_buffer);
-	if (main == NULL)
-		report_error("No main function found in the program", NOLINE);
+    Procedure * main = get_main_procedure(ast_buffer);
+    if (main == NULL)
+	report_error("No main function found in the program", NOLINE);
 
-	else
+    else
 	{
-		main->print_ast(ast_buffer);
+	    main->print_ast(ast_buffer);
 	}
 }
 
 Eval_Result & Program::evaluate()
 {
-	Procedure * main = get_main_procedure(command_options.get_output_buffer());
-	if (main == NULL)
-		report_error("No main function found in the program", NOLINE);
+    Procedure * main = get_main_procedure(command_options.get_output_buffer());
+    if (main == NULL)
+	report_error("No main function found in the program", NOLINE);
 
-	global_symbol_table.create(interpreter_global_table);
+    global_symbol_table.create(interpreter_global_table);
 
-	command_options.create_output_buffer();
-	ostream & file_buffer = command_options.get_output_buffer();
-	file_buffer << "Evaluating Program\n";
-	file_buffer << GLOB_SPACE << "Global Variables (before evaluating):\n";
-	interpreter_global_table.print(file_buffer);
+    command_options.create_output_buffer();
+    ostream & file_buffer = command_options.get_output_buffer();
+    file_buffer << "Evaluating Program\n";
+    file_buffer << GLOB_SPACE << "Global Variables (before evaluating):\n";
+    interpreter_global_table.print(file_buffer);
 
-	Eval_Result & result = main->evaluate(file_buffer);
+    Eval_Result & result = main->evaluate(file_buffer);
 
-	file_buffer << GLOB_SPACE << "Global Variables (after evaluating):\n";
-	interpreter_global_table.print(file_buffer);
+    file_buffer << GLOB_SPACE << "Global Variables (after evaluating):\n";
+    interpreter_global_table.print(file_buffer);
 
-	return result;
+    return result;
 }
