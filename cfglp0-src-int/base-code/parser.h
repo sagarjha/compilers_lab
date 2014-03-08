@@ -63,7 +63,6 @@ class Parser: public ParserBase
 		d_scanner.switchStreams(input_file_name, "");
 		d_scanner.setSval(&d_val__);
 		max_bb_num = max_goto_bb_num = 0;
-		cur_num_basic_block = 2;
 	}
 
         int parse();
@@ -88,7 +87,7 @@ class Parser: public ParserBase
         int lex();
 
 	bool return_statement_used_flag;				// Keeps track that atleast a procedure has atleast 1 return statement
-	void bb_strictly_increasing_order_check(int bb_number); 
+	void bb_strictly_increasing_order_check(int cur_block_num, int bb_number); 
         
 	void executeAction(int ruleNr);
         void errorRecovery();

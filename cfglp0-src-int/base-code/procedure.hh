@@ -60,7 +60,7 @@ class Procedure
     Symbol_Table local_symbol_table;
     list<Basic_Block *> basic_block_list;
     list <argument> args;
-
+    int cur_num_basic_block;
 public:
     Procedure(Data_Type proc_return_type, string proc_name, list <argument*> arg_list);
     ~Procedure();
@@ -69,7 +69,9 @@ public:
     void set_basic_block_list(list<Basic_Block *> bb_list);
     void set_local_list(Symbol_Table & new_list);
     Data_Type get_return_type();
-    bool match_argument_list(list<argument> arg_list);
+    bool match_argument_list(list<argument*> *arg_list);
+    bool match_function_call(list <Ast *> * parameter_list);
+    
     Symbol_Table_Entry & get_symbol_table_entry(string variable_name);
 
     void print_ast(ostream & file_buffer);
@@ -80,9 +82,12 @@ public:
     Eval_Result & evaluate(ostream & file_buffer);
 
     bool variable_in_symbol_list_check(string variable);
+    void push_arguments_into_symbol_table();
     void print_local_symbol_table() {
 	local_symbol_table.print_table();
     }
+    
+    int get_and_increment_basic_block_number();
 };
 
 #endif

@@ -78,7 +78,8 @@
 %type <argument_obj> argument
 %type <D> type
 %type <list_of_argument> declaration_argument_list
-									
+%type <ast_list> exp_assign_op_list
+
 %start program
 
 %%
@@ -274,8 +275,18 @@ procedure_list:
 procedure:
 		NAME '(' argument_list ')'
 		{
-		// check that function has been declared at the definition time
+		// if the function is main
+		if (*$1 == "main") {
+		current_procedure = new Procedure (void_data_type, "main", *(new (list<argument*>)));
+		// push to procedure_map of program object
+		program_object.set_procedure_map(*current_procedure);
+		}
+		else {
 		current_procedure = program_object.get_procedure(*$1);
+		// check that function has been declared at the definition time and that is compatible with its earlier signature
+		current_procedure->match_argument_list($3);
+		current_procedure->push_arguments_into_symbol_table();
+		}
 		}
 		procedure_body
 		{
@@ -286,8 +297,17 @@ procedure:
 	|
 		NAME '(' ')'
 		{
-		// check that function has been declared at the definition time
+		// if the function is main
+		if (*$1 == "main") {
+		current_procedure = new Procedure (void_data_type, "main", *(new (list<argument*>)));
+		// push to procedure_map of program object
+		program_object.set_procedure_map(*current_procedure);
+		}
+		else {
 		current_procedure = program_object.get_procedure(*$1);
+		// check that function has been declared at the definition time and that is compatible with its earlier signature
+		current_procedure->match_argument_list(NULL);
+		}
 		}
 		procedure_body
 		{
@@ -306,12 +326,13 @@ procedure_body:
 		{
 		current_procedure->print_local_symbol_table();
 		current_procedure->set_local_list(*$2);
+		current_procedure->push_arguments_into_symbol_table();
 		delete $2;
 		}
 		basic_block_list '}'
 		{
 		  
-		    // no return statement necessary
+		// no return statement necessary
 		/* if (return_statement_used_flag == false) */
 		/* 	{ */
 		/* 		int line = get_line_number(); */
@@ -422,7 +443,7 @@ basic_block_list:
 		report_error("Basic block doesn't exist", line);
 		}
 
-		bb_strictly_increasing_order_check($2->get_bb_number());
+		bb_strictly_increasing_order_check(current_procedure->get_and_increment_basic_block_number(), $2->get_bb_number());
 
 		$$ = $1;
 		$$->push_back($2);
@@ -438,7 +459,7 @@ basic_block_list:
 		report_error("Basic block doesn't exist", line);
 		}
 
-		bb_strictly_increasing_order_check($1->get_bb_number());
+		bb_strictly_increasing_order_check(current_procedure->get_and_increment_basic_block_number(), $1->get_bb_number());
 
 		max_bb_num = max ($1->get_bb_number(), max_bb_num);
 
@@ -581,7 +602,7 @@ statement_list:
 assignment_statement:
 		variable ASSIGN_OP exp_assign_op ';'
 		{
-		  $$ = new Assignment_Ast($1, $3);
+		$$ = new Assignment_Ast($1, $3);
 		int line = get_line_number();
 		$$->check_ast(line);
 		}
@@ -590,29 +611,39 @@ assignment_statement:
 function_call_statement:
 		NAME '(' exp_assign_op_list ')'
 		{
-		#if 0
-		$$ = new Assignment_Ast();
-		#endif
+		$$ = new Functional_Call_Ast(*$1, *$3);
+		Procedure * called_procedure = program_object.get_procedure(*$1);
+		$$->set_data_type(called_procedure->get_return_type());
 		}
 	|
 		NAME '(' ')'
 		{
-		#if 0
-		$$ = new Assignment_Ast();
-		#endif
+		$$ = new Functional_Call_Ast(*$1, *(new list<Ast*>()));
+		Procedure * called_procedure = program_object.get_procedure(*$1);
+		$$->set_data_type(called_procedure->get_return_type());
 		}
 		;
 
 exp_assign_op_list:
 		exp_assign_op_list ',' exp_assign_op
+		{
+		$$ = $1;
+		$$->push_back($3);
+		}
 	|
 		exp_assign_op
+		{
+		$$ = new (list<Ast*>);
+		$$->push_back($1);
+		}
 		;
 
 variable:
 		NAME
 		{
-		  Symbol_Table_Entry var_table_entry;
+		Symbol_Table_Entry var_table_entry;
+
+		cout << current_procedure->get_proc_name() << endl;
 
 		if (current_procedure->variable_in_symbol_list_check(*$1))
 		var_table_entry = current_procedure->get_symbol_table_entry(*$1);
@@ -647,7 +678,7 @@ variable:
 		report_error("Variable has not been declared", line);
 		}
 		Name_Ast * toCast = new Name_Ast(*$4, var_table_entry);
-		$$ = new Cast_Name_Ast(toCast, int_data_type);
+		$$ = new Cast_Name_Ast(toCast, $2);
 		delete $4;
 		}
 		;
@@ -841,10 +872,14 @@ exp_mul_div:
 
 singleton:
 		function_call_statement
+		{
+		$$ = $1;
+		}
 	|
 		'(' type ')' function_call_statement
 		{
 		$$ = $4;
+		$$->set_data_type($2);
 		}
 	|	
 		modified_variable
@@ -874,6 +909,6 @@ singleton:
 		'(' type ')' '(' exp_assign_op ')'
 		{
 		  // make a new cast expression ast object pointer
-		 $$ = new Cast_Expr_Ast ($5, int_data_type);
+		 $$ = new Cast_Expr_Ast ($5, $2);
 		}
 		;

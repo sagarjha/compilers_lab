@@ -49,6 +49,11 @@ Data_Type Ast::get_data_type()
     report_internal_error("Should not reach, Ast : get_data_type");
 }
 
+void Ast::set_data_type(Data_Type data_type)
+{
+    report_internal_error("Should not reach, Ast : set_data_type");
+}
+
 
 void Ast::print_value(Local_Environment & eval_env, ostream & file_buffer)
 {
@@ -1096,4 +1101,37 @@ Eval_Result & Goto_Ast::evaluate_without_print(Local_Environment & eval_env, ost
     Eval_Result & result = *new Eval_Result_BB();
     result.set_block_id(bb_id);
     return result;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////
+
+Functional_Call_Ast::Functional_Call_Ast (string& given_name, list <Ast*> arguments) {
+    name = given_name;
+    args = arguments;
+}
+
+Functional_Call_Ast::~Functional_Call_Ast() {
+    for (list<Ast*>::iterator i = args.begin(); i != args.end();) {
+	args.erase(i);
+    }
+}
+
+Data_Type Functional_Call_Ast::get_data_type() {
+    return node_data_type;
+}
+
+void Functional_Call_Ast::set_data_type(Data_Type data_type) {
+    node_data_type = data_type;
+}
+
+bool Functional_Call_Ast::check_ast(int line) {
+    report_error("Should not reach here", line);
+}
+
+void Functional_Call_Ast::print_ast(ostream& file_buffer) {
+
+}
+
+Eval_Result & Functional_Call_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer) {
+    
 }
