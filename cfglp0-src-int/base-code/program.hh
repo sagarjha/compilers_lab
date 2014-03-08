@@ -46,10 +46,11 @@ public:
     ~Program();
     void delete_all();
 
-    void set_procedure_map(Procedure & proc);
+    bool set_procedure_map(Procedure & proc);
     Procedure * get_procedure(string);
     void set_global_table(Symbol_Table & new_global_table);
-
+    bool check_all_functions_defined();
+    
     Symbol_Table_Entry & get_symbol_table_entry(string variable);
 
     void print_ast();
@@ -60,10 +61,6 @@ public:
 
     bool variable_in_symbol_list_check(string variable);
     void variable_in_proc_map_check(string symbol, int line);
-
-    void print_global_symbol_table () {
-	global_symbol_table.print_table();
-    }
 };
 
 #endif

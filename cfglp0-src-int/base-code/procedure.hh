@@ -61,6 +61,7 @@ class Procedure
     list<Basic_Block *> basic_block_list;
     list <argument> args;
     int cur_num_basic_block;
+    bool function_defined;
 public:
     Procedure(Data_Type proc_return_type, string proc_name, list <argument*> arg_list);
     ~Procedure();
@@ -71,6 +72,7 @@ public:
     Data_Type get_return_type();
     bool match_argument_list(list<argument*> *arg_list);
     bool match_function_call(list <Ast *> * parameter_list);
+    bool check_function_defined();
     
     Symbol_Table_Entry & get_symbol_table_entry(string variable_name);
 
@@ -83,10 +85,6 @@ public:
 
     bool variable_in_symbol_list_check(string variable);
     void push_arguments_into_symbol_table();
-    void print_local_symbol_table() {
-	local_symbol_table.print_table();
-    }
-    
     int get_and_increment_basic_block_number();
 };
 
