@@ -91,10 +91,15 @@ program:
 		program_object.set_global_table(*$1);
 		program_object.print_global_symbol_table();
 		return_statement_used_flag = false;				// No return statement in the current procedure till now
-
 		}
 		procedure_list
 		{
+		Procedure * main_procedure = program_object.get_main_procedure(cout);
+		if (main_procedure == NULL) 
+		{
+		int line = get_line_number();
+		report_error("No main procedure defined",line);
+		}
 		if ($1)
 		$1->global_list_in_proc_map_check(get_line_number());
 
@@ -103,6 +108,12 @@ program:
 	|
 		procedure_name
 		{
+		Procedure * main_procedure = program_object.get_main_procedure(cout);
+		if (main_procedure == NULL) 
+		{
+		int line = get_line_number();
+		report_error("No main procedure defined",line);
+		}
 		  
 		return_statement_used_flag = false;				// No return statement in the current procedure till now
 		}
@@ -121,6 +132,12 @@ program:
 		}
 		procedure_name
 		{
+		Procedure * main_procedure = program_object.get_main_procedure(cout);
+		if (main_procedure == NULL) 
+		{
+		int line = get_line_number();
+		report_error("No main procedure defined",line);
+		}
 		  
 		return_statement_used_flag = false;				// No return statement in the current procedure till now
 		}
@@ -132,7 +149,12 @@ program:
 	|
 		function_declaration_list procedure_list
 		{
-		  
+		Procedure * main_procedure = program_object.get_main_procedure(cout);
+		if (main_procedure == NULL) 
+		{
+		int line = get_line_number();
+		report_error("No main procedure defined",line);
+		}
 		}
 		;
 
@@ -212,7 +234,8 @@ procedure_name:
 		{
 		// create a new procedure
 		current_procedure= new Procedure(void_data_type, *($1), *($3));
-		// check that its name is main
+		// push to procedure_map of program object
+		program_object.set_procedure_map(*current_procedure);
 		}
 	|
 		NAME '(' ')'
@@ -220,6 +243,8 @@ procedure_name:
 		list <argument *> * new_list = new  (list <argument*>);
 		// create a new procedure
 		current_procedure= new Procedure(void_data_type, *($1), *new_list);
+		// push to procedure_map of program object
+		program_object.set_procedure_map(*current_procedure);
 		}
 		;
 
@@ -455,7 +480,7 @@ basic_block_list:
 		  
 		if (!$1)
 		{
-		  int line = get_line_number();
+		int line = get_line_number();
 		report_error("Basic block doesn't exist", line);
 		}
 
@@ -613,6 +638,15 @@ function_call_statement:
 		{
 		$$ = new Functional_Call_Ast(*$1, *$3);
 		Procedure * called_procedure = program_object.get_procedure(*$1);
+		if (called_procedure == NULL) {
+		int line = get_line_number();
+		report_error("Function does not exist", line);
+		}
+		// check if the call matches the signature
+		if (!called_procedure->match_function_call($3)) {
+		int line = get_line_number();
+		report_error("Function call does not match its signature",line);
+		}
 		$$->set_data_type(called_procedure->get_return_type());
 		}
 	|
@@ -620,6 +654,15 @@ function_call_statement:
 		{
 		$$ = new Functional_Call_Ast(*$1, *(new list<Ast*>()));
 		Procedure * called_procedure = program_object.get_procedure(*$1);
+		if (called_procedure == NULL) {
+		int line = get_line_number();
+		report_error("Function does not exist", line);
+		}
+		// check if the call matches the signature
+		if (!called_procedure->match_function_call(NULL)) {
+		int line = get_line_number();
+		report_error("Function call does not match its signature",line);
+		}
 		$$->set_data_type(called_procedure->get_return_type());
 		}
 		;
