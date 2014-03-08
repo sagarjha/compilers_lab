@@ -67,7 +67,6 @@ public:
     int get_variable_table_size() {
 	return variable_table.size();
     }
-    void print_table();
 };
 
 class Symbol_Table_Entry
@@ -82,9 +81,6 @@ public:
 
     Data_Type get_data_type();
     string get_variable_name();
-    void print() {
-	cout << "\t" << variable_name << " " << variable_data_type << endl;
-    }
 };
 
 #endif

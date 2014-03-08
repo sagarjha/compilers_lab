@@ -58,9 +58,29 @@ void Program::set_global_table(Symbol_Table & new_global_table)
     global_symbol_table.set_table_scope(global);
 }
 
-void Program::set_procedure_map(Procedure & proc)
+bool Program::set_procedure_map(Procedure & proc)
 {
-    procedure_map[proc.get_proc_name()] = &proc;
+    Procedure * proc_ptr = new Procedure (proc);
+    if (procedure_map[proc.get_proc_name()]) {
+	return false;
+    }
+    procedure_map[proc.get_proc_name()] = proc_ptr;
+    return true;
+}
+
+bool Program::check_all_functions_defined() {
+    map<string, Procedure *>::iterator i;
+    for(i = procedure_map.begin(); i != procedure_map.end(); i++)
+	{
+	    if (i->first == "main") {
+		continue;
+	    }
+	    bool ret = (i->second)->check_function_defined();
+	    if (ret == false) {
+		return ret;
+	    }
+	}
+    return true;
 }
 
 Procedure * Program::get_procedure(string name)
@@ -80,8 +100,8 @@ Symbol_Table_Entry & Program::get_symbol_table_entry(string variable_name)
 
 void Program::variable_in_proc_map_check(string variable, int line)
 {
-    if(procedure_map[variable] != NULL)
-	report_error("Variable name cannot be same as procedure name", line);
+    if(procedure_map.find(variable) != procedure_map.end())
+    	report_error("Variable name cannot be same as procedure name", line);
 }
 
 Procedure * Program::get_main_procedure(ostream & file_buffer)

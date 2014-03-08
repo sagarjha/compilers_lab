@@ -57,6 +57,7 @@ Procedure::Procedure(Data_Type proc_return_type, string proc_name, list <argumen
 	args.push_back(*(*i));
     }
     cur_num_basic_block = 2;
+    function_defined=false;
 }
 
 Procedure::~Procedure()
@@ -78,7 +79,6 @@ void Procedure::set_basic_block_list(list<Basic_Block *> bb_list)
 
 void Procedure::set_local_list(Symbol_Table & new_list)
 {
-    cout << "caught!!" << endl;
     local_symbol_table = new_list;
     local_symbol_table.set_table_scope(local);
 }
@@ -89,7 +89,7 @@ Data_Type Procedure::get_return_type()
 }
 
 bool Procedure::match_argument_list(list<argument*> *arg_list) {
-    cout << args.size() << " " << name << endl;
+    function_defined = true;
     if (arg_list == NULL) {
 	return args.size() == 0;
     }
@@ -104,12 +104,11 @@ bool Procedure::match_argument_list(list<argument*> *arg_list) {
 	}
 	(*i).set_name((*j)->get_name());
     }
-    cout << args.size() << " " << name << endl;
     return true;
 }
 
 bool Procedure::match_function_call(list <Ast *> * parameter_list) {
-  if (parameter_list == NULL) {
+    if (parameter_list == NULL) {
     if (args.size() == 0) {
       return true;
     }
@@ -144,6 +143,10 @@ void Procedure::push_arguments_into_symbol_table()
 
 int Procedure::get_and_increment_basic_block_number() {
     return cur_num_basic_block++;
+}
+
+bool Procedure::check_function_defined() {
+    return function_defined;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////

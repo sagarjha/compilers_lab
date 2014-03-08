@@ -89,7 +89,6 @@ program:
 		function_declaration_list
 		{
 		program_object.set_global_table(*$1);
-		program_object.print_global_symbol_table();
 		return_statement_used_flag = false;				// No return statement in the current procedure till now
 		}
 		procedure_list
@@ -100,9 +99,15 @@ program:
 		int line = get_line_number();
 		report_error("No main procedure defined",line);
 		}
+
+		bool ret = program_object.check_all_functions_defined();
+		// check if all the functions have been defined
+		if (!ret) {
+		int line = get_line_number();
+		report_error("Function declared but not defined",line);
+		}
 		if ($1)
 		$1->global_list_in_proc_map_check(get_line_number());
-
 		delete $1;
 		}
 	|
@@ -119,8 +124,6 @@ program:
 		}
 		procedure_body
 		{
-		  
-		program_object.set_procedure_map(*current_procedure);
 		}
 	|
 		declaration_statement_list
@@ -144,7 +147,11 @@ program:
 		procedure_body
 		{
 		  
-		program_object.set_procedure_map(*current_procedure);
+		bool ret = program_object.set_procedure_map(*current_procedure);
+		if (!ret) {
+		int line = get_line_number();
+		report_error("Function already defined, overloading not allowed",line);
+		}
 		}
 	|
 		function_declaration_list procedure_list
@@ -154,6 +161,12 @@ program:
 		{
 		int line = get_line_number();
 		report_error("No main procedure defined",line);
+		}
+		bool ret = program_object.check_all_functions_defined();
+		// check if all the functions have been defined
+		if (!ret) {
+		int line = get_line_number();
+		report_error("Function declared but not defined",line);
 		}
 		}
 		;
@@ -174,7 +187,11 @@ function_declaration:
 		{
 		Procedure * current_procedure = new Procedure ($1, *($2), *($4));
 		// push to procedure_map of program object
-		program_object.set_procedure_map(*current_procedure);
+		bool ret = program_object.set_procedure_map(*current_procedure);
+		if (!ret) { 
+		int line = get_line_number();
+		report_error("Function already defined, overloading not allowed",line);
+		}
 
 		}
 	|
@@ -183,7 +200,11 @@ function_declaration:
 		{
 		Procedure * current_procedure = new Procedure (void_data_type, *($2), *($4));
 		// push to procedure_map of program object
-		program_object.set_procedure_map(*current_procedure);
+		bool ret = program_object.set_procedure_map(*current_procedure);
+		if (!ret) { 
+		int line = get_line_number();
+		report_error("Function already defined, overloading not allowed",line);
+		}
 		}
 	|
 		type
@@ -191,7 +212,11 @@ function_declaration:
 		{
 		Procedure * current_procedure = new Procedure ($1, *($2), *(new (list <argument*>)));
 		// push to procedure_map of program object
-		program_object.set_procedure_map(*current_procedure);
+		bool ret = program_object.set_procedure_map(*current_procedure);
+		if (!ret) { 
+		int line = get_line_number();
+		report_error("Function already defined, overloading not allowed",line);
+		}
 		}
 	|
 		VOID
@@ -199,7 +224,11 @@ function_declaration:
 		{
 		Procedure * current_procedure = new Procedure (void_data_type, *($2), *(new (list<argument*>)));
 		// push to procedure_map of program object
-		program_object.set_procedure_map(*current_procedure);
+		bool ret = program_object.set_procedure_map(*current_procedure);
+		if (!ret) { 
+		int line = get_line_number();
+		report_error("Function already defined, overloading not allowed",line);
+		}
 		}
 		;
 
@@ -235,7 +264,12 @@ procedure_name:
 		// create a new procedure
 		current_procedure= new Procedure(void_data_type, *($1), *($3));
 		// push to procedure_map of program object
-		program_object.set_procedure_map(*current_procedure);
+		bool ret = program_object.set_procedure_map(*current_procedure);
+		if (!ret) { 
+		int line = get_line_number();
+		fflush(stdout);
+		report_error("Function already defined, overloading not allowed",line);
+		}
 		}
 	|
 		NAME '(' ')'
@@ -244,7 +278,12 @@ procedure_name:
 		// create a new procedure
 		current_procedure= new Procedure(void_data_type, *($1), *new_list);
 		// push to procedure_map of program object
-		program_object.set_procedure_map(*current_procedure);
+		bool ret = program_object.set_procedure_map(*current_procedure);
+		if (!ret) { 
+		int line = get_line_number();
+		report_error("Function already defined, overloading not allowed",line);
+		}
+
 		}
 		;
 
@@ -304,7 +343,12 @@ procedure:
 		if (*$1 == "main") {
 		current_procedure = new Procedure (void_data_type, "main", *(new (list<argument*>)));
 		// push to procedure_map of program object
-		program_object.set_procedure_map(*current_procedure);
+		bool ret = program_object.set_procedure_map(*current_procedure);
+		if (!ret) { 
+		int line = get_line_number();
+		report_error("Function already defined, overloading not allowed",line);
+		}
+
 		}
 		else {
 		current_procedure = program_object.get_procedure(*$1);
@@ -326,7 +370,12 @@ procedure:
 		if (*$1 == "main") {
 		current_procedure = new Procedure (void_data_type, "main", *(new (list<argument*>)));
 		// push to procedure_map of program object
-		program_object.set_procedure_map(*current_procedure);
+		bool ret = program_object.set_procedure_map(*current_procedure);
+		if (!ret) { 
+		int line = get_line_number();
+		report_error("Function already defined, overloading not allowed",line);
+		}
+
 		}
 		else {
 		current_procedure = program_object.get_procedure(*$1);
@@ -349,7 +398,6 @@ procedure_body:
 		'{'
 		declaration_statement_list
 		{
-		current_procedure->print_local_symbol_table();
 		current_procedure->set_local_list(*$2);
 		current_procedure->push_arguments_into_symbol_table();
 		delete $2;
@@ -686,8 +734,6 @@ variable:
 		{
 		Symbol_Table_Entry var_table_entry;
 
-		cout << current_procedure->get_proc_name() << endl;
-
 		if (current_procedure->variable_in_symbol_list_check(*$1))
 		var_table_entry = current_procedure->get_symbol_table_entry(*$1);
 
@@ -697,7 +743,7 @@ variable:
 		else
 		{
 		int line = get_line_number();
-		report_error("Variable has not been declared", line);
+		report_error("Variable has not declared", line);
 		}
 
 		$$ = new Name_Ast(*$1, var_table_entry);

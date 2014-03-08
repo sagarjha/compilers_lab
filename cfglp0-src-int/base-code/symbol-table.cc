@@ -70,11 +70,9 @@ void Symbol_Table::global_list_in_proc_map_check(int line)
 
 bool Symbol_Table::variable_in_symbol_list_check(string variable)
 {
-    cout << variable_table.size() << endl;
     list<Symbol_Table_Entry *>::iterator i;
     for (i = variable_table.begin(); i != variable_table.end(); i++)
 	{
-	    cout << (*i)->get_variable_name() << " " << variable << endl;
 	    if ((*i)->get_variable_name() == variable)
 		return true;
 	}
@@ -111,17 +109,6 @@ void Symbol_Table::create(Local_Environment & local_global_variables_table)
 	    local_global_variables_table.put_variable_value(*j, name);
 	}
 }
-
-void Symbol_Table::print_table() {
-    list <Symbol_Table_Entry*>::iterator i;
-    if (variable_table.empty()) {
-	cout << "variable table is NULL" << endl;
-    }
-    for (i = variable_table.begin(); i != variable_table.end(); ++i) {
-	(*i)->print();
-    }
-}
-
 
 /////////////////////////////////////////////////////////////
 
