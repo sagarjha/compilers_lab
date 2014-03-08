@@ -109,7 +109,13 @@ bool Procedure::match_argument_list(list<argument*> *arg_list) {
 }
 
 bool Procedure::match_function_call(list <Ast *> * parameter_list) {
-    if (parameter_list->size () != args.size()) {
+  if (parameter_list == NULL) {
+    if (args.size() == 0) {
+      return true;
+    }
+    return false;
+  }
+  if (parameter_list->size () != args.size()) {
 	return false;
     }
     list<argument>::iterator i = args.begin();

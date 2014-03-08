@@ -86,14 +86,7 @@ void Program::variable_in_proc_map_check(string variable, int line)
 
 Procedure * Program::get_main_procedure(ostream & file_buffer)
 {
-    map<string, Procedure *>::iterator i;
-    for(i = procedure_map.begin(); i != procedure_map.end(); i++)
-	{
-	    if (i->second != NULL && i->second->get_proc_name() == "main")
-		return i->second;
-	}
-	
-    return NULL;
+    return procedure_map["main"];
 }
 
 void Program::print_ast()
