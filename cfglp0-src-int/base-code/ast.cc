@@ -1008,7 +1008,7 @@ void Return_Ast::print_ast(ostream & file_buffer)
 	
 	
 	else {
-		file_buffer << AST_SPACE << "Return" << expn->print_ast();
+		file_buffer << AST_SPACE << "Return" << expn->print_ast(file_buffer);
 	}
 }
 
