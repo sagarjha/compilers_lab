@@ -76,6 +76,7 @@
 %type <argument_obj> declaration_argument
 %type <list_of_argument> argument_list
 %type <argument_obj> argument
+%type <ast> return_statement
 %type <D> type
 %type <list_of_argument> declaration_argument_list
 %type <ast_list> exp_assign_op_list
@@ -348,13 +349,18 @@ procedure:
 		int line = get_line_number();
 		report_error("Function already defined, overloading not allowed",line);
 		}
-
+		program_object.push_to_list(*$1);
 		}
 		else {
 		current_procedure = program_object.get_procedure(*$1);
+		if (current_procedure == NULL) {
+		int line = get_line_number();
+		report_error("Function declaration not present",line);
+		}
 		// check that function has been declared at the definition time and that is compatible with its earlier signature
 		current_procedure->match_argument_list($3);
 		current_procedure->push_arguments_into_symbol_table();
+		program_object.push_to_list(*$1);
 		}
 		}
 		procedure_body
@@ -375,12 +381,17 @@ procedure:
 		int line = get_line_number();
 		report_error("Function already defined, overloading not allowed",line);
 		}
-
+		program_object.push_to_list(*$1);
 		}
 		else {
 		current_procedure = program_object.get_procedure(*$1);
+		if (current_procedure == NULL) {
+		int line = get_line_number();
+		report_error("Function declaration not present",line);
+		}
 		// check that function has been declared at the definition time and that is compatible with its earlier signature
 		current_procedure->match_argument_list(NULL);
+		program_object.push_to_list(*$1);
 		}
 		}
 		procedure_body
@@ -630,8 +641,6 @@ executable_statement_list:
 	|
 		statement_list return_statement ';'
 		{
-		  Ast * ret = new Return_Ast();
-
 		return_statement_used_flag = true;					// Current procedure has an occurrence of return statement
 
 		if ($1 != NULL)
@@ -640,14 +649,20 @@ executable_statement_list:
 		else
 		$$ = new list<Ast *>;
 
-		$$->push_back(ret);
+		$$->push_back($2);
 		}
 		;
 
 return_statement:
 		RETURN
+		{
+		$$ = new Return_Ast(NULL);
+		}
 	|
 		RETURN exp_assign_op
+		{
+		$$ = new Return_Ast($2);
+		}
 	;
 
 statement_list:
@@ -668,7 +683,13 @@ statement_list:
 	|
 		statement_list function_call_statement ';'
 		{
-		  
+		if ($1 == NULL)
+		$$ = new list<Ast *>;
+
+		else
+		$$ = $1;
+
+		$$->push_back($2);
 		}
 		;
 

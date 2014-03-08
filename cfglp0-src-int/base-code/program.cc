@@ -60,11 +60,10 @@ void Program::set_global_table(Symbol_Table & new_global_table)
 
 bool Program::set_procedure_map(Procedure & proc)
 {
-    Procedure * proc_ptr = new Procedure (proc);
     if (procedure_map[proc.get_proc_name()]) {
 	return false;
     }
-    procedure_map[proc.get_proc_name()] = proc_ptr;
+    procedure_map[proc.get_proc_name()] = &proc;
     return true;
 }
 
@@ -85,7 +84,14 @@ bool Program::check_all_functions_defined() {
 
 Procedure * Program::get_procedure(string name)
 {
+    if (procedure_map.find(name) == procedure_map.end()) {
+	return NULL;
+    }
     return procedure_map[name];
+}
+
+void Program::push_to_list(string name) {
+    procedure_list.push_back(name);
 }
 
 bool Program::variable_in_symbol_list_check(string variable)
@@ -116,14 +122,16 @@ void Program::print_ast()
 
     ast_buffer << "Program:\n";
 
-    Procedure * main = get_main_procedure(ast_buffer);
-    if (main == NULL)
-	report_error("No main function found in the program", NOLINE);
+    for (list<string>::iterator i = procedure_list.begin(); i != procedure_list.end(); ++i) {
+	Procedure * proc = get_procedure(*i);
+	if (proc == NULL)
+	    report_error("procedure here cannot be null", NOLINE);
 
-    else
-	{
-	    main->print_ast(ast_buffer);
-	}
+	else
+	    {
+		proc->print_ast(ast_buffer);
+	    }
+    }
 }
 
 Eval_Result & Program::evaluate()

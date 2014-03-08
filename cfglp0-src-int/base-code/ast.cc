@@ -539,13 +539,13 @@ Eval_Result & Expr_Ast::evaluate(Local_Environment & eval_env, ostream & file_bu
 			ans = l_int_value * r_int_value;
 			break;
 		    case 11: // /
-		      if (r_int_value == 0.0) {
-			report_error ("Floating Point Exception : Dividing by zero\n", NOLINE);
-		      }
-		      else {
-			ans = l_int_value / r_int_value;
-		      }
-		      break;
+			if (r_int_value == 0.0) {
+			    report_error ("Floating Point Exception : Dividing by zero\n", NOLINE);
+			}
+			else {
+			    ans = l_int_value / r_int_value;
+			}
+			break;
 		    case 12: // u-
 			ans = -l_int_value;
 			break;
@@ -592,12 +592,12 @@ Eval_Result & Expr_Ast::evaluate(Local_Environment & eval_env, ostream & file_bu
 			ans = l_int_value * r_int_value;
 			break;
 		    case 11: // /
-		      if (r_int_value == 0.0) {
-			report_error ("Floating Point Exception : Dividing by zero\n",NOLINE);
-		      }
-		      else {
-			ans = l_int_value / r_int_value;
-		      }
+			if (r_int_value == 0.0) {
+			    report_error ("Floating Point Exception : Dividing by zero\n",NOLINE);
+			}
+			else {
+			    ans = l_int_value / r_int_value;
+			}
 			break;
 		    case 12: // u-
 			ans = -l_int_value;
@@ -704,13 +704,13 @@ Eval_Result & Expr_Ast::get_value_of_evaluation(Local_Environment & eval_env)
 			ans = l_int_value * r_int_value;
 			break;
 		    case 11: // /
-		      if (r_int_value == 0.0) {
-			report_error ("Floating Point Exception : Dividing by zero\n",NOLINE);
-		      }
-		      else {
-			ans = l_int_value / r_int_value;
-		      }
-		      break;
+			if (r_int_value == 0.0) {
+			    report_error ("Floating Point Exception : Dividing by zero\n",NOLINE);
+			}
+			else {
+			    ans = l_int_value / r_int_value;
+			}
+			break;
 		    case 12: // u-
 			ans = -l_int_value;
 			break;
@@ -757,13 +757,13 @@ Eval_Result & Expr_Ast::get_value_of_evaluation(Local_Environment & eval_env)
 			ans = l_int_value * r_int_value;
 			break;
 		    case 11: // /
-		      if (r_int_value == 0.0) {
-			report_error ("Floating Point Exception : Dividing by zero\n",NOLINE);
-		      }
-		      else {
-			ans = l_int_value / r_int_value;
-		      }
-		      break;
+			if (r_int_value == 0.0) {
+			    report_error ("Floating Point Exception : Dividing by zero\n",NOLINE);
+			}
+			else {
+			    ans = l_int_value / r_int_value;
+			}
+			break;
 		    case 12: // u-
 			ans = -l_int_value;
 			break;
@@ -816,7 +816,7 @@ void Cast_Expr_Ast::print_value(Local_Environment & eval_env, ostream & file_buf
 
     // print the result value here
     if (node_data_type == float_data_type || node_data_type == double_data_type) {
-    file_buffer << fixed << setprecision (2) << result.get_value() << endl;
+	file_buffer << fixed << setprecision (2) << result.get_value() << endl;
     }
     else {
 	file_buffer << (int)result.get_value() << endl;
@@ -993,7 +993,7 @@ Eval_Result & Number_Ast<DATA_TYPE>::get_value_of_evaluation(Local_Environment &
 ///////////////////////////////////////////////////////////////////////////////
 
 Return_Ast::Return_Ast(Ast * _expn) {
-	expn = _expn;
+    expn = _expn;
 }
 
 Return_Ast::~Return_Ast()
@@ -1001,15 +1001,16 @@ Return_Ast::~Return_Ast()
 
 void Return_Ast::print_ast(ostream & file_buffer)
 {
-	if (expn == NULL) {
-		// void return type
-		file_buffer << AST_SPACE << "Return <NOTHING>\n";
-	}
+    if (expn == NULL) {
+	// void return type
+	file_buffer << endl << AST_SPACE << "RETURN <NOTHING>";
+    }
 	
 	
-	else {
-		file_buffer << AST_SPACE << "Return" << expn->print_ast(file_buffer);
-	}
+    else {
+	file_buffer << endl << AST_SPACE << "RETURN ";
+	expn->print_ast(file_buffer);
+    }
 }
 
 Eval_Result & Return_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)
@@ -1017,16 +1018,15 @@ Eval_Result & Return_Ast::evaluate(Local_Environment & eval_env, ostream & file_
     print_ast(file_buffer);
     
     if (expn != NULL) {
-		if (expn->get_data_type() == int_data_type) {
-			Eval_Result & result = expn->get_value_of_evaluation(eval_env);
-			return result;
-		}
+	Eval_Result & result = expn->get_value_of_evaluation(eval_env);
+	return result;
+	}
     
     else {
-		Eval_Result & result = *new Eval_Result_Value_Int ();
-		result.set_result_enum(return_result);
-		return result;
-	}
+	Eval_Result & result = *new Eval_Result_Value_Int ();
+	result.set_result_enum(return_result);
+	return result;
+    }
 }
 
 template class Number_Ast<int>;
@@ -1147,10 +1147,12 @@ bool Functional_Call_Ast::check_ast(int line) {
 }
 
 void Functional_Call_Ast::print_ast(ostream& file_buffer) {
-	file_buffer << "FN CALL: " << name << endl;
-	for (list <Ast *>::iterator i = args.begin(); i != args.end(); i++) {
-		(*i) -> print_ast(file_buffer);
-	} 
+    file_buffer << endl << AST_SPACE << "FN CALL: " << name << "(";
+    for (list <Ast *>::iterator i = args.begin(); i != args.end(); i++) {
+	file_buffer << endl << AST_NODE_SPACE;
+	(*i) -> print_ast(file_buffer);
+    }
+    file_buffer << ")";
 }
 
 Eval_Result & Functional_Call_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer) {

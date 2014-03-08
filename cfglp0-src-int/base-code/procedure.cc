@@ -161,8 +161,12 @@ void Procedure::print_ast(ostream & file_buffer)
     file_buffer << PROC_SPACE << "Procedure: " << name << "\n\n";
 
     list<Basic_Block *>::iterator i;
+    if (basic_block_list.size() == 0) {
+	file_buffer << "Basic Block List is Empty" << endl;
+    }
     for(i = basic_block_list.begin(); i != basic_block_list.end(); i++)
 	(*i)->print_bb(file_buffer);
+    file_buffer << endl << endl;
 }
 	
 Basic_Block & Procedure::get_start_basic_block()

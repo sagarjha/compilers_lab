@@ -40,6 +40,7 @@ class Program
 {
     Symbol_Table global_symbol_table;
     map<string, Procedure *> procedure_map;
+    list <string> procedure_list;
 
 public:
     Program();
@@ -50,6 +51,7 @@ public:
     Procedure * get_procedure(string);
     void set_global_table(Symbol_Table & new_global_table);
     bool check_all_functions_defined();
+    void push_to_list(string);
     
     Symbol_Table_Entry & get_symbol_table_entry(string variable);
 
