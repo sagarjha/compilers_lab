@@ -31,6 +31,9 @@ using namespace std;
 #include"local-environment.hh"
 #include"symbol-table.hh"
 #include"ast.hh"
+#include"basic-block.hh"
+#include"procedure.hh"
+#include"program.hh"
 #include<iomanip>
 
 Ast::Ast()
