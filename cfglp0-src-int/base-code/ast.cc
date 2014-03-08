@@ -1129,7 +1129,10 @@ bool Functional_Call_Ast::check_ast(int line) {
 }
 
 void Functional_Call_Ast::print_ast(ostream& file_buffer) {
-
+	file_buffer << "FN CALL: " << name << endl;
+	for (list <Ast *>::iterator i = args.begin(); i != args.end(); i++) {
+		(*i) -> print_ast(file_buffer);
+	} 
 }
 
 Eval_Result & Functional_Call_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer) {
