@@ -49,7 +49,7 @@ public:
     virtual void print_ast(ostream & file_buffer) = 0;
     virtual void print_value(Local_Environment & eval_env, ostream & file_buffer);
 
-    virtual Eval_Result & get_value_of_evaluation(Local_Environment & eval_env);
+    virtual Eval_Result & get_value_of_evaluation(Local_Environment & eval_env, ostream & file_buffer);
     virtual void set_value_of_evaluation(Local_Environment & eval_env, Eval_Result & result);
     virtual Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer) = 0;
 };
@@ -103,7 +103,7 @@ public:
     void print_ast(ostream & file_buffer);
 
     void print_value(Local_Environment & eval_env, ostream & file_buffer);
-    Eval_Result & get_value_of_evaluation(Local_Environment & eval_env);
+    Eval_Result & get_value_of_evaluation(Local_Environment & eval_env, ostream & file_buffer);
     void set_value_of_evaluation(Local_Environment & eval_env, Eval_Result & result);
     Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
 };
@@ -122,7 +122,7 @@ public:
     void print_ast(ostream & file_buffer);
 
     void print_value(Local_Environment & eval_env, ostream & file_buffer);
-    Eval_Result & get_value_of_evaluation(Local_Environment & eval_env);
+    Eval_Result & get_value_of_evaluation(Local_Environment & eval_env, ostream & file_buffer);
     Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
 };
 
@@ -139,7 +139,7 @@ public:
     void print_ast(ostream & file_buffer);
 
     Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
-    Eval_Result & get_value_of_evaluation(Local_Environment & eval_env);  
+    Eval_Result & get_value_of_evaluation(Local_Environment & eval_env, ostream & file_buffer);  
 };
 
 // class definition of expr_ast
@@ -161,7 +161,7 @@ public:
 
     Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
 
-    Eval_Result & get_value_of_evaluation(Local_Environment & eval_env);
+    Eval_Result & get_value_of_evaluation(Local_Environment & eval_env, ostream & file_buffer);
 };
 
 class Cast_Expr_Ast:public Ast
@@ -178,7 +178,7 @@ public:
     void print_ast(ostream & file_buffer);
 
     void print_value(Local_Environment & eval_env, ostream & file_buffer);
-    Eval_Result & get_value_of_evaluation(Local_Environment & eval_env);
+    Eval_Result & get_value_of_evaluation(Local_Environment & eval_env, ostream & file_buffer);
     Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
 };
 
@@ -244,7 +244,7 @@ public:
     void print_ast (ostream &);
 
     Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
-    Eval_Result & evaluate_without_print(Local_Environment & eval_env, ostream & file_buffer);
+    Eval_Result & get_value_of_evaluation(Local_Environment & eval_env, ostream & file_buffer);
 
 };
 
@@ -264,6 +264,7 @@ public:
     bool check_ast(int line);
 
     Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
+    Eval_Result & get_value_of_evaluation(Local_Environment & eval_env, ostream & file_buffer);
 };
 
 #endif

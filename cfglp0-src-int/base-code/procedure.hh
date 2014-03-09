@@ -62,6 +62,9 @@ class Procedure
     list <argument> args;
     int cur_num_basic_block;
     bool function_defined;
+    /* To store argument ASTs */
+    list <Eval_Result_Value *> call_arguments;
+    /* New code ends */
 public:
     Procedure(Data_Type proc_return_type, string proc_name, list <argument*> arg_list);
     ~Procedure();
@@ -69,6 +72,10 @@ public:
     string get_proc_name();
     void set_basic_block_list(list<Basic_Block *> bb_list);
     void set_local_list(Symbol_Table & new_list);
+    /* To set arguments (Eval_Result_Value objects) before evaluating and to clear them afterwards */
+    void push_call_argument(Eval_Result_Value * new_arg);
+    void clear_call_arguments();
+    /* New code ends */
     Data_Type get_return_type();
     bool match_argument_list(list<argument*> *arg_list);
     bool match_function_call(list <Ast *> * parameter_list);

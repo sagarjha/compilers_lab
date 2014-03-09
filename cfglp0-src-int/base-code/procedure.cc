@@ -77,6 +77,19 @@ void Procedure::set_basic_block_list(list<Basic_Block *> bb_list)
     basic_block_list = bb_list;
 }
 
+void Procedure::push_call_argument(Eval_Result_Value * new_arg)
+{
+    call_arguments.push_back(new_arg);
+}
+
+void Procedure::clear_call_arguments()
+{
+    int n = call_arguments.size();
+    for (int i=0; i<n; i++) {
+		call_arguments.pop_back();
+	}
+}
+
 void Procedure::set_local_list(Symbol_Table & new_list)
 {
     local_symbol_table = new_list;
@@ -199,10 +212,17 @@ Eval_Result & Procedure::evaluate(ostream & file_buffer)
 {
     Local_Environment & eval_env = *new Local_Environment();
     local_symbol_table.create(eval_env);
+    
+    /* Now to evaluate the arguments and put them in the eval_env- not yet sure if this is to be done*/
+    list<Eval_Result_Value *>::iterator argVals = call_arguments.begin();
+    for (list<argument>::iterator argNames = args.begin() ; argNames!=args.end(); argNames++, argVals++) {
+		eval_env.put_variable_value(*(*argVals), (*argNames).get_name());
+	}
+	/* New code ends here*/
 	
     Eval_Result * result = NULL;
 
-    file_buffer << PROC_SPACE << "Evaluating Procedure " << name << "\n";
+    file_buffer << PROC_SPACE << "Evaluating Procedure << " << name << " >>\n";
     file_buffer << LOC_VAR_SPACE << "Local Variables (before evaluating):\n";
     eval_env.print(file_buffer);
     file_buffer << "\n";
@@ -247,7 +267,7 @@ Eval_Result & Procedure::evaluate(ostream & file_buffer)
 	}
 
     file_buffer << "\n\n";
-    file_buffer << LOC_VAR_SPACE << "Local Variables (after evaluating):\n";
+    file_buffer << LOC_VAR_SPACE << "Local Variables (after evaluating) Function: << " << name << " >>\n";
     eval_env.print(file_buffer);
 
     return *result;

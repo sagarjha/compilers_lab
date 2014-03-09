@@ -63,7 +63,7 @@ void Ast::print_value(Local_Environment & eval_env, ostream & file_buffer)
     report_internal_error("Should not reach, Ast : print_value");
 }
 
-Eval_Result & Ast::get_value_of_evaluation(Local_Environment & eval_env)
+Eval_Result & Ast::get_value_of_evaluation(Local_Environment & eval_env, ostream & file_buffer)
 {
     report_internal_error("Should not reach, Ast : get_value_of_evaluation");
 }
@@ -214,7 +214,7 @@ void Name_Ast::print_value(Local_Environment & eval_env, ostream & file_buffer)
     file_buffer << "\n";
 }
 
-Eval_Result & Name_Ast::get_value_of_evaluation(Local_Environment & eval_env)
+Eval_Result & Name_Ast::get_value_of_evaluation(Local_Environment & eval_env, ostream & file_buffer)
 {
     if (eval_env.does_variable_exist(variable_name))
 	{
@@ -255,7 +255,7 @@ void Name_Ast::set_value_of_evaluation(Local_Environment & eval_env, Eval_Result
 
 Eval_Result & Name_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)
 {
-    return get_value_of_evaluation(eval_env);
+    return get_value_of_evaluation(eval_env, file_buffer);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -281,7 +281,7 @@ void Cast_Name_Ast::print_ast(ostream & file_buffer)
 
 void Cast_Name_Ast::print_value(Local_Environment & eval_env, ostream & file_buffer)
 {
-    Eval_Result & result = get_value_of_evaluation(eval_env);
+    Eval_Result & result = get_value_of_evaluation(eval_env, file_buffer);
 
     // print the result value here
     if (node_data_type == float_data_type || node_data_type == double_data_type) {
@@ -292,10 +292,9 @@ void Cast_Name_Ast::print_value(Local_Environment & eval_env, ostream & file_buf
     }
 }
 
-Eval_Result & Cast_Name_Ast::get_value_of_evaluation(Local_Environment & eval_env)
+Eval_Result & Cast_Name_Ast::get_value_of_evaluation(Local_Environment & eval_env, ostream & file_buffer)
 {
-    Eval_Result & result = name->get_value_of_evaluation(eval_env);
-    // to cast the result here............STILL TO DO THIS, DUDE!
+    Eval_Result & result = name->get_value_of_evaluation(eval_env, file_buffer);
 
     switch(data_type){
     case int_data_type:
@@ -328,7 +327,7 @@ Eval_Result & Cast_Name_Ast::get_value_of_evaluation(Local_Environment & eval_en
 
 Eval_Result & Cast_Name_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)
 {
-    return get_value_of_evaluation(eval_env);
+    return get_value_of_evaluation(eval_env,file_buffer);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -627,12 +626,12 @@ Eval_Result & Expr_Ast::evaluate(Local_Environment & eval_env, ostream & file_bu
 	}
 }
 
-Eval_Result & Expr_Ast::get_value_of_evaluation(Local_Environment & eval_env)
+Eval_Result & Expr_Ast::get_value_of_evaluation(Local_Environment & eval_env, ostream & file_buffer)
 {
     // assignment operation
     if (op == 1)
 	{
-	    Eval_Result & result = rhs->get_value_of_evaluation(eval_env);
+	    Eval_Result & result = rhs->get_value_of_evaluation(eval_env, file_buffer);
 
 	    if (result.is_variable_defined() == false)
 		report_error("Variable should be defined to be on rhs", NOLINE);
@@ -647,7 +646,7 @@ Eval_Result & Expr_Ast::get_value_of_evaluation(Local_Environment & eval_env)
     else
 	{
 	    if (op == 12) {
-		Eval_Result & left_eval_result = lhs->get_value_of_evaluation(eval_env);
+		Eval_Result & left_eval_result = lhs->get_value_of_evaluation(eval_env, file_buffer);
 	    
 		if (lhs->get_data_type() == int_data_type) {
 		    int l_int_value = left_eval_result.get_value();
@@ -669,8 +668,8 @@ Eval_Result & Expr_Ast::get_value_of_evaluation(Local_Environment & eval_env)
 	    }
 
 	    else {
-		Eval_Result & left_eval_result = lhs->get_value_of_evaluation(eval_env);
-		Eval_Result & right_eval_result = rhs->get_value_of_evaluation(eval_env);
+		Eval_Result & left_eval_result = lhs->get_value_of_evaluation(eval_env, file_buffer);
+		Eval_Result & right_eval_result = rhs->get_value_of_evaluation(eval_env, file_buffer);
 
 		if (lhs->get_data_type() == int_data_type) {
 		    int l_int_value = left_eval_result.get_value();
@@ -815,7 +814,7 @@ void Cast_Expr_Ast::print_ast(ostream & file_buffer)
 
 void Cast_Expr_Ast::print_value(Local_Environment & eval_env, ostream & file_buffer)
 {
-    Eval_Result & result = get_value_of_evaluation(eval_env);
+    Eval_Result & result = get_value_of_evaluation(eval_env, file_buffer);
 
     // print the result value here
     if (node_data_type == float_data_type || node_data_type == double_data_type) {
@@ -826,10 +825,9 @@ void Cast_Expr_Ast::print_value(Local_Environment & eval_env, ostream & file_buf
     }
 }
 
-Eval_Result & Cast_Expr_Ast::get_value_of_evaluation(Local_Environment & eval_env)
+Eval_Result & Cast_Expr_Ast::get_value_of_evaluation(Local_Environment & eval_env, ostream & file_buffer)
 {
-    Eval_Result & result = expr->get_value_of_evaluation(eval_env);
-    // to cast the result here............STILL TO DO THIS, DUDE!
+    Eval_Result & result = expr->get_value_of_evaluation(eval_env, file_buffer);
 
     switch(data_type){
     case int_data_type:
@@ -862,7 +860,7 @@ Eval_Result & Cast_Expr_Ast::get_value_of_evaluation(Local_Environment & eval_en
 
 Eval_Result & Cast_Expr_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)
 {
-    return get_value_of_evaluation(eval_env);
+    return get_value_of_evaluation(eval_env, file_buffer);
 }
 
 
@@ -969,7 +967,7 @@ Eval_Result & Number_Ast<DATA_TYPE>::evaluate(Local_Environment & eval_env, ostr
 }
 
 template <class DATA_TYPE>
-Eval_Result & Number_Ast<DATA_TYPE>::get_value_of_evaluation(Local_Environment & eval_env) {
+Eval_Result & Number_Ast<DATA_TYPE>::get_value_of_evaluation(Local_Environment & eval_env, ostream & file_buffer) {
     if (node_data_type == int_data_type)
 	{
 	    Eval_Result_Value_Int * result = new Eval_Result_Value_Int ();
@@ -1021,7 +1019,7 @@ Eval_Result & Return_Ast::evaluate(Local_Environment & eval_env, ostream & file_
     print_ast(file_buffer);
     
     if (expn != NULL) {
-	Eval_Result & result = expn->get_value_of_evaluation(eval_env);
+	Eval_Result & result = expn->get_value_of_evaluation(eval_env, file_buffer);
 	return result;
 	}
     
@@ -1087,7 +1085,7 @@ Eval_Result & Conditional_Ast::evaluate(Local_Environment & eval_env, ostream & 
 
     file_buffer << AST_SPACE << "Condition " << ((predicate_value.get_value()==0)?"False":"True") << " : Goto (BB " << successor << ")" << endl;
   
-    return goto_statement_to_execute.evaluate_without_print(eval_env, file_buffer);
+    return goto_statement_to_execute.get_value_of_evaluation(eval_env, file_buffer);
 }
 
 
@@ -1117,7 +1115,7 @@ Eval_Result & Goto_Ast::evaluate(Local_Environment & eval_env, ostream & file_bu
     return result;
 }
 
-Eval_Result & Goto_Ast::evaluate_without_print(Local_Environment & eval_env, ostream & file_buffer)
+Eval_Result & Goto_Ast::get_value_of_evaluation(Local_Environment & eval_env, ostream & file_buffer)
 {
     Eval_Result & result = *new Eval_Result_BB();
     result.set_block_id(bb_id);
@@ -1159,5 +1157,16 @@ void Functional_Call_Ast::print_ast(ostream& file_buffer) {
 }
 
 Eval_Result & Functional_Call_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer) {
-    
+    Procedure * called_procedure = program_object.get_procedure(name);
+    for (list<Ast *>::iterator i = args.begin(); i!=args.end(); i++) {
+		Eval_Result & val = (*i)->evaluate(eval_env, file_buffer);
+		called_procedure -> push_call_argument((Eval_Result_Value*) &val);
+	}
+    Eval_Result & result = called_procedure -> evaluate(file_buffer);
+    called_procedure -> clear_call_arguments();
+    return result;
+}
+
+Eval_Result & Functional_Call_Ast::get_value_of_evaluation(Local_Environment & eval_env, ostream & file_buffer) {
+	return evaluate(eval_env, file_buffer);
 }

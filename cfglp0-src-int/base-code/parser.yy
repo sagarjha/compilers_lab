@@ -988,8 +988,9 @@ singleton:
 	|
 		'(' type ')' function_call_statement
 		{
-		$$ = $4;
-		$$->set_data_type($2);
+		//$$ = $4;
+		//$$->set_data_type($2);
+		$$ = new Cast_Expr_Ast ($4, $2);
 		}
 	|	
 		modified_variable
@@ -999,7 +1000,7 @@ singleton:
 	|
 		'-' modified_variable
 		{
-		  $$ = new Expr_Ast ($2, 12, NULL);
+		$$ = new Expr_Ast ($2, 12, NULL);
 		int line = get_line_number();
 		$$->check_ast(line);
 		}
