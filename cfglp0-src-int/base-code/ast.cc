@@ -1052,13 +1052,22 @@ void Conditional_Ast::print_ast (ostream & file_buffer)
 {
     file_buffer << AST_SPACE << "If_Else statement:";
     pred->print_ast(file_buffer);
-    file_buffer << endl << AST_NODE_SPACE << "True Successor: " << bb_id1;
+}
+
+void Conditional_Ast::print_successors (ostream & file_buffer)
+{
+	file_buffer << endl << AST_NODE_SPACE << "True Successor: " << bb_id1;
     file_buffer << endl << AST_NODE_SPACE << "False Successor: " << bb_id2 << endl;
 }
 
 Eval_Result & Conditional_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)
 {
+	
+	print_ast(file_buffer);
+	
     Eval_Result & predicate_value = pred -> evaluate(eval_env, file_buffer) ;
+	
+	print_successors(file_buffer);
 	
     int successor;
 	
@@ -1078,8 +1087,6 @@ Eval_Result & Conditional_Ast::evaluate(Local_Environment & eval_env, ostream & 
 	{
 	    report_error ("Predicate evaluation inside if-else statement failed", NOLINE);
 	}
-
-    print_ast(file_buffer);
 	
     Goto_Ast goto_statement_to_execute = Goto_Ast (successor);
 

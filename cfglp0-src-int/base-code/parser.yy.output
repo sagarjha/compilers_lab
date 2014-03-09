@@ -1,0 +1,1489 @@
+
+Production Rules
+(rule precedences determined from %prec or 1st terminal between parentheses):
+1: program ->  declaration_statement_list function_declaration_list #0001 procedure_list
+2: #0001 ->  <empty>
+3: program ->  procedure_name #0002 procedure_body
+4: #0002 ->  <empty>
+5: program ->  declaration_statement_list #0003 procedure_name #0004 procedure_body
+6: #0003 ->  <empty>
+7: #0004 ->  <empty>
+8: program ->  function_declaration_list procedure_list
+9: function_declaration_list ->  function_declaration_list function_declaration
+10: function_declaration_list ->  function_declaration
+11: function_declaration (NAME) ->  type NAME '(' declaration_argument_list ')' ';'
+12: function_declaration (VOID) ->  VOID NAME '(' declaration_argument_list ')' ';'
+13: function_declaration (NAME) ->  type NAME '(' ')' ';'
+14: function_declaration (VOID) ->  VOID NAME '(' ')' ';'
+15: declaration_argument_list (',') ->  declaration_argument_list ',' declaration_argument
+16: declaration_argument_list ->  declaration_argument
+17: declaration_argument (NAME) ->  type NAME
+18: declaration_argument ->  type
+19: procedure_name (NAME) ->  NAME '(' argument_list ')'
+20: procedure_name (NAME) ->  NAME '(' ')'
+21: argument_list (',') ->  argument_list ',' argument
+22: argument_list ->  argument
+23: argument (NAME) ->  type NAME
+24: type (INTEGER) ->  INTEGER
+25: type (FLOAT) ->  FLOAT
+26: type (DOUBLE) ->  DOUBLE
+27: procedure_list ->  procedure
+28: procedure_list ->  procedure_list procedure
+29: procedure (NAME) ->  NAME '(' argument_list ')' #0005 procedure_body
+30: #0005 ->  <empty>
+31: procedure (NAME) ->  NAME '(' ')' #0006 procedure_body
+32: #0006 ->  <empty>
+33: procedure_body ('{') ->  '{' declaration_statement_list #0007 basic_block_list '}'
+34: #0007 ->  <empty>
+35: procedure_body ('{') ->  '{' basic_block_list '}'
+36: declaration_statement_list ->  declaration_statement
+37: declaration_statement_list ->  declaration_statement_list declaration_statement
+38: declaration_statement (NAME) ->  type NAME ';'
+39: basic_block_list ->  basic_block_list basic_block
+40: basic_block_list ->  basic_block
+41: basic_block (BASIC_BLOCK) ->  BASIC_BLOCK ':' executable_statement_list
+42: basic_block (BASIC_BLOCK) ->  BASIC_BLOCK ':' executable_statement_list conditional_statement
+43: basic_block (BASIC_BLOCK) ->  BASIC_BLOCK ':' executable_statement_list goto_statement
+44: executable_statement_list ->  statement_list
+45: executable_statement_list (';') ->  statement_list return_statement ';'
+46: return_statement (RETURN) ->  RETURN
+47: return_statement (RETURN) ->  RETURN exp_assign_op
+48: statement_list ->  <empty>
+49: statement_list ->  statement_list assignment_statement
+50: statement_list (';') ->  statement_list function_call_statement ';'
+51: assignment_statement (ASSIGN_OP) ->  variable ASSIGN_OP exp_assign_op ';'
+52: function_call_statement (NAME) ->  NAME '(' exp_assign_op_list ')'
+53: function_call_statement (NAME) ->  NAME '(' ')'
+54: exp_assign_op_list (',') ->  exp_assign_op_list ',' exp_assign_op
+55: exp_assign_op_list ->  exp_assign_op
+56: variable (NAME) ->  NAME
+57: variable ('(') ->  '(' type ')' NAME
+58: constant (INTEGER_NUMBER) ->  INTEGER_NUMBER
+59: constant (FLOATING_POINT_NUMBER) ->  FLOATING_POINT_NUMBER
+60: conditional_statement (IF) ->  IF '(' exp_assign_op ')' GOTO BASIC_BLOCK ';' ELSE GOTO BASIC_BLOCK ';'
+61: goto_statement (GOTO) ->  GOTO BASIC_BLOCK ';'
+62: modified_variable ->  variable
+63: modified_variable ->  constant
+64: exp_assign_op (ASSIGN_OP) ->  exp_assign_op ASSIGN_OP exp_eq_ne
+65: exp_assign_op ->  exp_eq_ne
+66: exp_eq_ne (EQUAL) ->  exp_eq_ne EQUAL exp_le_lt_ge_gt
+67: exp_eq_ne (NOT_EQUAL) ->  exp_eq_ne NOT_EQUAL exp_le_lt_ge_gt
+68: exp_eq_ne ->  exp_le_lt_ge_gt
+69: exp_le_lt_ge_gt (GE) ->  exp_le_lt_ge_gt GE exp_add_sub
+70: exp_le_lt_ge_gt (GT) ->  exp_le_lt_ge_gt GT exp_add_sub
+71: exp_le_lt_ge_gt (LE) ->  exp_le_lt_ge_gt LE exp_add_sub
+72: exp_le_lt_ge_gt (LT) ->  exp_le_lt_ge_gt LT exp_add_sub
+73: exp_le_lt_ge_gt ->  exp_add_sub
+74: exp_add_sub ('+') ->  exp_add_sub '+' exp_mul_div
+75: exp_add_sub ('-') ->  exp_add_sub '-' exp_mul_div
+76: exp_add_sub ->  exp_mul_div
+77: exp_mul_div ('*') ->  exp_mul_div '*' singleton
+78: exp_mul_div ('/') ->  exp_mul_div '/' singleton
+79: exp_mul_div ->  singleton
+80: singleton ->  function_call_statement
+81: singleton ('(') ->  '(' type ')' function_call_statement
+82: singleton ->  modified_variable
+83: singleton ('-') ->  '-' modified_variable
+84: singleton ('(') ->  '(' exp_assign_op ')'
+85: singleton ('-') ->  '-' '(' exp_assign_op ')'
+86: singleton ('(') ->  '(' type ')' '(' exp_assign_op ')'
+87: program_$ ->  program
+
+
+Symbolic Terminal tokens:
+       error
+       EOF
+   257: INTEGER_NUMBER
+   258: BASIC_BLOCK
+   259: FLOATING_POINT_NUMBER
+   260: NAME
+   261: RETURN
+   262: INTEGER
+   263: FLOAT
+   264: DOUBLE
+   265: VOID
+   266: IF
+   267: ELSE
+   268: GOTO
+   269: ASSIGN_OP
+   270: NOT_EQUAL
+   271: EQUAL
+   272: LT
+   273: LE
+   274: GT
+   275: GE
+    40: '('
+    41: ')'
+    59: ';'
+    44: ','
+   123: '{'
+   125: '}'
+    58: ':'
+    43: '+'
+    45: '-'
+    42: '*'
+    47: '/'
+
+
+Grammar States: 
+State 0:
+87: program_$ ->  . program 
+  0:   On program to state 1
+  1:   On declaration_statement_list to state 2
+  2:   On procedure_name to state 3
+  3:   On function_declaration_list to state 4
+  4:   On declaration_statement to state 5
+  5:   On NAME to state 6
+  6:   On function_declaration to state 7
+  7:   On type to state 8
+  8:   On VOID to state 9
+  9:   On INTEGER to state 10
+  10:   On FLOAT to state 11
+  11:   On DOUBLE to state 12
+
+
+State 1:
+87: program_$ -> program  . 
+
+
+State 2:
+1: program -> declaration_statement_list  . function_declaration_list #0001 procedure_list 
+5: program -> declaration_statement_list  . #0003 procedure_name #0004 procedure_body 
+37: declaration_statement_list -> declaration_statement_list  . declaration_statement 
+  0:   On function_declaration_list to state 13
+  1:   On #0003 to state 14
+  2:   On declaration_statement to state 15
+  3:   On function_declaration to state 7
+  4:   On type to state 8
+  5:   On VOID to state 9
+  6:   On INTEGER to state 10
+  7:   On FLOAT to state 11
+  8:   On DOUBLE to state 12
+  Reduce by 6: #0003 ->  . 
+
+
+State 3:
+3: program -> procedure_name  . #0002 procedure_body 
+  0:   On #0002 to state 16
+  Reduce by 4: #0002 ->  . 
+
+
+State 4:
+8: program -> function_declaration_list  . procedure_list 
+9: function_declaration_list -> function_declaration_list  . function_declaration 
+  0:   On procedure_list to state 17
+  1:   On function_declaration to state 18
+  2:   On procedure to state 19
+  3:   On type to state 20
+  4:   On VOID to state 9
+  5:   On NAME to state 21
+  6:   On INTEGER to state 10
+  7:   On FLOAT to state 11
+  8:   On DOUBLE to state 12
+
+
+State 5:
+36: declaration_statement_list -> declaration_statement  . 
+  Reduce by 36: declaration_statement_list -> declaration_statement  . 
+
+
+State 6:
+19: procedure_name -> NAME  . '(' argument_list ')' 
+20: procedure_name -> NAME  . '(' ')' 
+  0:   On '(' to state 22
+
+
+State 7:
+10: function_declaration_list -> function_declaration  . 
+  Reduce by 10: function_declaration_list -> function_declaration  . 
+
+
+State 8:
+38: declaration_statement -> type  . NAME ';' 
+11: function_declaration -> type  . NAME '(' declaration_argument_list ')' ';' 
+13: function_declaration -> type  . NAME '(' ')' ';' 
+  0:   On NAME to state 23
+
+
+State 9:
+12: function_declaration -> VOID  . NAME '(' declaration_argument_list ')' ';' 
+14: function_declaration -> VOID  . NAME '(' ')' ';' 
+  0:   On NAME to state 24
+
+
+State 10:
+24: type -> INTEGER  . 
+  Reduce by 24: type -> INTEGER  . 
+
+
+State 11:
+25: type -> FLOAT  . 
+  Reduce by 25: type -> FLOAT  . 
+
+
+State 12:
+26: type -> DOUBLE  . 
+  Reduce by 26: type -> DOUBLE  . 
+
+
+State 13:
+1: program -> declaration_statement_list function_declaration_list  . #0001 procedure_list 
+9: function_declaration_list -> function_declaration_list  . function_declaration 
+  0:   On #0001 to state 25
+  1:   On function_declaration to state 18
+  2:   On type to state 20
+  3:   On VOID to state 9
+  4:   On INTEGER to state 10
+  5:   On FLOAT to state 11
+  6:   On DOUBLE to state 12
+  Reduce by 2: #0001 ->  . 
+
+
+State 14:
+5: program -> declaration_statement_list #0003  . procedure_name #0004 procedure_body 
+  0:   On procedure_name to state 26
+  1:   On NAME to state 6
+
+
+State 15:
+37: declaration_statement_list -> declaration_statement_list declaration_statement  . 
+  Reduce by 37: declaration_statement_list -> declaration_statement_list declaration_statement  . 
+
+
+State 16:
+3: program -> procedure_name #0002  . procedure_body 
+  0:   On procedure_body to state 27
+  1:   On '{' to state 28
+
+
+State 17:
+8: program -> function_declaration_list procedure_list  . 
+28: procedure_list -> procedure_list  . procedure 
+  0:   On procedure to state 29
+  1:   On NAME to state 21
+  Reduce by 8: program -> function_declaration_list procedure_list  . 
+
+
+State 18:
+9: function_declaration_list -> function_declaration_list function_declaration  . 
+  Reduce by 9: function_declaration_list -> function_declaration_list function_declaration  . 
+
+
+State 19:
+27: procedure_list -> procedure  . 
+  Reduce by 27: procedure_list -> procedure  . 
+
+
+State 20:
+11: function_declaration -> type  . NAME '(' declaration_argument_list ')' ';' 
+13: function_declaration -> type  . NAME '(' ')' ';' 
+  0:   On NAME to state 30
+
+
+State 21:
+29: procedure -> NAME  . '(' argument_list ')' #0005 procedure_body 
+31: procedure -> NAME  . '(' ')' #0006 procedure_body 
+  0:   On '(' to state 31
+
+
+State 22:
+19: procedure_name -> NAME '('  . argument_list ')' 
+20: procedure_name -> NAME '('  . ')' 
+  0:   On argument_list to state 32
+  1:   On ')' to state 33
+  2:   On argument to state 34
+  3:   On type to state 35
+  4:   On INTEGER to state 10
+  5:   On FLOAT to state 11
+  6:   On DOUBLE to state 12
+
+
+State 23:
+38: declaration_statement -> type NAME  . ';' 
+11: function_declaration -> type NAME  . '(' declaration_argument_list ')' ';' 
+13: function_declaration -> type NAME  . '(' ')' ';' 
+  0:   On ';' to state 36
+  1:   On '(' to state 37
+
+
+State 24:
+12: function_declaration -> VOID NAME  . '(' declaration_argument_list ')' ';' 
+14: function_declaration -> VOID NAME  . '(' ')' ';' 
+  0:   On '(' to state 38
+
+
+State 25:
+1: program -> declaration_statement_list function_declaration_list #0001  . procedure_list 
+  0:   On procedure_list to state 39
+  1:   On procedure to state 19
+  2:   On NAME to state 21
+
+
+State 26:
+5: program -> declaration_statement_list #0003 procedure_name  . #0004 procedure_body 
+  0:   On #0004 to state 40
+  Reduce by 7: #0004 ->  . 
+
+
+State 27:
+3: program -> procedure_name #0002 procedure_body  . 
+  Reduce by 3: program -> procedure_name #0002 procedure_body  . 
+
+
+State 28:
+33: procedure_body -> '{'  . declaration_statement_list #0007 basic_block_list '}' 
+35: procedure_body -> '{'  . basic_block_list '}' 
+  0:   On declaration_statement_list to state 41
+  1:   On basic_block_list to state 42
+  2:   On declaration_statement to state 5
+  3:   On basic_block to state 43
+  4:   On type to state 44
+  5:   On BASIC_BLOCK to state 45
+  6:   On INTEGER to state 10
+  7:   On FLOAT to state 11
+  8:   On DOUBLE to state 12
+
+
+State 29:
+28: procedure_list -> procedure_list procedure  . 
+  Reduce by 28: procedure_list -> procedure_list procedure  . 
+
+
+State 30:
+11: function_declaration -> type NAME  . '(' declaration_argument_list ')' ';' 
+13: function_declaration -> type NAME  . '(' ')' ';' 
+  0:   On '(' to state 37
+
+
+State 31:
+29: procedure -> NAME '('  . argument_list ')' #0005 procedure_body 
+31: procedure -> NAME '('  . ')' #0006 procedure_body 
+  0:   On argument_list to state 46
+  1:   On ')' to state 47
+  2:   On argument to state 34
+  3:   On type to state 35
+  4:   On INTEGER to state 10
+  5:   On FLOAT to state 11
+  6:   On DOUBLE to state 12
+
+
+State 32:
+19: procedure_name -> NAME '(' argument_list  . ')' 
+21: argument_list -> argument_list  . ',' argument 
+  0:   On ')' to state 48
+  1:   On ',' to state 49
+
+
+State 33:
+20: procedure_name -> NAME '(' ')'  . 
+  Reduce by 20: procedure_name -> NAME '(' ')'  . 
+
+
+State 34:
+22: argument_list -> argument  . 
+  Reduce by 22: argument_list -> argument  . 
+
+
+State 35:
+23: argument -> type  . NAME 
+  0:   On NAME to state 50
+
+
+State 36:
+38: declaration_statement -> type NAME ';'  . 
+  Reduce by 38: declaration_statement -> type NAME ';'  . 
+
+
+State 37:
+11: function_declaration -> type NAME '('  . declaration_argument_list ')' ';' 
+13: function_declaration -> type NAME '('  . ')' ';' 
+  0:   On declaration_argument_list to state 51
+  1:   On ')' to state 52
+  2:   On declaration_argument to state 53
+  3:   On type to state 54
+  4:   On INTEGER to state 10
+  5:   On FLOAT to state 11
+  6:   On DOUBLE to state 12
+
+
+State 38:
+12: function_declaration -> VOID NAME '('  . declaration_argument_list ')' ';' 
+14: function_declaration -> VOID NAME '('  . ')' ';' 
+  0:   On declaration_argument_list to state 55
+  1:   On ')' to state 56
+  2:   On declaration_argument to state 53
+  3:   On type to state 54
+  4:   On INTEGER to state 10
+  5:   On FLOAT to state 11
+  6:   On DOUBLE to state 12
+
+
+State 39:
+1: program -> declaration_statement_list function_declaration_list #0001 procedure_list  . 
+28: procedure_list -> procedure_list  . procedure 
+  0:   On procedure to state 29
+  1:   On NAME to state 21
+  Reduce by 1: program -> declaration_statement_list function_declaration_list #0001 procedure_list  . 
+
+
+State 40:
+5: program -> declaration_statement_list #0003 procedure_name #0004  . procedure_body 
+  0:   On procedure_body to state 57
+  1:   On '{' to state 28
+
+
+State 41:
+33: procedure_body -> '{' declaration_statement_list  . #0007 basic_block_list '}' 
+37: declaration_statement_list -> declaration_statement_list  . declaration_statement 
+  0:   On #0007 to state 58
+  1:   On declaration_statement to state 15
+  2:   On type to state 44
+  3:   On INTEGER to state 10
+  4:   On FLOAT to state 11
+  5:   On DOUBLE to state 12
+  Reduce by 34: #0007 ->  . 
+
+
+State 42:
+35: procedure_body -> '{' basic_block_list  . '}' 
+39: basic_block_list -> basic_block_list  . basic_block 
+  0:   On '}' to state 59
+  1:   On basic_block to state 60
+  2:   On BASIC_BLOCK to state 45
+
+
+State 43:
+40: basic_block_list -> basic_block  . 
+  Reduce by 40: basic_block_list -> basic_block  . 
+
+
+State 44:
+38: declaration_statement -> type  . NAME ';' 
+  0:   On NAME to state 61
+
+
+State 45:
+41: basic_block -> BASIC_BLOCK  . ':' executable_statement_list 
+42: basic_block -> BASIC_BLOCK  . ':' executable_statement_list conditional_statement 
+43: basic_block -> BASIC_BLOCK  . ':' executable_statement_list goto_statement 
+  0:   On ':' to state 62
+
+
+State 46:
+29: procedure -> NAME '(' argument_list  . ')' #0005 procedure_body 
+21: argument_list -> argument_list  . ',' argument 
+  0:   On ')' to state 63
+  1:   On ',' to state 49
+
+
+State 47:
+31: procedure -> NAME '(' ')'  . #0006 procedure_body 
+  0:   On #0006 to state 64
+  Reduce by 32: #0006 ->  . 
+
+
+State 48:
+19: procedure_name -> NAME '(' argument_list ')'  . 
+  Reduce by 19: procedure_name -> NAME '(' argument_list ')'  . 
+
+
+State 49:
+21: argument_list -> argument_list ','  . argument 
+  0:   On argument to state 65
+  1:   On type to state 35
+  2:   On INTEGER to state 10
+  3:   On FLOAT to state 11
+  4:   On DOUBLE to state 12
+
+
+State 50:
+23: argument -> type NAME  . 
+  Reduce by 23: argument -> type NAME  . 
+
+
+State 51:
+11: function_declaration -> type NAME '(' declaration_argument_list  . ')' ';' 
+15: declaration_argument_list -> declaration_argument_list  . ',' declaration_argument 
+  0:   On ')' to state 66
+  1:   On ',' to state 67
+
+
+State 52:
+13: function_declaration -> type NAME '(' ')'  . ';' 
+  0:   On ';' to state 68
+
+
+State 53:
+16: declaration_argument_list -> declaration_argument  . 
+  Reduce by 16: declaration_argument_list -> declaration_argument  . 
+
+
+State 54:
+17: declaration_argument -> type  . NAME 
+18: declaration_argument -> type  . 
+  0:   On NAME to state 69
+  Reduce by 18: declaration_argument -> type  . 
+
+
+State 55:
+12: function_declaration -> VOID NAME '(' declaration_argument_list  . ')' ';' 
+15: declaration_argument_list -> declaration_argument_list  . ',' declaration_argument 
+  0:   On ')' to state 70
+  1:   On ',' to state 67
+
+
+State 56:
+14: function_declaration -> VOID NAME '(' ')'  . ';' 
+  0:   On ';' to state 71
+
+
+State 57:
+5: program -> declaration_statement_list #0003 procedure_name #0004 procedure_body  . 
+  Reduce by 5: program -> declaration_statement_list #0003 procedure_name #0004 procedure_body  . 
+
+
+State 58:
+33: procedure_body -> '{' declaration_statement_list #0007  . basic_block_list '}' 
+  0:   On basic_block_list to state 72
+  1:   On basic_block to state 43
+  2:   On BASIC_BLOCK to state 45
+
+
+State 59:
+35: procedure_body -> '{' basic_block_list '}'  . 
+  Reduce by 35: procedure_body -> '{' basic_block_list '}'  . 
+
+
+State 60:
+39: basic_block_list -> basic_block_list basic_block  . 
+  Reduce by 39: basic_block_list -> basic_block_list basic_block  . 
+
+
+State 61:
+38: declaration_statement -> type NAME  . ';' 
+  0:   On ';' to state 36
+
+
+State 62:
+41: basic_block -> BASIC_BLOCK ':'  . executable_statement_list 
+42: basic_block -> BASIC_BLOCK ':'  . executable_statement_list conditional_statement 
+43: basic_block -> BASIC_BLOCK ':'  . executable_statement_list goto_statement 
+  0:   On executable_statement_list to state 73
+  1:   On statement_list to state 74
+  Reduce by 48: statement_list ->  . 
+
+
+State 63:
+29: procedure -> NAME '(' argument_list ')'  . #0005 procedure_body 
+  0:   On #0005 to state 75
+  Reduce by 30: #0005 ->  . 
+
+
+State 64:
+31: procedure -> NAME '(' ')' #0006  . procedure_body 
+  0:   On procedure_body to state 76
+  1:   On '{' to state 28
+
+
+State 65:
+21: argument_list -> argument_list ',' argument  . 
+  Reduce by 21: argument_list -> argument_list ',' argument  . 
+
+
+State 66:
+11: function_declaration -> type NAME '(' declaration_argument_list ')'  . ';' 
+  0:   On ';' to state 77
+
+
+State 67:
+15: declaration_argument_list -> declaration_argument_list ','  . declaration_argument 
+  0:   On declaration_argument to state 78
+  1:   On type to state 54
+  2:   On INTEGER to state 10
+  3:   On FLOAT to state 11
+  4:   On DOUBLE to state 12
+
+
+State 68:
+13: function_declaration -> type NAME '(' ')' ';'  . 
+  Reduce by 13: function_declaration -> type NAME '(' ')' ';'  . 
+
+
+State 69:
+17: declaration_argument -> type NAME  . 
+  Reduce by 17: declaration_argument -> type NAME  . 
+
+
+State 70:
+12: function_declaration -> VOID NAME '(' declaration_argument_list ')'  . ';' 
+  0:   On ';' to state 79
+
+
+State 71:
+14: function_declaration -> VOID NAME '(' ')' ';'  . 
+  Reduce by 14: function_declaration -> VOID NAME '(' ')' ';'  . 
+
+
+State 72:
+33: procedure_body -> '{' declaration_statement_list #0007 basic_block_list  . '}' 
+39: basic_block_list -> basic_block_list  . basic_block 
+  0:   On '}' to state 80
+  1:   On basic_block to state 60
+  2:   On BASIC_BLOCK to state 45
+
+
+State 73:
+41: basic_block -> BASIC_BLOCK ':' executable_statement_list  . 
+42: basic_block -> BASIC_BLOCK ':' executable_statement_list  . conditional_statement 
+43: basic_block -> BASIC_BLOCK ':' executable_statement_list  . goto_statement 
+  0:   On conditional_statement to state 81
+  1:   On goto_statement to state 82
+  2:   On IF to state 83
+  3:   On GOTO to state 84
+  Reduce by 41: basic_block -> BASIC_BLOCK ':' executable_statement_list  . 
+
+
+State 74:
+44: executable_statement_list -> statement_list  . 
+45: executable_statement_list -> statement_list  . return_statement ';' 
+49: statement_list -> statement_list  . assignment_statement 
+50: statement_list -> statement_list  . function_call_statement ';' 
+  0:   On return_statement to state 85
+  1:   On assignment_statement to state 86
+  2:   On function_call_statement to state 87
+  3:   On RETURN to state 88
+  4:   On variable to state 89
+  5:   On NAME to state 90
+  6:   On '(' to state 91
+  Reduce by 44: executable_statement_list -> statement_list  . 
+
+
+State 75:
+29: procedure -> NAME '(' argument_list ')' #0005  . procedure_body 
+  0:   On procedure_body to state 92
+  1:   On '{' to state 28
+
+
+State 76:
+31: procedure -> NAME '(' ')' #0006 procedure_body  . 
+  Reduce by 31: procedure -> NAME '(' ')' #0006 procedure_body  . 
+
+
+State 77:
+11: function_declaration -> type NAME '(' declaration_argument_list ')' ';'  . 
+  Reduce by 11: function_declaration -> type NAME '(' declaration_argument_list ')' ';'  . 
+
+
+State 78:
+15: declaration_argument_list -> declaration_argument_list ',' declaration_argument  . 
+  Reduce by 15: declaration_argument_list -> declaration_argument_list ',' declaration_argument  . 
+
+
+State 79:
+12: function_declaration -> VOID NAME '(' declaration_argument_list ')' ';'  . 
+  Reduce by 12: function_declaration -> VOID NAME '(' declaration_argument_list ')' ';'  . 
+
+
+State 80:
+33: procedure_body -> '{' declaration_statement_list #0007 basic_block_list '}'  . 
+  Reduce by 33: procedure_body -> '{' declaration_statement_list #0007 basic_block_list '}'  . 
+
+
+State 81:
+42: basic_block -> BASIC_BLOCK ':' executable_statement_list conditional_statement  . 
+  Reduce by 42: basic_block -> BASIC_BLOCK ':' executable_statement_list conditional_statement  . 
+
+
+State 82:
+43: basic_block -> BASIC_BLOCK ':' executable_statement_list goto_statement  . 
+  Reduce by 43: basic_block -> BASIC_BLOCK ':' executable_statement_list goto_statement  . 
+
+
+State 83:
+60: conditional_statement -> IF  . '(' exp_assign_op ')' GOTO BASIC_BLOCK ';' ELSE GOTO BASIC_BLOCK ';' 
+  0:   On '(' to state 93
+
+
+State 84:
+61: goto_statement -> GOTO  . BASIC_BLOCK ';' 
+  0:   On BASIC_BLOCK to state 94
+
+
+State 85:
+45: executable_statement_list -> statement_list return_statement  . ';' 
+  0:   On ';' to state 95
+
+
+State 86:
+49: statement_list -> statement_list assignment_statement  . 
+  Reduce by 49: statement_list -> statement_list assignment_statement  . 
+
+
+State 87:
+50: statement_list -> statement_list function_call_statement  . ';' 
+  0:   On ';' to state 96
+
+
+State 88:
+46: return_statement -> RETURN  . 
+47: return_statement -> RETURN  . exp_assign_op 
+  0:   On exp_assign_op to state 97
+  1:   On exp_eq_ne to state 98
+  2:   On exp_le_lt_ge_gt to state 99
+  3:   On exp_add_sub to state 100
+  4:   On exp_mul_div to state 101
+  5:   On singleton to state 102
+  6:   On function_call_statement to state 103
+  7:   On '(' to state 104
+  8:   On modified_variable to state 105
+  9:   On '-' to state 106
+  10:   On NAME to state 90
+  11:   On variable to state 107
+  12:   On constant to state 108
+  13:   On INTEGER_NUMBER to state 109
+  14:   On FLOATING_POINT_NUMBER to state 110
+  Reduce by 46: return_statement -> RETURN  . 
+
+
+State 89:
+51: assignment_statement -> variable  . ASSIGN_OP exp_assign_op ';' 
+  0:   On ASSIGN_OP to state 111
+
+
+State 90:
+52: function_call_statement -> NAME  . '(' exp_assign_op_list ')' 
+53: function_call_statement -> NAME  . '(' ')' 
+56: variable -> NAME  . 
+  0:   On '(' to state 112
+  Reduce by 56: variable -> NAME  . 
+
+
+State 91:
+57: variable -> '('  . type ')' NAME 
+  0:   On type to state 113
+  1:   On INTEGER to state 10
+  2:   On FLOAT to state 11
+  3:   On DOUBLE to state 12
+
+
+State 92:
+29: procedure -> NAME '(' argument_list ')' #0005 procedure_body  . 
+  Reduce by 29: procedure -> NAME '(' argument_list ')' #0005 procedure_body  . 
+
+
+State 93:
+60: conditional_statement -> IF '('  . exp_assign_op ')' GOTO BASIC_BLOCK ';' ELSE GOTO BASIC_BLOCK ';' 
+  0:   On exp_assign_op to state 114
+  1:   On exp_eq_ne to state 98
+  2:   On exp_le_lt_ge_gt to state 99
+  3:   On exp_add_sub to state 100
+  4:   On exp_mul_div to state 101
+  5:   On singleton to state 102
+  6:   On function_call_statement to state 103
+  7:   On '(' to state 104
+  8:   On modified_variable to state 105
+  9:   On '-' to state 106
+  10:   On NAME to state 90
+  11:   On variable to state 107
+  12:   On constant to state 108
+  13:   On INTEGER_NUMBER to state 109
+  14:   On FLOATING_POINT_NUMBER to state 110
+
+
+State 94:
+61: goto_statement -> GOTO BASIC_BLOCK  . ';' 
+  0:   On ';' to state 115
+
+
+State 95:
+45: executable_statement_list -> statement_list return_statement ';'  . 
+  Reduce by 45: executable_statement_list -> statement_list return_statement ';'  . 
+
+
+State 96:
+50: statement_list -> statement_list function_call_statement ';'  . 
+  Reduce by 50: statement_list -> statement_list function_call_statement ';'  . 
+
+
+State 97:
+47: return_statement -> RETURN exp_assign_op  . 
+64: exp_assign_op -> exp_assign_op  . ASSIGN_OP exp_eq_ne 
+  0:   On ASSIGN_OP to state 116
+  Reduce by 47: return_statement -> RETURN exp_assign_op  . 
+
+
+State 98:
+65: exp_assign_op -> exp_eq_ne  . 
+66: exp_eq_ne -> exp_eq_ne  . EQUAL exp_le_lt_ge_gt 
+67: exp_eq_ne -> exp_eq_ne  . NOT_EQUAL exp_le_lt_ge_gt 
+  0:   On EQUAL to state 117
+  1:   On NOT_EQUAL to state 118
+  Reduce by 65: exp_assign_op -> exp_eq_ne  . 
+
+
+State 99:
+68: exp_eq_ne -> exp_le_lt_ge_gt  . 
+69: exp_le_lt_ge_gt -> exp_le_lt_ge_gt  . GE exp_add_sub 
+70: exp_le_lt_ge_gt -> exp_le_lt_ge_gt  . GT exp_add_sub 
+71: exp_le_lt_ge_gt -> exp_le_lt_ge_gt  . LE exp_add_sub 
+72: exp_le_lt_ge_gt -> exp_le_lt_ge_gt  . LT exp_add_sub 
+  0:   On GE to state 119
+  1:   On GT to state 120
+  2:   On LE to state 121
+  3:   On LT to state 122
+  Reduce by 68: exp_eq_ne -> exp_le_lt_ge_gt  . 
+
+
+State 100:
+73: exp_le_lt_ge_gt -> exp_add_sub  . 
+74: exp_add_sub -> exp_add_sub  . '+' exp_mul_div 
+75: exp_add_sub -> exp_add_sub  . '-' exp_mul_div 
+  0:   On '+' to state 123
+  1:   On '-' to state 124
+  Reduce by 73: exp_le_lt_ge_gt -> exp_add_sub  . 
+
+
+State 101:
+76: exp_add_sub -> exp_mul_div  . 
+77: exp_mul_div -> exp_mul_div  . '*' singleton 
+78: exp_mul_div -> exp_mul_div  . '/' singleton 
+  0:   On '*' to state 125
+  1:   On '/' to state 126
+  Reduce by 76: exp_add_sub -> exp_mul_div  . 
+
+
+State 102:
+79: exp_mul_div -> singleton  . 
+  Reduce by 79: exp_mul_div -> singleton  . 
+
+
+State 103:
+80: singleton -> function_call_statement  . 
+  Reduce by 80: singleton -> function_call_statement  . 
+
+
+State 104:
+81: singleton -> '('  . type ')' function_call_statement 
+84: singleton -> '('  . exp_assign_op ')' 
+86: singleton -> '('  . type ')' '(' exp_assign_op ')' 
+57: variable -> '('  . type ')' NAME 
+  0:   On type to state 127
+  1:   On exp_assign_op to state 128
+  2:   On INTEGER to state 10
+  3:   On FLOAT to state 11
+  4:   On DOUBLE to state 12
+  5:   On exp_eq_ne to state 98
+  6:   On exp_le_lt_ge_gt to state 99
+  7:   On exp_add_sub to state 100
+  8:   On exp_mul_div to state 101
+  9:   On singleton to state 102
+  10:   On function_call_statement to state 103
+  11:   On '(' to state 104
+  12:   On modified_variable to state 105
+  13:   On '-' to state 106
+  14:   On NAME to state 90
+  15:   On variable to state 107
+  16:   On constant to state 108
+  17:   On INTEGER_NUMBER to state 109
+  18:   On FLOATING_POINT_NUMBER to state 110
+
+
+State 105:
+82: singleton -> modified_variable  . 
+  Reduce by 82: singleton -> modified_variable  . 
+
+
+State 106:
+83: singleton -> '-'  . modified_variable 
+85: singleton -> '-'  . '(' exp_assign_op ')' 
+  0:   On modified_variable to state 129
+  1:   On '(' to state 130
+  2:   On variable to state 107
+  3:   On constant to state 108
+  4:   On NAME to state 131
+  5:   On INTEGER_NUMBER to state 109
+  6:   On FLOATING_POINT_NUMBER to state 110
+
+
+State 107:
+62: modified_variable -> variable  . 
+  Reduce by 62: modified_variable -> variable  . 
+
+
+State 108:
+63: modified_variable -> constant  . 
+  Reduce by 63: modified_variable -> constant  . 
+
+
+State 109:
+58: constant -> INTEGER_NUMBER  . 
+  Reduce by 58: constant -> INTEGER_NUMBER  . 
+
+
+State 110:
+59: constant -> FLOATING_POINT_NUMBER  . 
+  Reduce by 59: constant -> FLOATING_POINT_NUMBER  . 
+
+
+State 111:
+51: assignment_statement -> variable ASSIGN_OP  . exp_assign_op ';' 
+  0:   On exp_assign_op to state 132
+  1:   On exp_eq_ne to state 98
+  2:   On exp_le_lt_ge_gt to state 99
+  3:   On exp_add_sub to state 100
+  4:   On exp_mul_div to state 101
+  5:   On singleton to state 102
+  6:   On function_call_statement to state 103
+  7:   On '(' to state 104
+  8:   On modified_variable to state 105
+  9:   On '-' to state 106
+  10:   On NAME to state 90
+  11:   On variable to state 107
+  12:   On constant to state 108
+  13:   On INTEGER_NUMBER to state 109
+  14:   On FLOATING_POINT_NUMBER to state 110
+
+
+State 112:
+52: function_call_statement -> NAME '('  . exp_assign_op_list ')' 
+53: function_call_statement -> NAME '('  . ')' 
+  0:   On exp_assign_op_list to state 133
+  1:   On ')' to state 134
+  2:   On exp_assign_op to state 135
+  3:   On exp_eq_ne to state 98
+  4:   On exp_le_lt_ge_gt to state 99
+  5:   On exp_add_sub to state 100
+  6:   On exp_mul_div to state 101
+  7:   On singleton to state 102
+  8:   On function_call_statement to state 103
+  9:   On '(' to state 104
+  10:   On modified_variable to state 105
+  11:   On '-' to state 106
+  12:   On NAME to state 90
+  13:   On variable to state 107
+  14:   On constant to state 108
+  15:   On INTEGER_NUMBER to state 109
+  16:   On FLOATING_POINT_NUMBER to state 110
+
+
+State 113:
+57: variable -> '(' type  . ')' NAME 
+  0:   On ')' to state 136
+
+
+State 114:
+60: conditional_statement -> IF '(' exp_assign_op  . ')' GOTO BASIC_BLOCK ';' ELSE GOTO BASIC_BLOCK ';' 
+64: exp_assign_op -> exp_assign_op  . ASSIGN_OP exp_eq_ne 
+  0:   On ')' to state 137
+  1:   On ASSIGN_OP to state 116
+
+
+State 115:
+61: goto_statement -> GOTO BASIC_BLOCK ';'  . 
+  Reduce by 61: goto_statement -> GOTO BASIC_BLOCK ';'  . 
+
+
+State 116:
+64: exp_assign_op -> exp_assign_op ASSIGN_OP  . exp_eq_ne 
+  0:   On exp_eq_ne to state 138
+  1:   On exp_le_lt_ge_gt to state 99
+  2:   On exp_add_sub to state 100
+  3:   On exp_mul_div to state 101
+  4:   On singleton to state 102
+  5:   On function_call_statement to state 103
+  6:   On '(' to state 104
+  7:   On modified_variable to state 105
+  8:   On '-' to state 106
+  9:   On NAME to state 90
+  10:   On variable to state 107
+  11:   On constant to state 108
+  12:   On INTEGER_NUMBER to state 109
+  13:   On FLOATING_POINT_NUMBER to state 110
+
+
+State 117:
+66: exp_eq_ne -> exp_eq_ne EQUAL  . exp_le_lt_ge_gt 
+  0:   On exp_le_lt_ge_gt to state 139
+  1:   On exp_add_sub to state 100
+  2:   On exp_mul_div to state 101
+  3:   On singleton to state 102
+  4:   On function_call_statement to state 103
+  5:   On '(' to state 104
+  6:   On modified_variable to state 105
+  7:   On '-' to state 106
+  8:   On NAME to state 90
+  9:   On variable to state 107
+  10:   On constant to state 108
+  11:   On INTEGER_NUMBER to state 109
+  12:   On FLOATING_POINT_NUMBER to state 110
+
+
+State 118:
+67: exp_eq_ne -> exp_eq_ne NOT_EQUAL  . exp_le_lt_ge_gt 
+  0:   On exp_le_lt_ge_gt to state 140
+  1:   On exp_add_sub to state 100
+  2:   On exp_mul_div to state 101
+  3:   On singleton to state 102
+  4:   On function_call_statement to state 103
+  5:   On '(' to state 104
+  6:   On modified_variable to state 105
+  7:   On '-' to state 106
+  8:   On NAME to state 90
+  9:   On variable to state 107
+  10:   On constant to state 108
+  11:   On INTEGER_NUMBER to state 109
+  12:   On FLOATING_POINT_NUMBER to state 110
+
+
+State 119:
+69: exp_le_lt_ge_gt -> exp_le_lt_ge_gt GE  . exp_add_sub 
+  0:   On exp_add_sub to state 141
+  1:   On exp_mul_div to state 101
+  2:   On singleton to state 102
+  3:   On function_call_statement to state 103
+  4:   On '(' to state 104
+  5:   On modified_variable to state 105
+  6:   On '-' to state 106
+  7:   On NAME to state 90
+  8:   On variable to state 107
+  9:   On constant to state 108
+  10:   On INTEGER_NUMBER to state 109
+  11:   On FLOATING_POINT_NUMBER to state 110
+
+
+State 120:
+70: exp_le_lt_ge_gt -> exp_le_lt_ge_gt GT  . exp_add_sub 
+  0:   On exp_add_sub to state 142
+  1:   On exp_mul_div to state 101
+  2:   On singleton to state 102
+  3:   On function_call_statement to state 103
+  4:   On '(' to state 104
+  5:   On modified_variable to state 105
+  6:   On '-' to state 106
+  7:   On NAME to state 90
+  8:   On variable to state 107
+  9:   On constant to state 108
+  10:   On INTEGER_NUMBER to state 109
+  11:   On FLOATING_POINT_NUMBER to state 110
+
+
+State 121:
+71: exp_le_lt_ge_gt -> exp_le_lt_ge_gt LE  . exp_add_sub 
+  0:   On exp_add_sub to state 143
+  1:   On exp_mul_div to state 101
+  2:   On singleton to state 102
+  3:   On function_call_statement to state 103
+  4:   On '(' to state 104
+  5:   On modified_variable to state 105
+  6:   On '-' to state 106
+  7:   On NAME to state 90
+  8:   On variable to state 107
+  9:   On constant to state 108
+  10:   On INTEGER_NUMBER to state 109
+  11:   On FLOATING_POINT_NUMBER to state 110
+
+
+State 122:
+72: exp_le_lt_ge_gt -> exp_le_lt_ge_gt LT  . exp_add_sub 
+  0:   On exp_add_sub to state 144
+  1:   On exp_mul_div to state 101
+  2:   On singleton to state 102
+  3:   On function_call_statement to state 103
+  4:   On '(' to state 104
+  5:   On modified_variable to state 105
+  6:   On '-' to state 106
+  7:   On NAME to state 90
+  8:   On variable to state 107
+  9:   On constant to state 108
+  10:   On INTEGER_NUMBER to state 109
+  11:   On FLOATING_POINT_NUMBER to state 110
+
+
+State 123:
+74: exp_add_sub -> exp_add_sub '+'  . exp_mul_div 
+  0:   On exp_mul_div to state 145
+  1:   On singleton to state 102
+  2:   On function_call_statement to state 103
+  3:   On '(' to state 104
+  4:   On modified_variable to state 105
+  5:   On '-' to state 106
+  6:   On NAME to state 90
+  7:   On variable to state 107
+  8:   On constant to state 108
+  9:   On INTEGER_NUMBER to state 109
+  10:   On FLOATING_POINT_NUMBER to state 110
+
+
+State 124:
+75: exp_add_sub -> exp_add_sub '-'  . exp_mul_div 
+  0:   On exp_mul_div to state 146
+  1:   On singleton to state 102
+  2:   On function_call_statement to state 103
+  3:   On '(' to state 104
+  4:   On modified_variable to state 105
+  5:   On '-' to state 106
+  6:   On NAME to state 90
+  7:   On variable to state 107
+  8:   On constant to state 108
+  9:   On INTEGER_NUMBER to state 109
+  10:   On FLOATING_POINT_NUMBER to state 110
+
+
+State 125:
+77: exp_mul_div -> exp_mul_div '*'  . singleton 
+  0:   On singleton to state 147
+  1:   On function_call_statement to state 103
+  2:   On '(' to state 104
+  3:   On modified_variable to state 105
+  4:   On '-' to state 106
+  5:   On NAME to state 90
+  6:   On variable to state 107
+  7:   On constant to state 108
+  8:   On INTEGER_NUMBER to state 109
+  9:   On FLOATING_POINT_NUMBER to state 110
+
+
+State 126:
+78: exp_mul_div -> exp_mul_div '/'  . singleton 
+  0:   On singleton to state 148
+  1:   On function_call_statement to state 103
+  2:   On '(' to state 104
+  3:   On modified_variable to state 105
+  4:   On '-' to state 106
+  5:   On NAME to state 90
+  6:   On variable to state 107
+  7:   On constant to state 108
+  8:   On INTEGER_NUMBER to state 109
+  9:   On FLOATING_POINT_NUMBER to state 110
+
+
+State 127:
+81: singleton -> '(' type  . ')' function_call_statement 
+86: singleton -> '(' type  . ')' '(' exp_assign_op ')' 
+57: variable -> '(' type  . ')' NAME 
+  0:   On ')' to state 149
+
+
+State 128:
+84: singleton -> '(' exp_assign_op  . ')' 
+64: exp_assign_op -> exp_assign_op  . ASSIGN_OP exp_eq_ne 
+  0:   On ')' to state 150
+  1:   On ASSIGN_OP to state 116
+
+
+State 129:
+83: singleton -> '-' modified_variable  . 
+  Reduce by 83: singleton -> '-' modified_variable  . 
+
+
+State 130:
+85: singleton -> '-' '('  . exp_assign_op ')' 
+57: variable -> '('  . type ')' NAME 
+  0:   On exp_assign_op to state 151
+  1:   On type to state 113
+  2:   On exp_eq_ne to state 98
+  3:   On INTEGER to state 10
+  4:   On FLOAT to state 11
+  5:   On DOUBLE to state 12
+  6:   On exp_le_lt_ge_gt to state 99
+  7:   On exp_add_sub to state 100
+  8:   On exp_mul_div to state 101
+  9:   On singleton to state 102
+  10:   On function_call_statement to state 103
+  11:   On '(' to state 104
+  12:   On modified_variable to state 105
+  13:   On '-' to state 106
+  14:   On NAME to state 90
+  15:   On variable to state 107
+  16:   On constant to state 108
+  17:   On INTEGER_NUMBER to state 109
+  18:   On FLOATING_POINT_NUMBER to state 110
+
+
+State 131:
+56: variable -> NAME  . 
+  Reduce by 56: variable -> NAME  . 
+
+
+State 132:
+51: assignment_statement -> variable ASSIGN_OP exp_assign_op  . ';' 
+64: exp_assign_op -> exp_assign_op  . ASSIGN_OP exp_eq_ne 
+  0:   On ';' to state 152
+  1:   On ASSIGN_OP to state 116
+
+
+State 133:
+52: function_call_statement -> NAME '(' exp_assign_op_list  . ')' 
+54: exp_assign_op_list -> exp_assign_op_list  . ',' exp_assign_op 
+  0:   On ')' to state 153
+  1:   On ',' to state 154
+
+
+State 134:
+53: function_call_statement -> NAME '(' ')'  . 
+  Reduce by 53: function_call_statement -> NAME '(' ')'  . 
+
+
+State 135:
+55: exp_assign_op_list -> exp_assign_op  . 
+64: exp_assign_op -> exp_assign_op  . ASSIGN_OP exp_eq_ne 
+  0:   On ASSIGN_OP to state 116
+  Reduce by 55: exp_assign_op_list -> exp_assign_op  . 
+
+
+State 136:
+57: variable -> '(' type ')'  . NAME 
+  0:   On NAME to state 155
+
+
+State 137:
+60: conditional_statement -> IF '(' exp_assign_op ')'  . GOTO BASIC_BLOCK ';' ELSE GOTO BASIC_BLOCK ';' 
+  0:   On GOTO to state 156
+
+
+State 138:
+64: exp_assign_op -> exp_assign_op ASSIGN_OP exp_eq_ne  . 
+66: exp_eq_ne -> exp_eq_ne  . EQUAL exp_le_lt_ge_gt 
+67: exp_eq_ne -> exp_eq_ne  . NOT_EQUAL exp_le_lt_ge_gt 
+  0:   On EQUAL to state 117
+  1:   On NOT_EQUAL to state 118
+  Reduce by 64: exp_assign_op -> exp_assign_op ASSIGN_OP exp_eq_ne  . 
+
+
+State 139:
+66: exp_eq_ne -> exp_eq_ne EQUAL exp_le_lt_ge_gt  . 
+69: exp_le_lt_ge_gt -> exp_le_lt_ge_gt  . GE exp_add_sub 
+70: exp_le_lt_ge_gt -> exp_le_lt_ge_gt  . GT exp_add_sub 
+71: exp_le_lt_ge_gt -> exp_le_lt_ge_gt  . LE exp_add_sub 
+72: exp_le_lt_ge_gt -> exp_le_lt_ge_gt  . LT exp_add_sub 
+  0:   On GE to state 119
+  1:   On GT to state 120
+  2:   On LE to state 121
+  3:   On LT to state 122
+  Reduce by 66: exp_eq_ne -> exp_eq_ne EQUAL exp_le_lt_ge_gt  . 
+
+
+State 140:
+67: exp_eq_ne -> exp_eq_ne NOT_EQUAL exp_le_lt_ge_gt  . 
+69: exp_le_lt_ge_gt -> exp_le_lt_ge_gt  . GE exp_add_sub 
+70: exp_le_lt_ge_gt -> exp_le_lt_ge_gt  . GT exp_add_sub 
+71: exp_le_lt_ge_gt -> exp_le_lt_ge_gt  . LE exp_add_sub 
+72: exp_le_lt_ge_gt -> exp_le_lt_ge_gt  . LT exp_add_sub 
+  0:   On GE to state 119
+  1:   On GT to state 120
+  2:   On LE to state 121
+  3:   On LT to state 122
+  Reduce by 67: exp_eq_ne -> exp_eq_ne NOT_EQUAL exp_le_lt_ge_gt  . 
+
+
+State 141:
+69: exp_le_lt_ge_gt -> exp_le_lt_ge_gt GE exp_add_sub  . 
+74: exp_add_sub -> exp_add_sub  . '+' exp_mul_div 
+75: exp_add_sub -> exp_add_sub  . '-' exp_mul_div 
+  0:   On '+' to state 123
+  1:   On '-' to state 124
+  Reduce by 69: exp_le_lt_ge_gt -> exp_le_lt_ge_gt GE exp_add_sub  . 
+
+
+State 142:
+70: exp_le_lt_ge_gt -> exp_le_lt_ge_gt GT exp_add_sub  . 
+74: exp_add_sub -> exp_add_sub  . '+' exp_mul_div 
+75: exp_add_sub -> exp_add_sub  . '-' exp_mul_div 
+  0:   On '+' to state 123
+  1:   On '-' to state 124
+  Reduce by 70: exp_le_lt_ge_gt -> exp_le_lt_ge_gt GT exp_add_sub  . 
+
+
+State 143:
+71: exp_le_lt_ge_gt -> exp_le_lt_ge_gt LE exp_add_sub  . 
+74: exp_add_sub -> exp_add_sub  . '+' exp_mul_div 
+75: exp_add_sub -> exp_add_sub  . '-' exp_mul_div 
+  0:   On '+' to state 123
+  1:   On '-' to state 124
+  Reduce by 71: exp_le_lt_ge_gt -> exp_le_lt_ge_gt LE exp_add_sub  . 
+
+
+State 144:
+72: exp_le_lt_ge_gt -> exp_le_lt_ge_gt LT exp_add_sub  . 
+74: exp_add_sub -> exp_add_sub  . '+' exp_mul_div 
+75: exp_add_sub -> exp_add_sub  . '-' exp_mul_div 
+  0:   On '+' to state 123
+  1:   On '-' to state 124
+  Reduce by 72: exp_le_lt_ge_gt -> exp_le_lt_ge_gt LT exp_add_sub  . 
+
+
+State 145:
+74: exp_add_sub -> exp_add_sub '+' exp_mul_div  . 
+77: exp_mul_div -> exp_mul_div  . '*' singleton 
+78: exp_mul_div -> exp_mul_div  . '/' singleton 
+  0:   On '*' to state 125
+  1:   On '/' to state 126
+  Reduce by 74: exp_add_sub -> exp_add_sub '+' exp_mul_div  . 
+
+
+State 146:
+75: exp_add_sub -> exp_add_sub '-' exp_mul_div  . 
+77: exp_mul_div -> exp_mul_div  . '*' singleton 
+78: exp_mul_div -> exp_mul_div  . '/' singleton 
+  0:   On '*' to state 125
+  1:   On '/' to state 126
+  Reduce by 75: exp_add_sub -> exp_add_sub '-' exp_mul_div  . 
+
+
+State 147:
+77: exp_mul_div -> exp_mul_div '*' singleton  . 
+  Reduce by 77: exp_mul_div -> exp_mul_div '*' singleton  . 
+
+
+State 148:
+78: exp_mul_div -> exp_mul_div '/' singleton  . 
+  Reduce by 78: exp_mul_div -> exp_mul_div '/' singleton  . 
+
+
+State 149:
+81: singleton -> '(' type ')'  . function_call_statement 
+86: singleton -> '(' type ')'  . '(' exp_assign_op ')' 
+57: variable -> '(' type ')'  . NAME 
+  0:   On function_call_statement to state 157
+  1:   On '(' to state 158
+  2:   On NAME to state 159
+
+
+State 150:
+84: singleton -> '(' exp_assign_op ')'  . 
+  Reduce by 84: singleton -> '(' exp_assign_op ')'  . 
+
+
+State 151:
+85: singleton -> '-' '(' exp_assign_op  . ')' 
+64: exp_assign_op -> exp_assign_op  . ASSIGN_OP exp_eq_ne 
+  0:   On ')' to state 160
+  1:   On ASSIGN_OP to state 116
+
+
+State 152:
+51: assignment_statement -> variable ASSIGN_OP exp_assign_op ';'  . 
+  Reduce by 51: assignment_statement -> variable ASSIGN_OP exp_assign_op ';'  . 
+
+
+State 153:
+52: function_call_statement -> NAME '(' exp_assign_op_list ')'  . 
+  Reduce by 52: function_call_statement -> NAME '(' exp_assign_op_list ')'  . 
+
+
+State 154:
+54: exp_assign_op_list -> exp_assign_op_list ','  . exp_assign_op 
+  0:   On exp_assign_op to state 161
+  1:   On exp_eq_ne to state 98
+  2:   On exp_le_lt_ge_gt to state 99
+  3:   On exp_add_sub to state 100
+  4:   On exp_mul_div to state 101
+  5:   On singleton to state 102
+  6:   On function_call_statement to state 103
+  7:   On '(' to state 104
+  8:   On modified_variable to state 105
+  9:   On '-' to state 106
+  10:   On NAME to state 90
+  11:   On variable to state 107
+  12:   On constant to state 108
+  13:   On INTEGER_NUMBER to state 109
+  14:   On FLOATING_POINT_NUMBER to state 110
+
+
+State 155:
+57: variable -> '(' type ')' NAME  . 
+  Reduce by 57: variable -> '(' type ')' NAME  . 
+
+
+State 156:
+60: conditional_statement -> IF '(' exp_assign_op ')' GOTO  . BASIC_BLOCK ';' ELSE GOTO BASIC_BLOCK ';' 
+  0:   On BASIC_BLOCK to state 162
+
+
+State 157:
+81: singleton -> '(' type ')' function_call_statement  . 
+  Reduce by 81: singleton -> '(' type ')' function_call_statement  . 
+
+
+State 158:
+86: singleton -> '(' type ')' '('  . exp_assign_op ')' 
+  0:   On exp_assign_op to state 163
+  1:   On exp_eq_ne to state 98
+  2:   On exp_le_lt_ge_gt to state 99
+  3:   On exp_add_sub to state 100
+  4:   On exp_mul_div to state 101
+  5:   On singleton to state 102
+  6:   On function_call_statement to state 103
+  7:   On '(' to state 104
+  8:   On modified_variable to state 105
+  9:   On '-' to state 106
+  10:   On NAME to state 90
+  11:   On variable to state 107
+  12:   On constant to state 108
+  13:   On INTEGER_NUMBER to state 109
+  14:   On FLOATING_POINT_NUMBER to state 110
+
+
+State 159:
+57: variable -> '(' type ')' NAME  . 
+52: function_call_statement -> NAME  . '(' exp_assign_op_list ')' 
+53: function_call_statement -> NAME  . '(' ')' 
+  0:   On '(' to state 112
+  Reduce by 57: variable -> '(' type ')' NAME  . 
+
+
+State 160:
+85: singleton -> '-' '(' exp_assign_op ')'  . 
+  Reduce by 85: singleton -> '-' '(' exp_assign_op ')'  . 
+
+
+State 161:
+54: exp_assign_op_list -> exp_assign_op_list ',' exp_assign_op  . 
+64: exp_assign_op -> exp_assign_op  . ASSIGN_OP exp_eq_ne 
+  0:   On ASSIGN_OP to state 116
+  Reduce by 54: exp_assign_op_list -> exp_assign_op_list ',' exp_assign_op  . 
+
+
+State 162:
+60: conditional_statement -> IF '(' exp_assign_op ')' GOTO BASIC_BLOCK  . ';' ELSE GOTO BASIC_BLOCK ';' 
+  0:   On ';' to state 164
+
+
+State 163:
+86: singleton -> '(' type ')' '(' exp_assign_op  . ')' 
+64: exp_assign_op -> exp_assign_op  . ASSIGN_OP exp_eq_ne 
+  0:   On ')' to state 165
+  1:   On ASSIGN_OP to state 116
+
+
+State 164:
+60: conditional_statement -> IF '(' exp_assign_op ')' GOTO BASIC_BLOCK ';'  . ELSE GOTO BASIC_BLOCK ';' 
+  0:   On ELSE to state 166
+
+
+State 165:
+86: singleton -> '(' type ')' '(' exp_assign_op ')'  . 
+  Reduce by 86: singleton -> '(' type ')' '(' exp_assign_op ')'  . 
+
+
+State 166:
+60: conditional_statement -> IF '(' exp_assign_op ')' GOTO BASIC_BLOCK ';' ELSE  . GOTO BASIC_BLOCK ';' 
+  0:   On GOTO to state 167
+
+
+State 167:
+60: conditional_statement -> IF '(' exp_assign_op ')' GOTO BASIC_BLOCK ';' ELSE GOTO  . BASIC_BLOCK ';' 
+  0:   On BASIC_BLOCK to state 168
+
+
+State 168:
+60: conditional_statement -> IF '(' exp_assign_op ')' GOTO BASIC_BLOCK ';' ELSE GOTO BASIC_BLOCK  . ';' 
+  0:   On ';' to state 169
+
+
+State 169:
+60: conditional_statement -> IF '(' exp_assign_op ')' GOTO BASIC_BLOCK ';' ELSE GOTO BASIC_BLOCK ';'  . 
+  Reduce by 60: conditional_statement -> IF '(' exp_assign_op ')' GOTO BASIC_BLOCK ';' ELSE GOTO BASIC_BLOCK ';'  . 
+
+
+

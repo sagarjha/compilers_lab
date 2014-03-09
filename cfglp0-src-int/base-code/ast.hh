@@ -227,6 +227,7 @@ public:
     Conditional_Ast (Ast*, int, int);
     ~Conditional_Ast();
     void print_ast (ostream &);
+    void print_successors (ostream & file_buffer);
 
     Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
     
