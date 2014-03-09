@@ -1004,12 +1004,12 @@ void Return_Ast::print_ast(ostream & file_buffer)
 {
     if (expn == NULL) {
 	// void return type
-	file_buffer << endl << AST_SPACE << "RETURN <NOTHING>";
+	file_buffer << AST_SPACE << "RETURN <NOTHING>";
     }
 	
 	
     else {
-	file_buffer << endl << AST_SPACE << "RETURN ";
+	file_buffer << AST_SPACE << "RETURN ";
 	expn->print_ast(file_buffer);
     }
 }

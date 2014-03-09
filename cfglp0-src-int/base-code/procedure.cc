@@ -269,7 +269,15 @@ Eval_Result & Procedure::evaluate(ostream & file_buffer)
     file_buffer << "\n\n";
     file_buffer << LOC_VAR_SPACE << "Local Variables (after evaluating) Function: << " << name << " >>\n";
     eval_env.print(file_buffer);
+    if (return_type == int_data_type)
+    {
+		file_buffer << AST_SPACE << "return : " << (int) result->get_value() << endl;
+	}
+	
+	else if (return_type != void_data_type)
+	{
+		file_buffer << AST_SPACE << "return : " << result->get_value() << endl;
+	}
 
     return *result;
 }
-
