@@ -30,6 +30,8 @@ using namespace std;
 #include"error-display.hh"
 #include"user-options.hh"
 #include<iomanip>
+#include<algorithm>
+#include<list>
 
 float Eval_Result::get_value()
 {
@@ -260,7 +262,6 @@ void Local_Environment::print(ostream & file_buffer)
 	{
 	  if (vi->is_variable_defined() == false)
 	    file_buffer << VAR_SPACE << (*i).first << " : undefined" << "\n";
-		
 	  else
 	    {
 	      if (vi->get_result_enum() == int_result || vi->get_result_enum() == return_int_result) {

@@ -26,6 +26,7 @@
 
 #include<string>
 #include<map>
+#include<list>
 //#include "basic-block.hh"
 
 #define VAR_SPACE "         "
@@ -33,17 +34,17 @@
 using namespace std;
 
 typedef enum
-    {
-	int_result,
-	void_result,
-	bb_result,
-	float_result,
-	double_result,
-	return_result,
-	return_void_result,
-	return_int_result,
-	return_float_result
-    } Result_Enum;
+  {
+    int_result,
+    void_result,
+    bb_result,
+    float_result,
+    double_result,
+    return_result,
+    return_void_result,
+    return_int_result,
+    return_float_result
+  } Result_Enum;
 
 class Eval_Result;
 class Local_Environment;
@@ -51,123 +52,123 @@ class Local_Environment;
 class Eval_Result 
 {
 protected:
-    Result_Enum result_type;
+  Result_Enum result_type;
 
 public:
-    virtual float get_value();
-    virtual void set_value(int value);
-    virtual void set_value(float value);
+  virtual float get_value();
+  virtual void set_value(int value);
+  virtual void set_value(float value);
 
-    virtual bool is_variable_defined();
-    virtual void set_variable_status(bool def);
+  virtual bool is_variable_defined();
+  virtual void set_variable_status(bool def);
 
-    virtual void set_result_enum(Result_Enum res) = 0;
-    virtual Result_Enum get_result_enum() = 0;
+  virtual void set_result_enum(Result_Enum res) = 0;
+  virtual Result_Enum get_result_enum() = 0;
 	
-    virtual void set_block_id(int next_block);
-    virtual int get_block();
+  virtual void set_block_id(int next_block);
+  virtual int get_block();
 };
 
 class Eval_Result_Value:public Eval_Result
 {
 public:
-    virtual void set_value(int number);
-    virtual void set_value(float value);
+  virtual void set_value(int number);
+  virtual void set_value(float value);
 
-    virtual float get_value();
+  virtual float get_value();
 
-    virtual bool is_variable_defined() = 0;
-    virtual void set_variable_status(bool def) = 0;
+  virtual bool is_variable_defined() = 0;
+  virtual void set_variable_status(bool def) = 0;
 
-    virtual Result_Enum get_result_enum() = 0;
+  virtual Result_Enum get_result_enum() = 0;
 };
 
 
 // to store goto targets
 class Eval_Result_BB:public Eval_Result
 {
-    int block_id;
+  int block_id;
 	
 public:	
-    Eval_Result_BB();
-    ~Eval_Result_BB();
+  Eval_Result_BB();
+  ~Eval_Result_BB();
 
-    virtual void set_block_id(int next_block);
-    virtual int get_block();
+  virtual void set_block_id(int next_block);
+  virtual int get_block();
 
-    virtual void set_result_enum(Result_Enum res);
-    virtual Result_Enum get_result_enum();
+  virtual void set_result_enum(Result_Enum res);
+  virtual Result_Enum get_result_enum();
 };
 
 
 class Eval_Result_Value_Int:public Eval_Result_Value
 {
-    int value;
-    bool defined;
+  int value;
+  bool defined;
 public:
-    Eval_Result_Value_Int();
-    ~Eval_Result_Value_Int();
+  Eval_Result_Value_Int();
+  ~Eval_Result_Value_Int();
 
-    void set_value(int number);
-    float get_value();
+  void set_value(int number);
+  float get_value();
 
-    void set_variable_status(bool def);
-    bool is_variable_defined();
+  void set_variable_status(bool def);
+  bool is_variable_defined();
 
-    void set_result_enum(Result_Enum res);
-    Result_Enum get_result_enum();
+  void set_result_enum(Result_Enum res);
+  Result_Enum get_result_enum();
 };
 
 class Eval_Result_Value_Float:public Eval_Result_Value
 {
-    float value;
-    bool defined;
+  float value;
+  bool defined;
 public:
-    Eval_Result_Value_Float();
-    ~Eval_Result_Value_Float();
+  Eval_Result_Value_Float();
+  ~Eval_Result_Value_Float();
 
-    void set_value(float number);
-    float get_value();
+  void set_value(float number);
+  float get_value();
 
-    void set_variable_status(bool def);
-    bool is_variable_defined();
+  void set_variable_status(bool def);
+  bool is_variable_defined();
 
-    void set_result_enum(Result_Enum res);
-    Result_Enum get_result_enum();
+  void set_result_enum(Result_Enum res);
+  Result_Enum get_result_enum();
 };
 
 class Eval_Result_Value_Double:public Eval_Result_Value
 {
-    double value;
-    bool defined;
+  double value;
+  bool defined;
 public:
-    Eval_Result_Value_Double();
-    ~Eval_Result_Value_Double();
+  Eval_Result_Value_Double();
+  ~Eval_Result_Value_Double();
 
-    void set_value(float number);
-    float get_value();
+  void set_value(float number);
+  float get_value();
 
-    void set_variable_status(bool def);
-    bool is_variable_defined();
+  void set_variable_status(bool def);
+  bool is_variable_defined();
 
-    void set_result_enum(Result_Enum res);
-    Result_Enum get_result_enum();
+  void set_result_enum(Result_Enum res);
+  Result_Enum get_result_enum();
 };
 
 
 class Local_Environment
 {
-    map<string, Eval_Result_Value *> variable_table;
+  map<string, Eval_Result_Value *> variable_table;
 
 public:
-    Local_Environment();
-    ~Local_Environment();
+  Local_Environment();
+  ~Local_Environment();
 
-    void print(ostream & file_buffer);
-    bool is_variable_defined(string name);
-    Eval_Result_Value * get_variable_value(string name);
-    void put_variable_value(Eval_Result_Value & value, string name);
-    bool does_variable_exist(string name);
+  void print(ostream & file_buffer);
+  bool is_variable_defined(string name);
+  Eval_Result_Value * get_variable_value(string name);
+  void put_variable_value(Eval_Result_Value & value, string name);
+  bool does_variable_exist(string name);
 };
 
 extern Local_Environment interpreter_global_table;
