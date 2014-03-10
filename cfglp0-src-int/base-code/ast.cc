@@ -1011,6 +1011,7 @@ void Return_Ast::print_ast(ostream & file_buffer)
     file_buffer << endl; // maxx
     file_buffer << AST_SPACE << "RETURN ";
     expn->print_ast(file_buffer);
+    file_buffer << endl;
   }
 }
 
@@ -1057,6 +1058,12 @@ void Conditional_Ast::print_ast (ostream & file_buffer)
 {
   file_buffer << endl << AST_SPACE << "If_Else statement:";
   pred->print_ast(file_buffer);
+  print_successors(file_buffer);
+}
+
+void Conditional_Ast::print_ast_modified (ostream & file_buffer) {
+  file_buffer << endl << AST_SPACE << "If_Else statement:";
+  pred->print_ast(file_buffer);
 }
 
 void Conditional_Ast::print_successors (ostream & file_buffer)
@@ -1068,7 +1075,7 @@ void Conditional_Ast::print_successors (ostream & file_buffer)
 Eval_Result & Conditional_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)
 {
 	
-  print_ast(file_buffer);
+  print_ast_modified(file_buffer);
 	
   Eval_Result & predicate_value = pred -> evaluate(eval_env, file_buffer) ;
 	
