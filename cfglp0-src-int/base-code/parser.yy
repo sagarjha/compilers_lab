@@ -189,11 +189,14 @@ function_declaration:
 		Procedure * current_procedure = new Procedure ($1, *($2), *($4));
 		// push to procedure_map of program object
 		bool ret = program_object.set_procedure_map(*current_procedure);
+		if (program_object.variable_in_symbol_list_check(*($2))) {
+			int line = get_line_number();
+			report_error("Function name the same as that of a global",line);
+		}
 		if (!ret) { 
 		int line = get_line_number();
 		report_error("Function already defined, overloading not allowed",line);
 		}
-
 		}
 	|
 		VOID
@@ -202,6 +205,10 @@ function_declaration:
 		Procedure * current_procedure = new Procedure (void_data_type, *($2), *($4));
 		// push to procedure_map of program object
 		bool ret = program_object.set_procedure_map(*current_procedure);
+		if (program_object.variable_in_symbol_list_check(*($2))) {
+			int line = get_line_number();
+			report_error("Function name the same as that of a global",line);
+		}
 		if (!ret) { 
 		int line = get_line_number();
 		report_error("Function already defined, overloading not allowed",line);
@@ -214,6 +221,10 @@ function_declaration:
 		Procedure * current_procedure = new Procedure ($1, *($2), *(new (list <argument*>)));
 		// push to procedure_map of program object
 		bool ret = program_object.set_procedure_map(*current_procedure);
+		if (program_object.variable_in_symbol_list_check(*($2))) {
+			int line = get_line_number();
+			report_error("Function name the same as that of a global",line);
+		}
 		if (!ret) { 
 		int line = get_line_number();
 		report_error("Function already defined, overloading not allowed",line);
@@ -226,6 +237,10 @@ function_declaration:
 		Procedure * current_procedure = new Procedure (void_data_type, *($2), *(new (list<argument*>)));
 		// push to procedure_map of program object
 		bool ret = program_object.set_procedure_map(*current_procedure);
+		if (program_object.variable_in_symbol_list_check(*($2))) {
+			int line = get_line_number();
+			report_error("Function name the same as that of a global",line);
+		}
 		if (!ret) { 
 		int line = get_line_number();
 		report_error("Function already defined, overloading not allowed",line);

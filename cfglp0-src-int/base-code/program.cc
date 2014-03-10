@@ -62,7 +62,7 @@ bool Program::set_procedure_map(Procedure & proc)
 {
     if (procedure_map[proc.get_proc_name()]) {
 	return false;
-    }
+    }    
     procedure_map[proc.get_proc_name()] = &proc;
     return true;
 }

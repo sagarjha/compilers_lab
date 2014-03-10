@@ -53,8 +53,15 @@ Procedure::Procedure(Data_Type proc_return_type, string proc_name, list <argumen
   return_type = proc_return_type;
   name = proc_name;
   list <argument *>::iterator i;
+  list <argument>::iterator j;
   for (i = arg_list.begin(); i != arg_list.end(); ++i) {
-    args.push_back(*(*i));
+    for (j = args.begin(); j!=args.end(); j++) { // March 11, 4:00 am, inner loop introduced to check if any two arguments had the same name
+		if ((*j).get_name() == (*i)->get_name())
+		{
+			report_error("Variable name clash amongst function arguments.", NOLINE);
+		}
+	}
+	args.push_back(*(*i));
   }
   cur_num_basic_block = 2;
   function_defined=false;
@@ -119,10 +126,9 @@ bool Procedure::match_argument_list(list<argument*> *arg_list) {
   list<argument>::iterator i;
   list<argument*>::iterator j;
   for (i = args.begin(), j = arg_list->begin(); i != args.end(); ++i, ++j) {
-    if ((*i).get_type() != (*j)->get_type()) {
+    if (((*i).get_type() != (*j)->get_type()) || ((*i).get_name() != (*j)->get_name())) { // March 11, 4:00 am. Previously, only type was checked here and the name was set
       return false;
     }
-    (*i).set_name((*j)->get_name());
   }
   return true;
 }
@@ -156,6 +162,9 @@ void Procedure::push_arguments_into_symbol_table()
 {
   for (list<argument>::iterator i = args.begin(); i != args.end(); ++i) {
     string name_tmp = (*i).get_name();
+    if (variable_in_symbol_list_check(name_tmp)) {
+		report_error("A local variable has the same name as a function argument", NOLINE);
+	}
     Symbol_Table_Entry * sym_tab_ent = new Symbol_Table_Entry(name_tmp, (*i).get_type());
     local_symbol_table.push_symbol(sym_tab_ent);
   }
