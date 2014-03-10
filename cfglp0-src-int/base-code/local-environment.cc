@@ -263,10 +263,10 @@ void Local_Environment::print(ostream & file_buffer)
 		
 	  else
 	    {
-	      if (vi->get_result_enum() == int_result) {
+	      if (vi->get_result_enum() == int_result || vi->get_result_enum() == return_int_result) {
 		file_buffer << VAR_SPACE << (*i).first << " : " << (int) vi->get_value() << "\n";
 	      }
-	      else if (vi->get_result_enum() == float_result || vi->get_result_enum() == double_result) {
+	      else if (vi->get_result_enum() == float_result || vi->get_result_enum() == double_result || vi->get_result_enum() == return_float_result) {
 		file_buffer << VAR_SPACE << (*i).first << " : " << fixed << setprecision(2) << vi->get_value() << "\n";
 	      }
 	    }

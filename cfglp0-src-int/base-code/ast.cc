@@ -175,9 +175,9 @@ void Name_Ast::print_value(Local_Environment & eval_env, ostream & file_buffer)
 
     else if (eval_env.is_variable_defined(variable_name) && loc_var_val != NULL)
 	{
-	    if (loc_var_val->get_result_enum() == int_result)
+	    if (loc_var_val->get_result_enum() == int_result || loc_var_val->get_result_enum() == return_int_result)
 		file_buffer << (int)loc_var_val->get_value() << "\n";
-	    else if (loc_var_val->get_result_enum() == float_result)
+	    else if (loc_var_val->get_result_enum() == float_result || loc_var_val->get_result_enum() == return_float_result)
 		file_buffer << fixed << setprecision (2) << loc_var_val->get_value() << "\n";
 	    else if (loc_var_val->get_result_enum() == double_result)
 		file_buffer << fixed << setprecision (2) << loc_var_val->get_value() << "\n";
@@ -187,14 +187,14 @@ void Name_Ast::print_value(Local_Environment & eval_env, ostream & file_buffer)
 
     else
 	{
-	    if (glob_var_val->get_result_enum() == int_result)
+	    if (glob_var_val->get_result_enum() == int_result || loc_var_val->get_result_enum() == return_int_result)
 		{
 		    if (glob_var_val == NULL)
 			file_buffer << "0\n";
 		    else
 			file_buffer << (int)glob_var_val->get_value() ;
 		}
-	    else if (glob_var_val->get_result_enum() == float_result)
+	    else if (glob_var_val->get_result_enum() == float_result || loc_var_val->get_result_enum() == return_float_result)
 		{
 		    if (glob_var_val == NULL)
 			file_buffer << "0\n";
@@ -229,13 +229,13 @@ Eval_Result & Name_Ast::get_value_of_evaluation(Local_Environment & eval_env, os
 void Name_Ast::set_value_of_evaluation(Local_Environment & eval_env, Eval_Result & result)
 {
     Eval_Result_Value * i;
-    if (result.get_result_enum() == int_result)
+    if (result.get_result_enum() == int_result || result.get_result_enum() == return_int_result)
 	{
 	    i = new Eval_Result_Value_Int();
 	    i->set_value((int)result.get_value());
 	}
 
-    if (result.get_result_enum() == float_result)
+    if (result.get_result_enum() == float_result || result.get_result_enum() == return_float_result)
 	{
 	    i = new Eval_Result_Value_Float();
 	    i->set_value(result.get_value());
@@ -1002,13 +1002,15 @@ Return_Ast::~Return_Ast()
 
 void Return_Ast::print_ast(ostream & file_buffer)
 {
-    if (expn == NULL) {
 	// void return type
+    if (expn == NULL) {
+	file_buffer << endl; // giveup
 	file_buffer << AST_SPACE << "RETURN <NOTHING>";
     }
 	
 	
     else {
+	file_buffer << endl; // maxx
 	file_buffer << AST_SPACE << "RETURN ";
 	expn->print_ast(file_buffer);
     }
@@ -1018,14 +1020,19 @@ Eval_Result & Return_Ast::evaluate(Local_Environment & eval_env, ostream & file_
 {
     print_ast(file_buffer);
     
+    //void return type
     if (expn != NULL) {
 	Eval_Result & result = expn->get_value_of_evaluation(eval_env, file_buffer);
+	if (result.get_result_enum() == int_result)
+		result.set_result_enum(return_int_result);
+	else if (result.get_result_enum() == float_result)
+		result.set_result_enum(return_float_result);
 	return result;
 	}
     
     else {
 	Eval_Result & result = *new Eval_Result_Value_Int ();
-	result.set_result_enum(return_result);
+	result.set_result_enum(return_void_result);
 	return result;
     }
 }
@@ -1165,10 +1172,12 @@ void Functional_Call_Ast::print_ast(ostream& file_buffer) {
 
 Eval_Result & Functional_Call_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer) {
     Procedure * called_procedure = program_object.get_procedure(name);
+    list<Eval_Result_Value *> new_arg_list;
     for (list<Ast *>::iterator i = args.begin(); i!=args.end(); i++) {
 		Eval_Result & val = (*i)->evaluate(eval_env, file_buffer);
-		called_procedure -> push_call_argument((Eval_Result_Value*) &val);
+		new_arg_list.push_back((Eval_Result_Value*) &val);
 	}
+	called_procedure -> push_call_arguments(new_arg_list);
     Eval_Result & result = called_procedure -> evaluate(file_buffer);
     called_procedure -> clear_call_arguments();
     return result;

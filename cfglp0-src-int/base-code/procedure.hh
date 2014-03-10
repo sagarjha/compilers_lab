@@ -73,7 +73,7 @@ public:
     void set_basic_block_list(list<Basic_Block *> bb_list);
     void set_local_list(Symbol_Table & new_list);
     /* To set arguments (Eval_Result_Value objects) before evaluating and to clear them afterwards */
-    void push_call_argument(Eval_Result_Value * new_arg);
+    void push_call_arguments(list<Eval_Result_Value *> new_arg);
     void clear_call_arguments();
     /* New code ends */
     Data_Type get_return_type();

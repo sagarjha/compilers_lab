@@ -77,9 +77,16 @@ void Procedure::set_basic_block_list(list<Basic_Block *> bb_list)
     basic_block_list = bb_list;
 }
 
-void Procedure::push_call_argument(Eval_Result_Value * new_arg)
+void Procedure::push_call_arguments(list<Eval_Result_Value *> new_arg)
 {
-    call_arguments.push_back(new_arg);
+    // call_arguments = new_arg;
+    
+    // Deep copy
+    int n = new_arg.size();
+    for (int i=0; i<n; i++)
+    {
+		call_arguments.splice(call_arguments.begin(), new_arg);
+	}
 }
 
 void Procedure::clear_call_arguments()
@@ -218,6 +225,7 @@ Eval_Result & Procedure::evaluate(ostream & file_buffer)
     for (list<argument>::iterator argNames = args.begin() ; argNames!=args.end(); argNames++, argVals++) {
 		eval_env.put_variable_value(*(*argVals), (*argNames).get_name());
 	}
+	clear_call_arguments();
 	/* New code ends here*/
 	
     Eval_Result * result = NULL;
@@ -259,8 +267,8 @@ Eval_Result & Procedure::evaluate(ostream & file_buffer)
 	    else // the last AST was not a control statement
 		{
 		    // check if the last ast was a return statement
-		    if (result->get_result_enum() == return_result) {
-			break;
+		    if (result->get_result_enum() == return_result || result->get_result_enum() == return_void_result || result->get_result_enum() == return_float_result || result->get_result_enum() == return_int_result) {
+				break;
 		    }
 		    current_bb = get_next_bb(*current_bb);		
 		}
@@ -271,12 +279,22 @@ Eval_Result & Procedure::evaluate(ostream & file_buffer)
     eval_env.print(file_buffer);
     if (return_type == int_data_type)
     {
-		file_buffer << AST_SPACE << "return : " << (int) result->get_value() << endl;
+		if (result->get_result_enum() == return_int_result) {
+			file_buffer << AST_SPACE << "return : " << (int) result->get_value() << endl;
+		}
+		else if (result->get_result_enum() == return_void_result) {
+			//file_buffer << AST_SPACE << "return : " << (int) result->get_value() << endl;
+		}
 	}
 	
 	else if (return_type != void_data_type)
 	{
-		file_buffer << AST_SPACE << "return : " << result->get_value() << endl;
+		if (result->get_result_enum() == return_float_result) {
+			file_buffer << AST_SPACE << "return : " << result->get_value() << endl;
+		}
+		else if (result->get_result_enum() == return_void_result) {
+			//file_buffer << AST_SPACE << "return : " << (int) result->get_value() << endl;
+		}
 	}
 
     return *result;

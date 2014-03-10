@@ -39,7 +39,10 @@ typedef enum
 	bb_result,
 	float_result,
 	double_result,
-	return_result
+	return_result,
+	return_void_result,
+	return_int_result,
+	return_float_result
     } Result_Enum;
 
 class Eval_Result;
