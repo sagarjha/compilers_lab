@@ -264,6 +264,7 @@ procedure_name:
 		{
 		// create a new procedure
 		current_procedure= new Procedure(void_data_type, *($1), *($3));
+		program_object.push_to_list(*$1);
 		// push to procedure_map of program object
 		bool ret = program_object.set_procedure_map(*current_procedure);
 		if (!ret) { 
@@ -278,6 +279,7 @@ procedure_name:
 		list <argument *> * new_list = new  (list <argument*>);
 		// create a new procedure
 		current_procedure= new Procedure(void_data_type, *($1), *new_list);
+		program_object.push_to_list(*$1);
 		// push to procedure_map of program object
 		bool ret = program_object.set_procedure_map(*current_procedure);
 		if (!ret) { 
@@ -988,8 +990,6 @@ singleton:
 	|
 		'(' type ')' function_call_statement
 		{
-		//$$ = $4;
-		//$$->set_data_type($2);
 		$$ = new Cast_Expr_Ast ($4, $2);
 		}
 	|	

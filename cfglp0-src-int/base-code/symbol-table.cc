@@ -99,11 +99,26 @@ void Symbol_Table::create(Local_Environment & local_global_variables_table)
   for (i = variable_table.begin(); i != variable_table.end(); i++)
     {
       string name = (*i)->get_variable_name();
-      Eval_Result_Value_Int * j = new Eval_Result_Value_Int();
+      Eval_Result_Value * j;
+      if ((*i)->get_data_type() == int_data_type) {
+	j = new Eval_Result_Value_Int();
+      }
+      else if ((*i)->get_data_type() == float_data_type) {
+	j = new Eval_Result_Value_Float();
+      }
+
+      else if ((*i)->get_data_type() == double_data_type) {
+	j = new Eval_Result_Value_Double();
+      }
+
+      if (j == NULL) {
+	report_error("Unknown data type", NOLINE);	
+      }
+      
       if (scope == global)
 	{
 	  j->set_variable_status(true);
-	  j->set_value(0);
+	  // j->set_value(0);
 	}
 
       local_global_variables_table.put_variable_value(*j, name);

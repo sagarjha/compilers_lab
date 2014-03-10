@@ -358,7 +358,7 @@ bool Expr_Ast::check_ast(int line)
     node_data_type = lhs->get_data_type();
     return true;
   }
-  else if (op == 6 || op == 7) {
+  else if (op >= 2 && op <= 7) {
     node_data_type = int_data_type;
     return true;
   }
