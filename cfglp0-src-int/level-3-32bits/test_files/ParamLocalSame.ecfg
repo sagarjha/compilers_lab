@@ -1,8 +1,7 @@
-int fn(int a);
+void fn(int a);
 
 main()
 {
-	int a;
 	int a;
 <bb 2>:
 	a = 3;
