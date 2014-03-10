@@ -1,4 +1,4 @@
-void fn (int b);
+void fn(int b);
 
 main()
 {

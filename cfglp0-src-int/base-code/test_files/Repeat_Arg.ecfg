@@ -1,4 +1,5 @@
-fn2(int a, int a);
+
+void fn2(int a, int a);
 fn2(int a, int a)
 {
    int b;

@@ -7,22 +7,18 @@ main ()
 
 <bb 2>:
   x = 8.1;
-  y = 1.03;
+  y = 1.0;
   z = sum (x, y);
   return;
 
 }
+
+
 sum (float a, float b)
 {
-  float x;
-  float D_1237;
   int x;	
 
 <bb 2>:
-  x = a + b;
-  D_1237 = x;
+  x = (int) (a + b);
   return x;
-
 }
-
-
