@@ -180,6 +180,20 @@ bool Procedure::check_function_defined() {
   return function_defined;
 }
 
+bool Procedure::check_return_type (Data_Type data_type) {
+    // check if the function is main
+    if (name == "main") {
+	// check if the return type is not already defined
+	if (return_type == void_data_type) {
+	    return_type = data_type;
+	    return true;
+	}
+	// otherwise
+	return (return_type == data_type);
+    }
+    return (return_type == data_type);
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 Symbol_Table_Entry & Procedure::get_symbol_table_entry(string variable_name)
@@ -195,8 +209,9 @@ void Procedure::print_ast(ostream & file_buffer)
   if (basic_block_list.size() == 0) {
     file_buffer << "Basic Block List is Empty" << endl;
   }
-  for(i = basic_block_list.begin(); i != basic_block_list.end(); i++)
+  for(i = basic_block_list.begin(); i != basic_block_list.end(); i++) {
     (*i)->print_bb(file_buffer);
+  }
   file_buffer << endl << endl;
 }
 	

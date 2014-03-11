@@ -118,7 +118,7 @@ program:
 		if (main_procedure == NULL) 
 		{
 		int line = get_line_number();
-		report_error("No main procedure defined",line);
+		report_error("Function not declared",line);
 		}
 		  
 		return_statement_used_flag = false;				// No return statement in the current procedure till now
@@ -682,6 +682,11 @@ return_statement:
 	|
 		RETURN exp_assign_op
 		{
+		int line = get_line_number();
+		bool ret = current_procedure->check_return_type ($2->get_data_type());
+		if (!ret) {
+		report_error("Return type mismatch error",line);
+		}
 		$$ = new Return_Ast($2);
 		}
 	;
