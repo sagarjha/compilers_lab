@@ -176,7 +176,7 @@ string User_Options::process_user_command_options(int argc, char * argv[])
 			else if (!(strcmp(option,"--help")) || !(strcmp(option,"-help")))
 			{        
 				cerr << usage;
-				exit(0);
+				exit(1);
 			}
 			else 
 			{

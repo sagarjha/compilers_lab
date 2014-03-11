@@ -411,7 +411,10 @@ procedure:
 		report_error("Function declaration not present",line);
 		}
 		// check that function has been declared at the definition time and that is compatible with its earlier signature
-		current_procedure->match_argument_list(NULL);
+		if (!current_procedure->match_argument_list(NULL)) {
+		int line = get_line_number();
+		report_error("Failed to match argument list", line);
+		}
 		program_object.push_to_list(*$1);
 		}
 		}

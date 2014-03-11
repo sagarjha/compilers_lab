@@ -41,7 +41,7 @@ void report_error(string error_message, int line)
 	else
 		message << file_name << " :: cfglp error : " << error_message;
 	print_error(message.str(), NOTEXIT);
-	exit(0);
+	exit(1);
 }
 
 void print_error(string error_message, int exit_flag)
@@ -50,11 +50,11 @@ void print_error(string error_message, int exit_flag)
 
 	if (command_options.is_do_eval_selected())
 	{
-		exit(0);
+		exit(1);
 	}
 
 	if (exit_flag)
-		exit(0);
+		exit(1);
 }
 
 
