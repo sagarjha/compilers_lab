@@ -62,6 +62,7 @@ class Procedure
     list <argument> args;
     int cur_num_basic_block;
     bool function_defined;
+    bool function_returned;
     /* To store argument ASTs */
     list <Eval_Result_Value *> call_arguments;
     /* New code ends */
@@ -80,6 +81,7 @@ public:
     bool match_argument_list(list<argument*> *arg_list);
     bool match_function_call(list <Ast *> * parameter_list);
     bool check_function_defined();
+    void check_function_returned();    
 
     bool check_return_type (Data_Type data_type);
     

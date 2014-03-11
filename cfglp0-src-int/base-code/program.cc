@@ -71,15 +71,20 @@ bool Program::check_all_functions_defined() {
     map<string, Procedure *>::iterator i;
     for(i = procedure_map.begin(); i != procedure_map.end(); i++)
 	{
-	    if (i->first == "main") {
-		continue;
-	    }
 	    bool ret = (i->second)->check_function_defined();
 	    if (ret == false) {
 		return ret;
 	    }
 	}
     return true;
+}
+
+void Program::check_all_functions_returned() {
+    map<string, Procedure *>::iterator i;
+    for(i = procedure_map.begin(); i != procedure_map.end(); i++)
+	{
+	    (i->second)->check_function_returned();
+	}
 }
 
 Procedure * Program::get_procedure(string name)

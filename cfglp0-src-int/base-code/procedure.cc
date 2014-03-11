@@ -65,6 +65,7 @@ Procedure::Procedure(Data_Type proc_return_type, string proc_name, list <argumen
     }
     cur_num_basic_block = 2;
     function_defined=false;
+    function_returned=false;
 }
 
 Procedure::~Procedure()
@@ -130,8 +131,8 @@ bool Procedure::match_argument_list(list<argument*> *arg_list) {
     list<argument*>::iterator j;
   
     for (i = args.begin(), j = arg_list->begin(); i != args.end(); ++i, ++j) {
-	//cout << (*i).get_name() << " " << (*j)->get_name() << " " << ((*i).get_name()).compare((*j)->get_name()) << endl;
-	if (((*i).get_type() != (*j)->get_type()) || ((*i).get_name()).compare((*j)->get_name()) != 0) { // March 11, 4:00 am. Previously, only type was checked here and the name was set
+	// March 11, 4:00 am. Previously, only type was checked here and the name was set
+	if (((*i).get_type() != (*j)->get_type()) || ((*i).get_name()).compare((*j)->get_name()) != 0) {
 	    return false;
 	}
     }
@@ -183,17 +184,17 @@ bool Procedure::check_function_defined() {
     return function_defined;
 }
 
-bool Procedure::check_return_type (Data_Type data_type) {
-    // check if the function is main
-    if (name == "main") {
-	// check if the return type is not already defined
-	if (return_type == void_data_type) {
-	    return_type = data_type;
-	    return true;
-	}
-	// otherwise
-	return (return_type == data_type);
+void Procedure::check_function_returned() {
+    if (return_type == void_data_type) {
+	return ;
+    }	
+    if (!function_returned) {
+	report_error("Function " + name + " does not have a return statement matching its return type", NOLINE);
     }
+}
+
+bool Procedure::check_return_type (Data_Type data_type) {
+    function_returned = true;
     return (return_type == data_type);
 }
 

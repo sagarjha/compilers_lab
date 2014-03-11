@@ -105,6 +105,7 @@ program:
 		int line = get_line_number();
 		report_error("Function declared but not defined",line);
 		}
+		program_object.check_all_functions_returned();
 		if ($1)
 		$1->global_list_in_proc_map_check(get_line_number());
 		delete $1;
@@ -124,6 +125,7 @@ program:
 		int line = get_line_number();
 		report_error("Function declared but not defined",line);
 		}
+		program_object.check_all_functions_returned();
 		}
 		;
 
@@ -360,7 +362,7 @@ declaration_statement_list:
 		program_object.variable_in_proc_map_check($1->get_variable_name(), line);
 
 		string var_name = $1->get_variable_name();
-		if (current_procedure && current_procedure->get_proc_name() == var_name)
+		if (program_object.get_procedure(var_name) != NULL)
 		{
 		int line = get_line_number();
 		report_error("Variable name cannot be same as procedure name", line);
@@ -380,7 +382,7 @@ declaration_statement_list:
 		program_object.variable_in_proc_map_check($2->get_variable_name(), line);
 
 		string var_name = $2->get_variable_name();
-		if (current_procedure && current_procedure->get_proc_name() == var_name)
+		if (program_object.get_procedure(var_name) != NULL)
 		{
 		int line = get_line_number();
 		report_error("Variable name cannot be same as procedure name", line);
@@ -664,7 +666,7 @@ variable:
 		else
 		{
 		int line = get_line_number();
-		report_error("Variable has not declared", line);
+		report_error("Variable has not been declared", line);
 		}
 
 		$$ = new Name_Ast(*$1, var_table_entry);
