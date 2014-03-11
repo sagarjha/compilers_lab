@@ -1,4 +1,5 @@
-float sum (float a, float b);
+void main();
+float sum(float a, float b);
 
 main ()
 {
@@ -7,13 +8,12 @@ main ()
   float x;
 
 <bb 2>:
-  x = 8.1;
+  x = 8.10;
   y = 1.04;
   z = sum (x, y);
   return;
 
 }
-
 
 sum (float a, float b)
 {

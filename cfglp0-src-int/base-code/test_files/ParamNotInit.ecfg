@@ -1,3 +1,4 @@
+void main();
 void fn(int b);
 
 main()

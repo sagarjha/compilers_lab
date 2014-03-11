@@ -1,5 +1,6 @@
-
+void fn();
 int fn2(int a, float b);
+void main();
 
 main()
 {
@@ -13,8 +14,8 @@ main()
 }
 fn2(int a, float c)
 {
-   int d;
+   int b;
 <bb 2>:
-   d = 2;
+   b = 2;
    return a;
 }

@@ -1,8 +1,9 @@
 int a;
-int a(int b);
+int f(int b);
+int f(int c);
 void main();
 
-a(int b)
+f(int b)
 {
 <bb 2>:
 	return b;
@@ -12,7 +13,6 @@ main()
 {
 	int h;
 <bb 2>:
-	h = 3;
-	a(h);
+	h = f(h);
 	return;
 }

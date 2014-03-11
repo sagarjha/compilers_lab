@@ -1,0 +1,11 @@
+int main();
+
+main()
+{
+	int h;
+<bb 2>:
+	h = 3;
+	return;
+<bb 3>:
+	return;
+}

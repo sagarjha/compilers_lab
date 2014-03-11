@@ -1,3 +1,5 @@
+void main();
+void fn();
 
 fn(int a, )
 {
