@@ -213,7 +213,11 @@ void Name_Ast::print_value(Local_Environment & eval_env, ostream & file_buffer)
 }
 
 Eval_Result & Name_Ast::get_value_of_evaluation(Local_Environment & eval_env, ostream & file_buffer)
-{
+{	
+  if (!eval_env.is_variable_defined(variable_name) && !interpreter_global_table.is_variable_defined(variable_name)) {
+	  report_error("Variable not defined", NOLINE);
+  }
+  
   if (eval_env.does_variable_exist(variable_name))
     {
       Eval_Result * result = eval_env.get_variable_value(variable_name);

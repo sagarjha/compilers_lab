@@ -125,8 +125,10 @@ bool Procedure::match_argument_list(list<argument*> *arg_list) {
   }
   list<argument>::iterator i;
   list<argument*>::iterator j;
+  
   for (i = args.begin(), j = arg_list->begin(); i != args.end(); ++i, ++j) {
-    if (((*i).get_type() != (*j)->get_type()) || ((*i).get_name() != (*j)->get_name())) { // March 11, 4:00 am. Previously, only type was checked here and the name was set
+	  //cout << (*i).get_name() << " " << (*j)->get_name() << " " << ((*i).get_name()).compare((*j)->get_name()) << endl;
+    if (((*i).get_type() != (*j)->get_type()) || ((*i).get_name()).compare((*j)->get_name()) != 0) { // March 11, 4:00 am. Previously, only type was checked here and the name was set
       return false;
     }
   }
