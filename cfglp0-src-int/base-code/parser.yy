@@ -73,12 +73,10 @@
 %type <ast> exp_mul_div
 %type <ast> singleton
 %type <ast> function_call_statement
-%type <argument_obj> declaration_argument
 %type <list_of_argument> argument_list
 %type <argument_obj> argument
 %type <ast> return_statement
 %type <D> type
-%type <list_of_argument> declaration_argument_list
 %type <ast_list> exp_assign_op_list
 
 %start program
@@ -112,49 +110,6 @@ program:
 		delete $1;
 		}
 	|
-		procedure_name
-		{
-		Procedure * main_procedure = program_object.get_main_procedure(cout);
-		if (main_procedure == NULL) 
-		{
-		int line = get_line_number();
-		report_error("Function not declared",line);
-		}
-		  
-		return_statement_used_flag = false;				// No return statement in the current procedure till now
-		}
-		procedure_body
-		{
-		}
-	|
-		declaration_statement_list
-		{
-		  
-		program_object.set_global_table(*$1);
-		return_statement_used_flag = false;				// No return statement in the current procedure till now
-
-		}
-		procedure_name
-		{
-		Procedure * main_procedure = program_object.get_main_procedure(cout);
-		if (main_procedure == NULL) 
-		{
-		int line = get_line_number();
-		report_error("No main procedure defined",line);
-		}
-		  
-		return_statement_used_flag = false;				// No return statement in the current procedure till now
-		}
-		procedure_body
-		{
-		  
-		bool ret = program_object.set_procedure_map(*current_procedure);
-		if (!ret) {
-		int line = get_line_number();
-		report_error("Function already defined, overloading not allowed",line);
-		}
-		}
-	|
 		function_declaration_list procedure_list
 		{
 		Procedure * main_procedure = program_object.get_main_procedure(cout);
@@ -184,7 +139,7 @@ function_declaration_list:
 
 function_declaration:
 		type
-		NAME '(' declaration_argument_list ')' ';'
+		NAME '(' argument_list ')' ';'
 		{
 		Procedure * current_procedure = new Procedure ($1, *($2), *($4));
 		// push to procedure_map of program object
@@ -200,7 +155,7 @@ function_declaration:
 		}
 	|
 		VOID
-		NAME '(' declaration_argument_list ')' ';'
+		NAME '(' argument_list ')' ';'
 		{
 		Procedure * current_procedure = new Procedure (void_data_type, *($2), *($4));
 		// push to procedure_map of program object
@@ -247,64 +202,6 @@ function_declaration:
 		}
 		}
 		;
-
-declaration_argument_list:
-		declaration_argument_list ',' declaration_argument
-		{
-		$$= $1;
-		$$->push_back ($3);
-		}
-	|
-		declaration_argument
-		{
-		$$= new (list <argument*>);
-		$$->push_back($1);
-		}
-		;
-
-declaration_argument:
-		type NAME
-		{
-		$$= new argument ($1, *($2));
-		}
-	|
-		type
-		{
-		$$= new argument (($1), "");
-		}
-;
-
-procedure_name:
-		NAME '(' argument_list ')'
-		{
-		// create a new procedure
-		current_procedure= new Procedure(void_data_type, *($1), *($3));
-		program_object.push_to_list(*$1);
-		// push to procedure_map of program object
-		bool ret = program_object.set_procedure_map(*current_procedure);
-		if (!ret) { 
-		int line = get_line_number();
-		fflush(stdout);
-		report_error("Function already defined, overloading not allowed",line);
-		}
-		}
-	|
-		NAME '(' ')'
-		{
-		list <argument *> * new_list = new  (list <argument*>);
-		// create a new procedure
-		current_procedure= new Procedure(void_data_type, *($1), *new_list);
-		program_object.push_to_list(*$1);
-		// push to procedure_map of program object
-		bool ret = program_object.set_procedure_map(*current_procedure);
-		if (!ret) { 
-		int line = get_line_number();
-		report_error("Function already defined, overloading not allowed",line);
-		}
-
-		}
-		;
-
 
 argument_list:
 		argument_list ',' argument
@@ -357,18 +254,6 @@ procedure_list:
 procedure:
 		NAME '(' argument_list ')'
 		{
-		// if the function is main
-		if (*$1 == "main") {
-		current_procedure = new Procedure (void_data_type, "main", *(new (list<argument*>)));
-		// push to procedure_map of program object
-		bool ret = program_object.set_procedure_map(*current_procedure);
-		if (!ret) { 
-		int line = get_line_number();
-		report_error("Function already defined, overloading not allowed",line);
-		}
-		program_object.push_to_list(*$1);
-		}
-		else {
 		current_procedure = program_object.get_procedure(*$1);
 		if (current_procedure == NULL) {
 		int line = get_line_number();
@@ -383,7 +268,6 @@ procedure:
 		current_procedure->push_arguments_into_symbol_table();
 		program_object.push_to_list(*$1);
 		}
-		}
 		procedure_body
 		{
 		// find the corresponding program object from the declaration
@@ -393,18 +277,6 @@ procedure:
 	|
 		NAME '(' ')'
 		{
-		// if the function is main
-		if (*$1 == "main") {
-		current_procedure = new Procedure (void_data_type, "main", *(new (list<argument*>)));
-		// push to procedure_map of program object
-		bool ret = program_object.set_procedure_map(*current_procedure);
-		if (!ret) { 
-		int line = get_line_number();
-		report_error("Function already defined, overloading not allowed",line);
-		}
-		program_object.push_to_list(*$1);
-		}
-		else {
 		current_procedure = program_object.get_procedure(*$1);
 		if (current_procedure == NULL) {
 		int line = get_line_number();
@@ -416,7 +288,6 @@ procedure:
 		report_error("Failed to match argument list", line);
 		}
 		program_object.push_to_list(*$1);
-		}
 		}
 		procedure_body
 		{
