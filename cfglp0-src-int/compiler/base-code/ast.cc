@@ -485,12 +485,13 @@ Code_For_Ast & Number_Ast<DATA_TYPE>::compile_and_optimize_ast(Lra_Outcome & lra
 ///////////////////////////////////////////////////////////////////////////////
 
 // code for the implementation of relational expressions
-Relational_Expr_Ast::Relational_Expr_Ast (Ast* l, int oper, Ast* r, int line)
+Relational_Expr_Ast::Relational_Expr_Ast (Ast* l, Tgt_Op oper, Ast* r, int line)
 {
     lhs = l;
     rhs = r;
     op = oper;
     lineno = line;
+    ast_num_child = binary_arity;
 }
 
 Relational_Expr_Ast::~Relational_Expr_Ast()
@@ -550,11 +551,11 @@ void Relational_Expr_Ast::print(ostream & file_buffer)
     
     file_buffer << "\n" << AST_NODE_SPACE << "Condition: " << op_str << "\n";
 
-    file_buffer << AST_IF_SPACE << "LHS (";
+    file_buffer << AST_SUB_NODE_SPACE << "LHS (";
     lhs->print(file_buffer);
     file_buffer << ")\n";
 
-    file_buffer << AST_IF_SPACE << "RHS (";
+    file_buffer << AST_SUB_NODE_SPACE << "RHS (";
     rhs->print(file_buffer);
     file_buffer << ")";
 }
@@ -624,11 +625,73 @@ Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
 }
 
 Code_For_Ast & Relational_Expr_Ast::compile() {
-  
+	
+	CHECK_INVARIANT((lhs != NULL), "Lhs cannot be null");
+    CHECK_INVARIANT((rhs != NULL), "Rhs cannot be null");
+
+    Code_For_Ast & load_stmt_left = lhs->compile();
+    Register_Descriptor * load_register_left = load_stmt_left.get_reg();
+    load_register_left->set_use_for_expr_result();
+    Code_For_Ast & load_stmt_right = rhs->compile();
+    Register_Descriptor * load_register_right = load_stmt_right.get_reg();	
+	load_register_right->set_use_for_expr_result();
+
+	// op+1 to make the ENUM code of the operation concordant with the self-assigned codes from before
+	Code_For_Ast set_stmt = create_set_stmt(op, load_register_left, load_register_right);
+    // Store the statement in ic_list
+
+    list<Icode_Stmt *> & ic_list = *new list<Icode_Stmt *>;
+
+    if (load_stmt_left.get_icode_list().empty() == false)
+	ic_list = load_stmt_left.get_icode_list();
+
+	if (load_stmt_right.get_icode_list().empty() == false)
+	ic_list.splice(ic_list.end(), load_stmt_right.get_icode_list());
+
+    if (set_stmt.get_icode_list().empty() == false)
+	ic_list.splice(ic_list.end(), set_stmt.get_icode_list());
+
+    Code_For_Ast * set_stmt_final;
+    if (ic_list.empty() == false)
+	set_stmt_final = new Code_For_Ast(ic_list, set_stmt.get_reg());
+	
+	load_register_left->reset_use_for_expr_result();
+	load_register_right->reset_use_for_expr_result();
+
+    return *set_stmt_final;
 }
 
 Code_For_Ast & Relational_Expr_Ast::compile_and_optimize_ast(Lra_Outcome & lra) {
   
+}
+
+Code_For_Ast & Relational_Expr_Ast::create_set_stmt(Tgt_Op opn, Register_Descriptor * reg1, Register_Descriptor * reg2)
+{
+    CHECK_INVARIANT((reg1 != NULL), "Operand register cannot be null");
+    CHECK_INVARIANT((reg2 != NULL), "Operand register cannot be null");
+	
+	Register_Descriptor * result_register_desc = machine_dscr_object.get_new_register();
+
+    Ics_Opd * result_register_opd = new Register_Addr_Opd(result_register_desc);
+    Ics_Opd * reg1_opd = new Register_Addr_Opd(reg1);
+    Ics_Opd * reg2_opd = new Register_Addr_Opd(reg2);
+
+    Icode_Stmt * store_temp_stmt = new Set_Rel_IC_Stmt(opn, reg1_opd, reg2_opd, result_register_opd);
+
+
+/* NOT SURE IF THIS IS TO BE DONE OR NOT
+    if (command_options.is_do_lra_selected() == false) {
+		variable_symbol_entry->free_register(reg1);
+		variable_symbol_entry->free_register(reg2);
+	}
+	*/
+	
+    list<Icode_Stmt *> & ic_list = *new list<Icode_Stmt *>;
+    ic_list.push_back(store_temp_stmt);
+
+    Code_For_Ast & name_code = *new Code_For_Ast(ic_list, result_register_desc);
+
+    return name_code;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -636,8 +699,8 @@ Code_For_Ast & Relational_Expr_Ast::compile_and_optimize_ast(Lra_Outcome & lra) 
 Conditional_Ast::Conditional_Ast(Ast* predicate, int id1, int id2, int line)
 {
     pred = predicate;
-    bb_id1 = id1;
-    bb_id2 = id2;
+    label_id1 = id1;
+    label_id2 = id2;
     lineno = line;
 }
 
@@ -650,8 +713,8 @@ void Conditional_Ast::print (ostream & file_buffer)
 {
     file_buffer << AST_SPACE << "If_Else statement:";
     pred->print(file_buffer);
-    file_buffer << endl << AST_NODE_SPACE << "True Successor: " << bb_id1;
-    file_buffer << endl << AST_NODE_SPACE << "False Successor: " << bb_id2 << endl;
+    file_buffer << endl << AST_NODE_SPACE << "True Successor: " << label_id1;
+    file_buffer << endl << AST_NODE_SPACE << "False Successor: " << label_id2 << endl;
 }
 
 Eval_Result & Conditional_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)
@@ -663,13 +726,13 @@ Eval_Result & Conditional_Ast::evaluate(Local_Environment & eval_env, ostream & 
     /* the predicate is true */
     if (predicate_value.get_int_value() == 1)
 	{
-	    successor = bb_id1;
+	    successor = label_id1;
 	} 
 
     /* the predicate is false */
     else if (predicate_value.get_int_value() == 0)
 	{	
-	    successor = bb_id2;
+	    successor = label_id2;
 	}
 	
     else
@@ -688,11 +751,41 @@ Eval_Result & Conditional_Ast::evaluate(Local_Environment & eval_env, ostream & 
 }
 
 Code_For_Ast & Conditional_Ast::compile() {
-
+	Code_For_Ast & expr_stmt = pred->compile();
+	Register_Descriptor * reg_to_compare = expr_stmt.get_reg();
+	
+	reg_to_compare->set_use_for_expr_result();
+	
+	Code_For_Ast true_stmt = create_bne_stmt(reg_to_compare);
+	
+	reg_to_compare->reset_use_for_expr_result();
+	
+	list<Icode_Stmt *> ic_list;
+    ic_list = expr_stmt.get_icode_list();
+    ic_list.splice(ic_list.end(), true_stmt.get_icode_list());
+	
+	Goto_Ast false_goto_statement = Goto_Ast (label_id2, lineno);
+	Code_For_Ast & false_goto_stmt = false_goto_statement.compile();
+	
+	ic_list.splice(ic_list.end(), false_goto_stmt.get_icode_list());
+	
+	Code_For_Ast * cond_stmt_final= new Code_For_Ast(ic_list, reg_to_compare);
+	reg_to_compare->reset_use_for_expr_result();
+	
+	return *cond_stmt_final;
 }
 
 Code_For_Ast & Conditional_Ast::compile_and_optimize_ast(Lra_Outcome & lra) {
+	
+}
 
+Code_For_Ast Conditional_Ast::create_bne_stmt(Register_Descriptor * reg) {
+	Ics_Opd * register_opd = new Register_Addr_Opd(reg);
+	Icode_Stmt * bne_stmt = new Control_IC_Stmt(bne, register_opd, label_id1);
+	list<Icode_Stmt *> & ic_list = *new list<Icode_Stmt *>;
+    ic_list.push_back(bne_stmt);
+    Code_For_Ast & name_code = *new Code_For_Ast(ic_list, reg);
+    return name_code;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -730,7 +823,14 @@ Eval_Result & Goto_Ast::evaluate_without_print(Local_Environment & eval_env, ost
 }
 
 Code_For_Ast & Goto_Ast::compile() {
-  
+	
+	Icode_Stmt * goto_stmt = new Control_IC_Stmt(goto_command, bb_id);
+	list<Icode_Stmt *> & ic_list = *new list<Icode_Stmt *>;
+    ic_list.push_back(goto_stmt);
+    
+    Code_For_Ast * new_code = new Code_For_Ast();
+	new_code -> set_icode_list(ic_list);
+	return *new_code;
 }
 
 Code_For_Ast & Goto_Ast::compile_and_optimize_ast(Lra_Outcome & lra) {

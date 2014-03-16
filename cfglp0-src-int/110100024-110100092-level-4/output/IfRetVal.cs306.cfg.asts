@@ -1,0 +1,42 @@
+Program:
+   Procedure: fn
+
+
+      Basic_Block 2
+
+         Asgn:
+            LHS (Name : a)
+            RHS (Num : 10)
+
+         If_Else statement:
+            Condition: GT
+               LHS (Name : a)
+               RHS (Num : 5)
+            True Successor: 3
+            False Successor: 4
+      Basic_Block 3
+
+         Asgn:
+            LHS (Name : D1234)
+            RHS (Num : 10)
+         Goto statement:
+            Successor: 5
+      Basic_Block 4
+
+         Asgn:
+            LHS (Name : D1234)
+            RHS (Name : a)
+
+      Basic_Block 5
+
+         RETURN Name : D1234
+
+
+   Procedure: main
+
+
+      Basic_Block 2
+
+         FN CALL: fn()
+         RETURN <NOTHING>
+

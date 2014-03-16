@@ -88,6 +88,9 @@ void Basic_Block::compile()
 	Code_For_Ast ast_code;
 
 	machine_dscr_object.validate_init_local_register_mapping();
+	
+	Icode_Stmt * bb_label_stmt = new Label_IC_Stmt(id_number);
+	bb_icode_list.push_back(bb_label_stmt);
 
 	// compile the program by visiting each ast in the block
 	list<Ast *>::iterator i;

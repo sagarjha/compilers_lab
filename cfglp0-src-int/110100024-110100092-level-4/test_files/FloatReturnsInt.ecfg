@@ -1,0 +1,9 @@
+float main();
+
+main()
+{
+	int h;
+<bb 2>:
+	h = 3;
+	return h;
+}

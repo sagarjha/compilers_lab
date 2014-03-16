@@ -1,0 +1,9 @@
+void main();
+
+main()
+{
+	float h;
+<bb 2>:
+	h = 3.00;
+	return h;
+}

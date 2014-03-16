@@ -1,0 +1,21 @@
+Program:
+   Procedure: fn
+
+
+      Basic_Block 2
+
+         RETURN Num : 2.30
+
+
+   Procedure: main
+
+
+      Basic_Block 2
+
+         Asgn:
+            LHS (Name : a)
+            RHS (
+         FN CALL: fn())
+
+         RETURN <NOTHING>
+

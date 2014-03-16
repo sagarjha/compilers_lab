@@ -1,0 +1,24 @@
+110100024- Sagar Jha
+110100092- Raghav Gupta
+
+Implementation of Programming Languages- Assignment 4b)
+
+Summary of changes made (file by file)-
+
+scanner.ll
+	- "void" was recognized as a keyword
+	- The comma was added to the list of meta characters
+
+parser.yy
+	- Added rules to detect function declarations and definitions
+	- Executable statements can now be standalone function calls
+	- Function calls can be part of expressions
+	- Function call parameters can be expressions consisting of global/local variables and function calls
+	- Return statements made more general
+	- The main function can have arguments, however this would cause an evaluation time error
+Constraints enforced:
+	- Every function needs to be defined AND declared even if not called anywhere
+	- The variable names in the declaration and definition should match, as also their types
+	- Duplicate declarations/definitions not allowed
+	- Function names can't be shared by any variable, local or global
+	- Successive basic blocks within a function increase only by 1

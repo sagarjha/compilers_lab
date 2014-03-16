@@ -49,7 +49,7 @@ typedef enum
 	a_op_o1_r,	/* r <- o1 */
 	a_op_r_r_o1,	/* r <- r op o1 */
 	a_op_r_o1_o2,	/* r <- o1 op o2 */ 
-	a_op_o1_o2_r,	/* r <- o1 op o2 */
+	a_op_o1_o2_r,	/* o1 op o2 r appearing in that order */
 	a_nsy		/* not specified yet */
 } Assembly_Format;
 
@@ -63,6 +63,7 @@ typedef enum
 	i_r_op_o1,	/* r <- o1 */
 	i_r_r_op_o1,	/* r <- r op o1 */
 	i_r_o1_op_o2,	/* r <- o1 op o2 */ 
+	i_op_o1_o2_r,  /* o1 op o2 r appearing in that order */
 	i_nsy		/* not specified yet */
 } Icode_Format;
 
@@ -78,7 +79,15 @@ typedef enum
 { 
 	load, 
 	imm_load, 
-	store, 
+	store,
+	sle,
+	sge,
+	slt,
+	sgt,
+	sne,
+	seq, 
+	goto_command,
+	bne,
 	nop 
 } Tgt_Op;
 
@@ -232,6 +241,72 @@ public:
 	void print_assembly(ostream & file_buffer);
 };
 
+class Set_Rel_IC_Stmt: public Icode_Stmt
+{ 
+	Ics_Opd * opd1;   
+	Ics_Opd * opd2;   
+	Ics_Opd * result; 
+
+public:
+	Set_Rel_IC_Stmt(Tgt_Op inst_op, Ics_Opd * opd1, Ics_Opd * opd2, Ics_Opd * result); 
+	~Set_Rel_IC_Stmt() {} 
+	Set_Rel_IC_Stmt & operator=(const Set_Rel_IC_Stmt & rhs);
+
+	Instruction_Descriptor & get_inst_op_of_ics();
+
+	Ics_Opd * get_opd1();
+	Ics_Opd * get_opd2();
+	void set_opd1(Ics_Opd * io);
+	void set_opd2(Ics_Opd * io);
+
+	Ics_Opd * get_result();
+	void set_result(Ics_Opd * io);
+
+	void print_icode(ostream & file_buffer);
+	void print_assembly(ostream & file_buffer);
+};
+
+class Label_IC_Stmt: public Icode_Stmt
+{ 
+	int num; 
+
+public:
+	Label_IC_Stmt(int _num); 
+	~Label_IC_Stmt() {} 
+	Label_IC_Stmt & operator=(const Label_IC_Stmt & rhs);
+
+	Instruction_Descriptor & get_inst_op_of_ics();
+
+	int get_num();
+	void set_num(int b);
+
+	void print_icode(ostream & file_buffer);
+	void print_assembly(ostream & file_buffer);
+};
+
+class Control_IC_Stmt: public Icode_Stmt
+{ 
+	Ics_Opd * opd;   
+	int label; 
+
+public:
+	Control_IC_Stmt(Tgt_Op opn, Ics_Opd * _opd, int t_label); 
+	Control_IC_Stmt(Tgt_Op opn, int t_label); 
+	~Control_IC_Stmt() {} 
+	Control_IC_Stmt & operator=(const Control_IC_Stmt & rhs);
+
+	Instruction_Descriptor & get_inst_op_of_ics();
+
+	Ics_Opd * get_opd1();
+	void set_opd1(Ics_Opd * io);
+
+	int get_label();
+	void set_label(int n);
+
+	void print_icode(ostream & file_buffer);
+	void print_assembly(ostream & file_buffer);
+};
+
 //////////////////////// Intermediate code for Ast statements ////////////////////////
 
 class Code_For_Ast
@@ -254,6 +329,7 @@ public:
 
 	void append_ics(Icode_Stmt & ics);
 	list<Icode_Stmt *> & get_icode_list();
+	void set_icode_list(list<Icode_Stmt *> & new_list);
 
 	Register_Descriptor * get_reg();
 

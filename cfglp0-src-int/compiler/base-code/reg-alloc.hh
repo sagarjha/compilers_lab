@@ -95,6 +95,7 @@ class Register_Descriptor
 
     bool get_used_for_expr_result();
     void reset_use_for_expr_result();
+    void set_use_for_expr_result();
 
     bool is_free();
 };

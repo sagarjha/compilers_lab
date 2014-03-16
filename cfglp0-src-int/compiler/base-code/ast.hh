@@ -33,7 +33,6 @@
 #define AST_SPACE "         "
 #define AST_NODE_SPACE "            "
 #define AST_SUB_NODE_SPACE "               "
-#define AST_IF_SPACE "               "
 
 using namespace std;
 
@@ -46,7 +45,8 @@ protected:
 	{
 	    zero_arity = 0,
 	    unary_arity = 1,
-	    binary_arity = 2
+	    binary_arity = 2,
+	    ternary_arity = 3
 	}Ast_Arity;
 
     Data_Type node_data_type;
@@ -142,10 +142,10 @@ class Relational_Expr_Ast:public Ast
 {
     Ast *lhs;
     Ast *rhs;
-    int op;
+    Tgt_Op op;
 
 public:
-    Relational_Expr_Ast (Ast*, int, Ast*, int);
+    Relational_Expr_Ast (Ast*, Tgt_Op, Ast*, int);
     ~Relational_Expr_Ast();
 
     Data_Type get_data_type();
@@ -157,6 +157,7 @@ public:
 
     Code_For_Ast & compile();
     Code_For_Ast & compile_and_optimize_ast(Lra_Outcome & lra);
+    Code_For_Ast & create_set_stmt(Tgt_Op opn, Register_Descriptor * reg1, Register_Descriptor * reg2);
 };
 
 class Return_Ast:public Ast
@@ -178,8 +179,8 @@ class Conditional_Ast:public Ast
 {
 
     Ast * pred;
-    int bb_id1;
-    int bb_id2;
+    int label_id1;
+    int label_id2;
 
 public:
     Conditional_Ast (Ast*, int, int, int);
@@ -190,11 +191,11 @@ public:
 
     Code_For_Ast & compile();
     Code_For_Ast & compile_and_optimize_ast(Lra_Outcome & lra);
+    Code_For_Ast create_bne_stmt(Register_Descriptor * reg);
 };
 
 class Goto_Ast:public Ast
 {
-
     int bb_id;
 
 public:

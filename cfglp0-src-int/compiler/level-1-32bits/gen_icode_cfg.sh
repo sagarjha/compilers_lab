@@ -1,0 +1,14 @@
+#!/bin/bash
+zero=0;
+mkdir output/test_files
+for f in test_files/*.cs306.cfg
+do
+    echo $f
+    `timeout 5s ./cfglp32 -icode -d $f > output/$f.icode`
+    res=$?
+    if [[ $res -ne $zero ]]; then
+	rm output/$f.eval
+    fi;
+done
+cp output/test_files/* output
+rm -r output/test_files

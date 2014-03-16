@@ -1,0 +1,18 @@
+int a(int b);
+void main();
+
+a(int b)
+{
+	int c;
+<bb 2>:
+	c = b;
+	return c;
+}
+
+main()
+{
+	int h;
+	int a;
+<bb 2>:
+	return;
+}

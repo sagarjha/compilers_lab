@@ -1,0 +1,28 @@
+110100024 - Sagar Jha
+110100092 - Raghav Gupta
+
+CS306 - Interpretation of Programming Languages Lab
+
+Assignment 2b) (parser for level 1, asts and evals implemented)
+
+a) scanner.ll
+   In addition to the changes made in 2a, the regex for num was also changed so that it does not accept underscores in numbers as a valid character. Also, the relational operators were identified separately from the META_CHARS.
+
+b) parser.yy, parser.h and parser.ih
+   Operator precedence and associativity were defined for the relational operators introduced. To achieve this, we changed the grammar a little bit by defining some new rules. Now, we force that the basic block must be consecutive increasing integers starting from 2. For this, implementation of bb_strictly_increasing_order_check was changed.
+
+c) for ast option
+
+   in files ast.hh & ast.cc
+      added the classes relational_expr_ast, boolean_expr_ast, conditional_ast and goto_ast and implementation of their methods for handling relational expressions, boolean expressions, if-else statements and goto statements respectively. The boolean_expr_ast was not used ultimately as the cfg file produced does not contain any logical operator like || or &&. Print methods of newly created classes were written to match the output of the reference implementation.
+
+d) for eval option
+
+   in files ast.hh and ast.cc
+      added methods to evaluate conditional, goto and relational expression asts. These made use of evaluation routines written for name and number asts. The relational expression AST must return 0 or 1 (integer) while the other two must return the ID of the block to go next, encapsulated within an Eval_Result object
+
+   in files local-environment.hh local-environment.cc
+      To accommodate block IDs to be accommodated within Eval_Result, a new result type, namely bb_result was added to Result_Enum. Also, a class Eval_Result_BB was derived from Eval_Result which would serve as the evaluation result of conditional and goto statements. Objects of this class have result_type = bb_result, and store the next block ID in a protected field. Functions to set and retrieve this block ID were written.
+
+    in file procedure.cc
+       In case the block contains a conditional/goto statement, it is guaranteed to be the last one in the block. So after the current block is evalauted, in case the last statement was a conditional/goto, the result type must be bb_result. If so, the next block to go to was retrieved from the result of the current block's evaluation. This change was implemented in the function to evaulate a procedure itself.

@@ -38,6 +38,7 @@
 	Basic_Block * basic_block;
 	list<Basic_Block *> * basic_block_list;
 	Procedure * procedure;
+	Tgt_Op target_op;
 };
 
 %token <integer_value> INTEGER_NUMBER BBNUM
@@ -45,9 +46,9 @@
 %token RETURN INTEGER IF ELSE 
 %token <string_value> GOTO 
 %token <integer_value> ASSIGN
-%token <integer_value> NOT_EQUAL
-%token <integer_value> EQUAL
-%token <integer_value> LT LE GT GE
+%token <target_op> NOT_EQUAL
+%token <target_op> EQUAL
+%token <target_op> LT LE GT GE
 			
 %type <symbol_table> optional_variable_declaration_list
 %type <symbol_table> variable_declaration_list
@@ -538,7 +539,7 @@ flp:
 		    if (NOT_ONLY_PARSE)
 		{
 		    // pass an integer instead of '=' according to specification
-		    $$ = new Relational_Expr_Ast ($1, 1, $3, get_line_number());
+		    $$ = new Relational_Expr_Ast ($1, nop, $3, get_line_number());
 		$$->check_ast();
 		}
 		}
@@ -558,7 +559,7 @@ slp:
 		    if (NOT_ONLY_PARSE)
 		{
 		    // pass an integer instead of '=' according to specification
-		    $$ = new Relational_Expr_Ast ($1, 7, $3, get_line_number());
+		    $$ = new Relational_Expr_Ast ($1, seq, $3, get_line_number());
 		$$->check_ast();
 		}
 		}
@@ -568,7 +569,7 @@ slp:
 		    if (NOT_ONLY_PARSE)
 		{
 		    // pass an integer instead of '=' according to specification
-		    $$ = new Relational_Expr_Ast ($1, 6, $3, get_line_number());
+		    $$ = new Relational_Expr_Ast ($1, sne, $3, get_line_number());
 		$$->check_ast();
 		}
 		}
@@ -588,7 +589,7 @@ tlp:
 		    if (NOT_ONLY_PARSE)
 		{
 		    // pass an integer instead of '=' according to specification
-		    $$ = new Relational_Expr_Ast ($1, 3, $3, get_line_number());
+		    $$ = new Relational_Expr_Ast ($1, sge, $3, get_line_number());
 		$$->check_ast();
 		}
 		}
@@ -598,7 +599,7 @@ tlp:
 		    if (NOT_ONLY_PARSE)
 		{
 		    // pass an integer instead of '=' according to specification
-		    $$ = new Relational_Expr_Ast ($1, 5, $3, get_line_number());
+		    $$ = new Relational_Expr_Ast ($1, sgt, $3, get_line_number());
 		$$->check_ast();
 		}
 		}
@@ -608,7 +609,7 @@ tlp:
 		    if (NOT_ONLY_PARSE)
 		{
 		    // pass an integer instead of '=' according to specification
-		    $$ = new Relational_Expr_Ast ($1, 2, $3, get_line_number());
+		    $$ = new Relational_Expr_Ast ($1, sle, $3, get_line_number());
 		$$->check_ast();
 		}
 		}
@@ -618,7 +619,7 @@ tlp:
 		    if (NOT_ONLY_PARSE)
 		{
 		    // pass an integer instead of '=' according to specification
-		    $$ = new Relational_Expr_Ast ($1, 4, $3, get_line_number());
+		    $$ = new Relational_Expr_Ast ($1, slt, $3, get_line_number());
 		$$->check_ast();
 		}
 		}
