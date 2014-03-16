@@ -320,6 +320,7 @@ Set_Rel_IC_Stmt& Set_Rel_IC_Stmt::operator=(const Set_Rel_IC_Stmt& rhs)
 void Set_Rel_IC_Stmt::print_icode(ostream & file_buffer)
 {
 	CHECK_INVARIANT (opd1, "Opd1 cannot be NULL for a move IC Stmt");
+	CHECK_INVARIANT (opd2, "Opd2 cannot be NULL for a move IC Stmt");
 	CHECK_INVARIANT (result, "Result cannot be NULL for a move IC Stmt");
 
 	string operation_name = op_desc.get_name();
@@ -347,36 +348,27 @@ void Set_Rel_IC_Stmt::print_icode(ostream & file_buffer)
 
 void Set_Rel_IC_Stmt::print_assembly(ostream & file_buffer)
 {
-	/*
-	CHECK_INVARIANT (opd1, "Opd1 cannot be NULL for a move IC Stmt");
+	CHECK_INVARIANT (opd1, "Opd1 cannot be NULL for a set_rel IC Stmt");
+	CHECK_INVARIANT (opd2, "Opd2 cannot be NULL for a set_rel IC Stmt");
 	CHECK_INVARIANT (result, "Result cannot be NULL for a move IC Stmt");
 	string op_name = op_desc.get_mnemonic();
 
 	Assembly_Format assem_format = op_desc.get_assembly_format();
 	switch (assem_format)
 	{
-	case a_op_r_o1: 
-			file_buffer << "\t" << op_name << ", ";
+	case a_op_r_o1_o2: 
+			file_buffer << "\t" << op_name << " ";
 			result->print_asm_opd(file_buffer);
 			file_buffer << ", ";
 			opd1->print_asm_opd(file_buffer);
-			file_buffer << "\n";
-
-			break; 
-
-	case a_op_o1_r: 
-			file_buffer << "\t" << op_name << ", ";
-			opd1->print_asm_opd(file_buffer);
 			file_buffer << ", ";
-			result->print_asm_opd(file_buffer);
+			opd2->print_asm_opd(file_buffer);
 			file_buffer << "\n";
-
 			break; 
-
+			
 	default: CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, "Intermediate code format not supported");
 		break;
 	}
-	*/
 }
 /******************************* Control statement code ************************/
 
@@ -440,7 +432,25 @@ void Control_IC_Stmt::print_icode(ostream & file_buffer) {
 }
 
 void Control_IC_Stmt::print_assembly(ostream & file_buffer) {
-	
+
+	string op_name = op_desc.get_mnemonic();
+
+	Assembly_Format assem_format = op_desc.get_assembly_format();
+	switch (assem_format)
+	{
+	case a_op_o1_o2_r: 
+			CHECK_INVARIANT (opd, "Opd cannot be NULL for a control IC Stmt");
+			file_buffer << "\t" << op_name << " ";
+			opd->print_asm_opd(file_buffer);
+			file_buffer << ", $zero, label" << label << endl;
+			break; 
+	case a_op_o1:
+			file_buffer << "\t" << op_name << " label" << label << endl;
+			break;
+			
+	default: CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, "Intermediate code format not supported");
+		break;
+	}
 }
 
 /******************************* Label statement code **************************/
@@ -462,11 +472,11 @@ void Label_IC_Stmt::set_num(int _num) {
 }
 
 void Label_IC_Stmt::print_icode(ostream & file_buffer) {
-	file_buffer << "label" << num << ":\n";
+	file_buffer << endl << "label" << num << ":\n";
 }
 
 void Label_IC_Stmt::print_assembly(ostream & file_buffer) {
-	
+	file_buffer << endl << "label" << num << ":\n";
 }
 
 /******************************* Class Code_For_Ast ****************************/

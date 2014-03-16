@@ -293,7 +293,7 @@ void Machine_Description::initialize_instruction_table()
 	spim_instruction_table[seq] = new Instruction_Descriptor(imm_load, "seq", "seq", "", i_r_o1_op_o2, a_op_r_o1_o2);
 	spim_instruction_table[sne] = new Instruction_Descriptor(imm_load, "sne", "sne", "", i_r_o1_op_o2, a_op_r_o1_o2);
 	spim_instruction_table[bne] = new Instruction_Descriptor(imm_load, "bne", "bne", "", i_op_o1_o2_r, a_op_o1_o2_r);
-	spim_instruction_table[goto_command] = new Instruction_Descriptor(imm_load, "goto", "li", "", i_op_o1, a_op_o1);
+	spim_instruction_table[goto_command] = new Instruction_Descriptor(imm_load, "goto", "j", "", i_op_o1, a_op_o1);
 }
 
 void Machine_Description::validate_init_local_register_mapping()
