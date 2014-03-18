@@ -80,11 +80,11 @@ int Parser::get_line_number()
 
 inline void Parser::bb_strictly_increasing_order_check(int bb_number)
 {
-	/*if (bb_number != cur_num_basic_block) {
+	if (bb_number != cur_num_basic_block) {
 	   int line = get_line_number();
 	   CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, "basic_block should be in strictly continuous order");
-	   ++cur_num_basic_block;
-	}*/
+	}
+	cur_num_basic_block++;
 }
 
 ///////////////////////////////////////////////////////////////////

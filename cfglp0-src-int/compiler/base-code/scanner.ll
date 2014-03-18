@@ -28,11 +28,12 @@
      [<]bb[ ][[:digit:]_][[:digit:]_]+[>] {
      store_token_name("BASIC BLOCK");
      
-     string bb_num_str = matched().substr(4, matched().length() - 2);
+     string bb_num_str = matched().substr(4, matched().length() - 5);
      CHECK_INPUT_AND_ABORT((atoi(bb_num_str.c_str()) >= 2), "Illegal basic block lable", lineNr());
      
      ParserBase::STYPE__ * val = getSval();
      val->integer_value = atoi(bb_num_str.c_str());
+     // cerr << val->integer_value << " " << bb_num_str << " " << matched() << endl;
      
      return Parser::BBNUM;
  }
@@ -40,11 +41,13 @@
      [<]bb[ ][2-9][>] {
 	 store_token_name("BASIC BLOCK");
 	 
-	 string bb_num_str = matched().substr(4, matched().length() - 2);
+	 string bb_num_str = matched().substr(4, matched().length() - 5);
 	 CHECK_INPUT_AND_ABORT((atoi(bb_num_str.c_str()) >= 2), "Illegal basic block lable", lineNr());
 	 
 	 ParserBase::STYPE__ * val = getSval();
 	 val->integer_value = atoi(bb_num_str.c_str());
+	 
+	 // cerr << val->integer_value << " " << bb_num_str << " " << matched() << endl;
 	 
 	 return Parser::BBNUM;
      }

@@ -276,6 +276,7 @@ basic_block_list:
 		CHECK_INVARIANT((bb_list != NULL), "New basic block cannot be null");
 		CHECK_INVARIANT((bb != NULL), "Basic block cannot be null");
 
+		
 		bb_strictly_increasing_order_check(bb->get_bb_number());
 
 		bb_list->push_back($2);
@@ -290,6 +291,7 @@ basic_block_list:
 		    Basic_Block * bb = $1;
 
 		CHECK_INVARIANT((bb != NULL), "Basic block cannot be null");
+		bb_strictly_increasing_order_check(bb->get_bb_number());
 
 		list<Basic_Block *> * bb_list = new list<Basic_Block *>;
 		bb_list->push_back(bb);

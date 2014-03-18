@@ -66,6 +66,7 @@ class Parser: public ParserBase
 
 		NOT_ONLY_PARSE = command_options.not_only_parse;
 		max_bb_num = max_goto_bb_num = 0;
+		cur_num_basic_block = 2;
 	}
 
         int parse();
