@@ -1,9 +1,0 @@
-int a;
-void main();
-int f(int b);
-
-f(int b)
-{
-<bb 2>:
-	return b;
-}

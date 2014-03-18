@@ -1,9 +1,0 @@
-int a(int b);
-void main();
-
-main()
-{
-	int h;
-<bb 2>:
-	return;
-}

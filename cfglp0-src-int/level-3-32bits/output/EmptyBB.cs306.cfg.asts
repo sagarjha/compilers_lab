@@ -1,6 +1,0 @@
-Program:
-   Procedure: main
-
-      Basic_Block 2
-         RETURN <NOTHING>
-
