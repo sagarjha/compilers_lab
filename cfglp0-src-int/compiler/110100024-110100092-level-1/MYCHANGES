@@ -1,0 +1,24 @@
+110100024 - Sagar Jha
+110100092 - Raghav Gupta
+
+CS306 - Interpretation of Programming Languages Lab
+
+Assignment 5a) (compiler generating intermediate code for level 1)
+
+a) scanner.ll
+   Used directly from assignment 2b
+
+b) parser.yy, parser.h and parser.ih
+   Used directly from assignment 2b. 
+
+c) in files ast.hh & ast.cc
+   Classes used from assignment 2b with minor changes like adding line number as argument to ast constructors, using Tgt_Op instead of a numeric argument in the constructor of relational expression ast. Writing compile function for each newly defined ast class.
+
+d) reg-alloc.cc
+   Instructions were added to execute mips commands sgt, slt, sge, sle, seq, sne, bne and j. Also, the option of setting a register to the "used" state, in case it is being used to store an intermediate result of an expression was added. Accordingly, the Register_Descriptor::is_free() function was changed.
+
+e) icode.cc
+   Tgt_Op was modified to accommodate the new instructions. Also, three more classes were derived out of Icode_Stmt, namely Set_Rel_IC_Stmt (to execute slt, sne, etc.), Control_IC_Stmt (to execute bne and j) and Label_IC_Stmt (to insert labels at the starting points of basic blocks).
+
+f) basic_block.cc
+   Additional code was written in the compile() function of Basic_Block class to also include a Label_IC_Stmt, which simply inserts a label, at the start of the basic block.
