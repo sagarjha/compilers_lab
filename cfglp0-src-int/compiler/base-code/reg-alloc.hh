@@ -203,7 +203,8 @@ typedef enum
 	mc_2r, 
 	r2m, 
 	c2m,
-	r2r
+	r2r,
+	mc_2r_modified
 } Lra_Scenario;
 
 class Lra_Outcome

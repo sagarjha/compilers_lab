@@ -170,6 +170,11 @@ void Lra_Outcome::optimize_lra(Lra_Scenario lcase, Ast * destination_memory, Ast
 
 		if (typeid(*source_memory) == typeid(Number_Ast<int>))
 			source_register = NULL;
+		else if (typeid(*source_memory) == typeid(Relational_Expr_Ast))
+		{
+			source_register = machine_dscr_object.get_new_register();
+			source_register->set_use_for_expr_result();
+		}
 		else
 		{
 			source_symbol_entry = &(source_memory->get_symbol_entry());
@@ -215,8 +220,40 @@ void Lra_Outcome::optimize_lra(Lra_Scenario lcase, Ast * destination_memory, Ast
 			is_a_new_register = true;
 			load_needed = true;
 		}
-
-		break;
+		
+		
+	case mc_2r_modified:
+		if (typeid(*source_memory) == typeid(Number_Ast<int>))
+		{
+			result_register = machine_dscr_object.get_new_register();
+			result_register->set_use_for_expr_result();
+			//cout << "Register " << result_register->get_name() << " is now busy\n";
+			is_a_new_register = true;
+			load_needed = true;
+		}
+		
+		else if (typeid(*source_memory) == typeid(Name_Ast))
+		{
+			source_symbol_entry = &(source_memory->get_symbol_entry());
+			result_register = source_register = source_symbol_entry->get_register();
+			if (result_register == NULL) {
+				result_register = machine_dscr_object.get_new_register();
+				source_symbol_entry->update_register(result_register);
+			}
+			
+			load_needed = false;		
+		}
+		
+		else // relational Ast
+		{
+			is_a_new_register = true;
+			load_needed = false;
+			
+		}
+		
+		register_description = result_register;
+		
+		return;
 
 	case r2r:
 		CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH,

@@ -84,7 +84,7 @@ Eval_Result & Basic_Block::evaluate(Local_Environment & eval_env, ostream & file
 }
 
 void Basic_Block::compile()
-{
+{	
 	Code_For_Ast ast_code;
 
 	machine_dscr_object.validate_init_local_register_mapping();

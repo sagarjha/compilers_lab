@@ -157,7 +157,7 @@ public:
 
     Code_For_Ast & compile();
     Code_For_Ast & compile_and_optimize_ast(Lra_Outcome & lra);
-    Code_For_Ast & create_set_stmt(Tgt_Op opn, Register_Descriptor * reg1, Register_Descriptor * reg2);
+    Code_For_Ast & create_set_stmt(Tgt_Op opn, Register_Descriptor * reg1, Register_Descriptor * reg2, Register_Descriptor * result);
 };
 
 class Return_Ast:public Ast
