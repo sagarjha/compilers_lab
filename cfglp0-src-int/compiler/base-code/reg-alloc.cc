@@ -239,16 +239,17 @@ void Lra_Outcome::optimize_lra(Lra_Scenario lcase, Ast * destination_memory, Ast
 			if (result_register == NULL) {
 				result_register = machine_dscr_object.get_new_register();
 				source_symbol_entry->update_register(result_register);
+				load_needed = true;
 			}
-			
-			load_needed = false;		
+			else {
+				load_needed = false;		
+			}
 		}
 		
 		else // relational Ast
 		{
 			is_a_new_register = true;
 			load_needed = false;
-			
 		}
 		
 		register_description = result_register;
