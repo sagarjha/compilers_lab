@@ -209,9 +209,29 @@ Code_For_Ast & Assignment_Ast::compile_and_optimize_ast(Lra_Outcome & lra)
 {
     CHECK_INVARIANT((lhs != NULL), "Lhs cannot be null");
     CHECK_INVARIANT((rhs != NULL), "Rhs cannot be null");
+    
+    Code_For_Ast load_stmt;
 
-    lra.optimize_lra(mc_2m, lhs, rhs);
-    Code_For_Ast load_stmt = rhs->compile_and_optimize_ast(lra);
+	if (typeid(*rhs) == typeid(Relational_Expr_Ast)) {
+		load_stmt = rhs->compile_and_optimize_ast(lra);
+		
+		Register_Descriptor * intermediate_result = load_stmt.get_reg();
+		Register_Descriptor * lhs_allocated_reg = (lhs->get_symbol_entry()).get_register();		
+		
+		
+		if (lhs_allocated_reg != NULL && lhs_allocated_reg != intermediate_result) {
+			(lhs->get_symbol_entry()).free_register(lhs_allocated_reg);
+		}
+		
+		(lhs->get_symbol_entry()).update_register(intermediate_result);
+		
+		lra.optimize_lra(mc_2m, lhs, rhs);
+	}
+
+	else {
+		lra.optimize_lra(mc_2m, lhs, rhs);
+		load_stmt = rhs->compile_and_optimize_ast(lra);
+	}
 
     Register_Descriptor * result_register = load_stmt.get_reg();
 
@@ -632,6 +652,7 @@ Code_For_Ast & Relational_Expr_Ast::compile() {
     Code_For_Ast & load_stmt_left = lhs->compile();
     Register_Descriptor * load_register_left = load_stmt_left.get_reg();
     load_register_left->set_use_for_expr_result();
+    
     Code_For_Ast & load_stmt_right = rhs->compile();
     Register_Descriptor * load_register_right = load_stmt_right.get_reg();	
 	load_register_right->set_use_for_expr_result();
@@ -662,7 +683,43 @@ Code_For_Ast & Relational_Expr_Ast::compile() {
 }
 
 Code_For_Ast & Relational_Expr_Ast::compile_and_optimize_ast(Lra_Outcome & lra) {
-  
+	CHECK_INVARIANT((lhs != NULL), "Lhs cannot be null");
+    CHECK_INVARIANT((rhs != NULL), "Rhs cannot be null");
+
+	lra.optimize_lra(mc_2r, NULL, lhs);
+    Code_For_Ast & load_stmt_left = lhs->compile_and_optimize_ast(lra);
+    Register_Descriptor * load_register_left = load_stmt_left.get_reg();
+    load_register_left->set_use_for_expr_result();
+    
+	lra.optimize_lra(mc_2r, NULL, rhs);
+    Code_For_Ast & load_stmt_right = rhs->compile_and_optimize_ast(lra);
+    Register_Descriptor * load_register_right = load_stmt_right.get_reg();	
+	load_register_right->set_use_for_expr_result();
+
+	// op+1 to make the ENUM code of the operation concordant with the self-assigned codes from before
+	Code_For_Ast set_stmt = create_set_stmt(op, load_register_left, load_register_right);
+    // Store the statement in ic_list
+
+    list<Icode_Stmt *> & ic_list = *new list<Icode_Stmt *>;
+
+    if (load_stmt_left.get_icode_list().empty() == false)
+	ic_list = load_stmt_left.get_icode_list();
+
+	if (load_stmt_right.get_icode_list().empty() == false)
+	ic_list.splice(ic_list.end(), load_stmt_right.get_icode_list());
+
+    if (set_stmt.get_icode_list().empty() == false)
+	ic_list.splice(ic_list.end(), set_stmt.get_icode_list());
+
+    Code_For_Ast * set_stmt_final;
+    if (ic_list.empty() == false)
+	set_stmt_final = new Code_For_Ast(ic_list, set_stmt.get_reg());
+	
+	load_register_left->reset_use_for_expr_result();
+	load_register_right->reset_use_for_expr_result();
+
+    return *set_stmt_final;
+	
 }
 
 Code_For_Ast & Relational_Expr_Ast::create_set_stmt(Tgt_Op opn, Register_Descriptor * reg1, Register_Descriptor * reg2)
@@ -776,7 +833,28 @@ Code_For_Ast & Conditional_Ast::compile() {
 }
 
 Code_For_Ast & Conditional_Ast::compile_and_optimize_ast(Lra_Outcome & lra) {
+	Code_For_Ast & expr_stmt = pred->compile_and_optimize_ast(lra);
+	Register_Descriptor * reg_to_compare = expr_stmt.get_reg();
 	
+	reg_to_compare->set_use_for_expr_result();
+	
+	Code_For_Ast true_stmt = create_bne_stmt(reg_to_compare);
+	
+	reg_to_compare->reset_use_for_expr_result();
+	
+	list<Icode_Stmt *> ic_list;
+    ic_list = expr_stmt.get_icode_list();
+    ic_list.splice(ic_list.end(), true_stmt.get_icode_list());
+	
+	Goto_Ast false_goto_statement = Goto_Ast (label_id2, lineno);
+	Code_For_Ast & false_goto_stmt = false_goto_statement.compile();
+	
+	ic_list.splice(ic_list.end(), false_goto_stmt.get_icode_list());
+	
+	Code_For_Ast * cond_stmt_final= new Code_For_Ast(ic_list, reg_to_compare);
+	reg_to_compare->reset_use_for_expr_result();
+	
+	return *cond_stmt_final;
 }
 
 Code_For_Ast Conditional_Ast::create_bne_stmt(Register_Descriptor * reg) {
@@ -834,7 +912,7 @@ Code_For_Ast & Goto_Ast::compile() {
 }
 
 Code_For_Ast & Goto_Ast::compile_and_optimize_ast(Lra_Outcome & lra) {
-  
+	return compile();
 }
 //////////////////////////////////////////////////////////////////////////////////////////
 
