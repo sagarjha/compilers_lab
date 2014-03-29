@@ -35,7 +35,10 @@ typedef enum
     {
 	int_result,
 	void_result,
-	bb_result
+	bb_result,
+	float_result,
+	double_result,
+	return_result
     } Result_Enum;
 
 class Eval_Result;
@@ -47,8 +50,9 @@ protected:
     Result_Enum result_type;
 
 public:
-    virtual int get_int_value();
+    virtual float get_value();
     virtual void set_value(int value);
+    virtual void set_value(float value);    
 
     virtual bool is_variable_defined();
     virtual void set_variable_status(bool def);
@@ -65,7 +69,9 @@ class Eval_Result_Value:public Eval_Result
     int block_id;
 public:
     virtual void set_value(int number);
-    virtual int get_int_value();
+    virtual void set_value(float value);
+
+    virtual float get_value();
 
     virtual bool is_variable_defined() = 0;
     virtual void set_variable_status(bool def) = 0;
@@ -99,7 +105,43 @@ public:
     ~Eval_Result_Value_Int();
 
     void set_value(int number);
-    int get_int_value();
+    float get_value();
+
+    void set_variable_status(bool def);
+    bool is_variable_defined();
+
+    void set_result_enum(Result_Enum res);
+    Result_Enum get_result_enum();
+};
+
+class Eval_Result_Value_Float:public Eval_Result_Value
+{
+    float value;
+    bool defined;
+public:
+    Eval_Result_Value_Float();
+    ~Eval_Result_Value_Float();
+
+    void set_value(float number);
+    float get_value();
+
+    void set_variable_status(bool def);
+    bool is_variable_defined();
+
+    void set_result_enum(Result_Enum res);
+    Result_Enum get_result_enum();
+};
+
+class Eval_Result_Value_Double:public Eval_Result_Value
+{
+    double value;
+    bool defined;
+public:
+    Eval_Result_Value_Double();
+    ~Eval_Result_Value_Double();
+
+    void set_value(float number);
+    float get_value();
 
     void set_variable_status(bool def);
     bool is_variable_defined();

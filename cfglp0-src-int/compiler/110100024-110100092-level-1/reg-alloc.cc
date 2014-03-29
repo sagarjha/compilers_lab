@@ -56,6 +56,7 @@ Register_Use_Category Register_Descriptor::get_use_category() 	{ return reg_use;
 Spim_Register Register_Descriptor::get_register()             	{ return reg_id; }
 string Register_Descriptor::get_name()				{ return reg_name; }
 bool Register_Descriptor::is_symbol_list_empty()         	{ return lra_symbol_list.empty(); }
+bool Register_Descriptor::is_symbol_list_singleton()         	{ return (lra_symbol_list.size()==1); }
 
 bool Register_Descriptor::is_free()     
 { 
@@ -184,9 +185,16 @@ void Lra_Outcome::optimize_lra(Lra_Scenario lcase, Ast * destination_memory, Ast
 		}
 		else if (destination_register != NULL)
 		{
-			result_register = destination_register;
-			is_same_as_destination = true;
-			load_needed = true;
+			if (!(destination_register->is_symbol_list_singleton())) {
+				result_register = machine_dscr_object.get_new_register();
+				load_needed = true;
+			}
+			
+			else {
+				result_register = destination_register;
+				is_same_as_destination = true;
+				load_needed = true;
+			}
 		}
 		else 
 		{

@@ -94,6 +94,27 @@ public:
     Code_For_Ast & compile_and_optimize_ast(Lra_Outcome & lra);
 };
 
+class Cast_Assignment_Ast:public Ast
+{
+    Ast * lhs;
+    Ast * rhs;
+    Data_Type data_type;
+
+public:
+    Cast_Assignment_Ast(Ast * temp_lhs, Ast * temp_rhs, Data_Type, int);
+    ~Cast_Assignment_Ast();
+
+    Data_Type get_data_type();
+    bool check_ast(int line);
+
+    void print(ostream & file_buffer);
+
+    Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
+
+    Code_For_Ast & compile();
+    Code_For_Ast & compile_and_optimize_ast(Lra_Outcome & lra);
+};
+
 class Name_Ast:public Ast
 {
     string variable_name;
@@ -118,6 +139,25 @@ public:
     Code_For_Ast & create_store_stmt(Register_Descriptor * store_register);
 };
 
+class Cast_Name_Ast:public Ast
+{
+    Ast *name;
+    Data_Type data_type;
+
+public:
+    Cast_Name_Ast(Ast *, Data_Type, int);
+    ~Cast_Name_Ast();
+
+    Data_Type get_data_type();
+    
+    void print(ostream & file_buffer);
+
+    Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
+
+    Code_For_Ast & compile();
+    Code_For_Ast & compile_and_optimize_ast(Lra_Outcome & lra);
+};
+
 template <class T>
 class Number_Ast:public Ast
 {
@@ -137,16 +177,16 @@ public:
     Code_For_Ast & compile_and_optimize_ast(Lra_Outcome & lra);
 };
 
-// class definition of relational_expr_ast
-class Relational_Expr_Ast:public Ast
+// class definition of expr_ast
+class Expr_Ast:public Ast
 {
     Ast *lhs;
     Ast *rhs;
     Tgt_Op op;
 
 public:
-    Relational_Expr_Ast (Ast*, Tgt_Op, Ast*, int);
-    ~Relational_Expr_Ast();
+    Expr_Ast (Ast*, Tgt_Op, Ast*, int);
+    ~Expr_Ast();
 
     Data_Type get_data_type();
     bool check_ast();
@@ -158,6 +198,26 @@ public:
     Code_For_Ast & compile();
     Code_For_Ast & compile_and_optimize_ast(Lra_Outcome & lra);
     Code_For_Ast & create_set_stmt(Tgt_Op opn, Register_Descriptor * reg1, Register_Descriptor * reg2);
+    Code_For_Ast & create_set_stmt(Tgt_Op opn, Register_Descriptor * reg1);    
+};
+
+// class definition of cast_expr_ast
+class Cast_Expr_Ast:public Ast
+{
+    Ast *expr;
+    Data_Type data_type;
+public:
+    Cast_Expr_Ast(Ast *, Data_Type, int);
+    ~Cast_Expr_Ast();
+
+    Data_Type get_data_type();
+
+    void print(ostream & file_buffer);
+    
+    Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
+
+    Code_For_Ast & compile();
+    Code_For_Ast & compile_and_optimize_ast(Lra_Outcome & lra);
 };
 
 class Return_Ast:public Ast

@@ -29,7 +29,9 @@
 %union 
 {
 	int integer_value;
+	float float_value;			
 	std::string * string_value;
+	Data_Type DT;
 	pair<Data_Type, string> * decl;
 	list<Ast *> * ast_list;
 	Ast * ast;
@@ -42,8 +44,9 @@
 };
 
 %token <integer_value> INTEGER_NUMBER BBNUM
+%token <float_value> FLOATING_POINT_NUMBER
 %token <string_value> NAME
-%token RETURN INTEGER IF ELSE 
+%token RETURN INTEGER FLOAT DOUBLE IF ELSE 
 %token <string_value> GOTO 
 %token <integer_value> ASSIGN
 %token <target_op> NOT_EQUAL
@@ -64,12 +67,14 @@
 %type <ast> modified_variable
 %type <ast> conditional_statement
 %type <ast> goto_statement
-%type <ast> flp
-%type <ast> slp
-%type <ast> tlp
-%type <ast> tlt
-
-			
+%type <ast> exp_assign_op
+%type <ast> exp_eq_ne
+%type <ast> exp_le_lt_ge_gt
+%type <ast> exp_add_sub
+%type <ast> exp_mul_div
+%type <ast> singleton
+%type <DT> type
+						
 %start program
 			
 %%
@@ -266,6 +271,36 @@ declaration:
 		$$ = declar;
 		}
 		}
+	|
+		FLOAT NAME
+		{
+		  if (NOT_ONLY_PARSE)
+		{
+		  CHECK_INVARIANT(($2 != NULL), "Name cannot be null");
+
+		string name = *$2;
+		Data_Type type = float_data_type;
+
+		pair<Data_Type, string> * declar = new pair<Data_Type, string>(type, name);
+
+		$$ = declar;
+		}
+		}
+	|
+		DOUBLE NAME
+		{
+		  if (NOT_ONLY_PARSE)
+		{
+		  CHECK_INVARIANT(($2 != NULL), "Name cannot be null");
+
+		string name = *$2;
+		Data_Type type = double_data_type;
+
+		pair<Data_Type, string> * declar = new pair<Data_Type, string>(type, name);
+
+		$$ = declar;
+		}
+		}
 		;
 
 basic_block_list:
@@ -439,7 +474,7 @@ assignment_statement_list:
 		;
 
 assignment_statement:
-		variable ASSIGN flp ';'
+		variable ASSIGN exp_assign_op ';'
 		{
 		    if (NOT_ONLY_PARSE)
 		{
@@ -453,6 +488,32 @@ assignment_statement:
 		assign->check_ast();
 
 		$$ = assign;
+		}
+		}
+		;
+
+type:
+		'(' INTEGER ')'
+		{
+		if (NOT_ONLY_PARSE)
+		{
+		  $$ = int_data_type;
+		}
+		}
+	|
+		'(' FLOAT ')'
+		{
+		if (NOT_ONLY_PARSE)
+		{
+		$$ = float_data_type;
+		}
+		}
+	|
+		'(' DOUBLE ')'
+		{
+		if (NOT_ONLY_PARSE)
+		{
+		$$ = double_data_type;
 		}
 		}
 		;
@@ -482,6 +543,30 @@ variable:
 		$$ = name_ast;
 		}
 		}
+	|
+		type NAME
+		{
+		  if (NOT_ONLY_PARSE)
+		{
+		  Symbol_Table_Entry * var_table_entry;
+
+		CHECK_INVARIANT(($2 != NULL), "Variable name cannot be null");
+
+		string var_name = *$2;
+
+		if (current_procedure->variable_in_symbol_list_check(var_name) == true)
+		var_table_entry = &(current_procedure->get_symbol_table_entry(var_name));
+
+		else if (program_object.variable_in_symbol_list_check(var_name) == true)
+		var_table_entry = &(program_object.get_symbol_table_entry(var_name));
+
+		else
+		CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, "Variable has not been declared");
+
+		Ast * toCast = new Name_Ast(var_name, *var_table_entry, get_line_number());
+		$$ = new Cast_Name_Ast(toCast, $1, get_line_number());
+		}
+		}
 		;
 
 constant:
@@ -496,10 +581,21 @@ constant:
 		$$ = num_ast;
 		}
 		}
+	|	
+		FLOATING_POINT_NUMBER
+		{
+		    if (NOT_ONLY_PARSE)
+		{
+		float fnum = $1;
+		Ast * fnum_ast = new Number_Ast<float>(fnum, float_data_type, get_line_number());
+
+		$$ = fnum_ast;
+		}
+		}
 		;
 
 conditional_statement:
-		IF '(' flp ')'
+		IF '(' exp_assign_op ')'
 		GOTO BBNUM ';'
 		ELSE
 		GOTO BBNUM ';'
@@ -542,18 +638,18 @@ modified_variable:
 		}
 		;
 
-flp: 
-		flp ASSIGN slp
+exp_assign_op: 
+		exp_assign_op ASSIGN exp_eq_ne
 		{
 		    if (NOT_ONLY_PARSE)
 		{
-		    // pass an integer instead of '=' according to specification
-		    $$ = new Relational_Expr_Ast ($1, nop, $3, get_line_number());
+		  // pass an integer instead of '=' according to specification
+		$$ = new Expr_Ast ($1, nop, $3, get_line_number());
 		$$->check_ast();
 		}
 		}
 	|
-		slp
+		exp_eq_ne
 		{
 		    if (NOT_ONLY_PARSE)
 		{
@@ -562,28 +658,78 @@ flp:
 		}
 		;
 
-slp:
-		slp EQUAL tlp
+exp_eq_ne:
+		exp_eq_ne EQUAL exp_le_lt_ge_gt
 		{
 		    if (NOT_ONLY_PARSE)
 		{
 		    // pass an integer instead of '=' according to specification
-		    $$ = new Relational_Expr_Ast ($1, seq, $3, get_line_number());
+		    $$ = new Expr_Ast ($1, seq, $3, get_line_number());
 		$$->check_ast();
 		}
 		}
 	|
-		slp NOT_EQUAL tlp
+		exp_eq_ne NOT_EQUAL exp_le_lt_ge_gt
 		{
 		    if (NOT_ONLY_PARSE)
 		{
 		    // pass an integer instead of '=' according to specification
-		    $$ = new Relational_Expr_Ast ($1, sne, $3, get_line_number());
+		    $$ = new Expr_Ast ($1, sne, $3, get_line_number());
 		$$->check_ast();
 		}
 		}
 	|
-		tlp
+		exp_le_lt_ge_gt
+		{
+		    if (NOT_ONLY_PARSE)
+		{
+		$$ = $1;
+		}
+		}
+		;
+
+exp_le_lt_ge_gt:
+		exp_le_lt_ge_gt GE exp_add_sub
+		{
+		    if (NOT_ONLY_PARSE)
+		{
+		    // pass an integer instead of '=' according to specification
+		    $$ = new Expr_Ast ($1, sge, $3, get_line_number());
+		$$->check_ast();
+		}
+		}
+	|
+		exp_le_lt_ge_gt GT exp_add_sub
+		{
+		    if (NOT_ONLY_PARSE)
+		{
+		    // pass an integer instead of '=' according to specification
+		    $$ = new Expr_Ast ($1, sgt, $3, get_line_number());
+		$$->check_ast();
+		}
+		}
+	|
+		exp_le_lt_ge_gt LE exp_add_sub
+		{
+		    if (NOT_ONLY_PARSE)
+		{
+		    // pass an integer instead of '=' according to specification
+		    $$ = new Expr_Ast ($1, sle, $3, get_line_number());
+		$$->check_ast();
+		}
+		}
+	|
+		exp_le_lt_ge_gt LT exp_add_sub
+		{
+		    if (NOT_ONLY_PARSE)
+		{
+		    // pass an integer instead of '=' according to specification
+		    $$ = new Expr_Ast ($1, slt, $3, get_line_number());
+		$$->check_ast();
+		}
+		}
+	|
+		exp_add_sub
 		{
 		    if (NOT_ONLY_PARSE)
 		{
@@ -592,57 +738,87 @@ slp:
 		}
 		;
 
-tlp:
-		tlp GE tlt
+exp_add_sub:
+		exp_add_sub '+' exp_mul_div
 		{
-		    if (NOT_ONLY_PARSE)
+		  if (NOT_ONLY_PARSE)
 		{
-		    // pass an integer instead of '=' according to specification
-		    $$ = new Relational_Expr_Ast ($1, sge, $3, get_line_number());
+		  // fill with the correct operand
+		if ($1->get_data_type() == int_data_type) {
+		$$ = new Expr_Ast($1,add,$3, get_line_number());
+		}
+		else {
+		$$ = new Expr_Ast($1,add_d,$3, get_line_number());
+		}
 		$$->check_ast();
 		}
 		}
-	|
-		tlp GT tlt
+	|	
+		exp_add_sub '-' exp_mul_div
 		{
-		    if (NOT_ONLY_PARSE)
+		  if (NOT_ONLY_PARSE)
 		{
-		    // pass an integer instead of '=' according to specification
-		    $$ = new Relational_Expr_Ast ($1, sgt, $3, get_line_number());
+		  // fill with the correct operand
+		if ($1->get_data_type() == int_data_type) {
+		$$ = new Expr_Ast($1,sub,$3, get_line_number());
+		}
+		else {
+		$$ = new Expr_Ast($1,sub_d,$3, get_line_number());		  
+		}
 		$$->check_ast();
 		}
 		}
-	|
-		tlp LE tlt
+|
+		exp_mul_div
 		{
-		    if (NOT_ONLY_PARSE)
+		  if (NOT_ONLY_PARSE)
 		{
-		    // pass an integer instead of '=' according to specification
-		    $$ = new Relational_Expr_Ast ($1, sle, $3, get_line_number());
-		$$->check_ast();
-		}
-		}
-	|
-		tlp LT tlt
-		{
-		    if (NOT_ONLY_PARSE)
-		{
-		    // pass an integer instead of '=' according to specification
-		    $$ = new Relational_Expr_Ast ($1, slt, $3, get_line_number());
-		$$->check_ast();
-		}
-		}
-	|
-		tlt
-		{
-		    if (NOT_ONLY_PARSE)
-		{
-		    $$ = $1;
+		$$ = $1;
 		}
 		}
 		;
 
-tlt:
+exp_mul_div:
+     		exp_mul_div '*' singleton
+		{
+		  if (NOT_ONLY_PARSE)
+		{
+		  // fill with the correct operand
+		if ($$->get_data_type() == int_data_type) {
+		$$ = new Expr_Ast ($1,mul, $3, get_line_number());
+		}
+		else {
+		$$ = new Expr_Ast ($1,mul_d, $3, get_line_number());
+		}
+		$$->check_ast();
+		}
+		}
+	|
+		exp_mul_div '/' singleton
+		{
+		  if (NOT_ONLY_PARSE)
+		{
+		  // fill with the correct operand
+		if ($$->get_data_type() == int_data_type) {
+		$$ = new Expr_Ast ($1,div_i, $3, get_line_number());
+		}
+		else {
+		$$ = new Expr_Ast ($1,div_d, $3, get_line_number());
+		}
+		$$->check_ast();	  
+		}
+		}
+	|
+		singleton
+		{
+		  if (NOT_ONLY_PARSE)
+		{
+		$$ = $1;
+		}
+		}
+		;
+
+singleton:
 		modified_variable
 		{
 		    if (NOT_ONLY_PARSE)
@@ -651,11 +827,47 @@ tlt:
 		}
 		}
 	|
-		'(' flp ')'
+		'-' modified_variable
+		{
+		  if (NOT_ONLY_PARSE)
+		{
+		if ($2->get_data_type() == int_data_type) {
+		$$ = new Expr_Ast($2,uminus,NULL, get_line_number());
+		}
+		else {
+		$$ = new Expr_Ast($2,uminus_d,NULL, get_line_number());
+		}		  
+		$$->check_ast();
+		}
+		}
+	|	
+		'(' exp_assign_op ')'
 		{
 		    if (NOT_ONLY_PARSE)
 		{
 		    $$ = $2;
+		}
+		}
+	|
+		'-' '(' exp_assign_op ')'
+		{
+		  if (NOT_ONLY_PARSE)
+		{
+		if ($3->get_data_type() == int_data_type) {
+		$$ = new Expr_Ast($3,uminus,NULL, get_line_number());
+		}
+		else {
+		$$ = new Expr_Ast($3,uminus,NULL, get_line_number());
+		}
+		$$->check_ast();
+		}
+		}
+	|
+		type '(' exp_assign_op ')'
+		{
+		  if (NOT_ONLY_PARSE)
+		{
+		$$ = new Cast_Expr_Ast($3, $1, get_line_number());
 		}
 		}
 		;
