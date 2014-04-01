@@ -177,7 +177,12 @@ void Const_Opd<DATA_TYPE>::print_ics_opd(ostream & file_buffer)
 template <class DATA_TYPE>
 void Const_Opd<DATA_TYPE>::print_asm_opd(ostream & file_buffer) 
 {
-    file_buffer << num;
+    if (data_type == int_data_type) {
+	file_buffer << num;
+    }
+    else {
+	file_buffer << fixed << setprecision(2) << num;
+    }
 }
 
 template <class DATA_TYPE>

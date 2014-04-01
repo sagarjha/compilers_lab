@@ -291,6 +291,16 @@ void Machine_Description::initialize_register_table()
     spim_register_table[f6] = new Register_Descriptor(f6, "f6", float_num, gp_data);
     spim_register_table[f8] = new Register_Descriptor(f8, "f8", float_num, gp_data);
     spim_register_table[f10] = new Register_Descriptor(f10, "f10", float_num, gp_data);	
+    spim_register_table[f10] = new Register_Descriptor(f12, "f12", float_num, gp_data);	
+    spim_register_table[f10] = new Register_Descriptor(f14, "f14", float_num, gp_data);	
+    spim_register_table[f10] = new Register_Descriptor(f16, "f16", float_num, gp_data);	
+    spim_register_table[f10] = new Register_Descriptor(f18, "f18", float_num, gp_data);	
+    spim_register_table[f10] = new Register_Descriptor(f20, "f20", float_num, gp_data);	
+    spim_register_table[f10] = new Register_Descriptor(f22, "f22", float_num, gp_data);	
+    spim_register_table[f10] = new Register_Descriptor(f24, "f24", float_num, gp_data);	
+    spim_register_table[f10] = new Register_Descriptor(f26, "f26", float_num, gp_data);	
+    spim_register_table[f10] = new Register_Descriptor(f28, "f28", float_num, gp_data);	
+    spim_register_table[f10] = new Register_Descriptor(f30, "f30", float_num, gp_data);	
     spim_register_table[gp] = new Register_Descriptor(gp, "gp", int_num, pointer);
     spim_register_table[sp] = new Register_Descriptor(sp, "sp", int_num, pointer);
     spim_register_table[fp] = new Register_Descriptor(fp, "fp", int_num, pointer);
