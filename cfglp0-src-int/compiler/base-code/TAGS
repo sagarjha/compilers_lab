@@ -1,0 +1,732 @@
+
+ast.cc,3737
+Ast::Ast(42,1292
+Ast::~Ast(45,1307
+bool Ast::check_ast(48,1323
+Data_Type Ast::get_data_type(55,1497
+Symbol_Table_Entry & Ast::get_symbol_entry(62,1684
+void Ast::print_value(69,1888
+Eval_Result & Ast::get_value_of_evaluation(76,2117
+void Ast::set_value_of_evaluation(83,2356
+Code_For_Ast & Ast::create_store_stmt(90,2608
+Assignment_Ast::Assignment_Ast(99,2910
+Assignment_Ast::~Assignment_Ast(110,3120
+Data_Type Assignment_Ast::get_data_type(116,3191
+bool Assignment_Ast::check_ast(121,3265
+void Assignment_Ast::print(140,3932
+Eval_Result & Assignment_Ast::evaluate(153,4252
+Code_For_Ast & Assignment_Ast::compile(173,4863
+Code_For_Ast & Assignment_Ast::compile_and_optimize_ast(212,6007
+Name_Ast::Name_Ast(265,7550
+Name_Ast::~Name_Ast(278,7944
+Data_Type Name_Ast::get_data_type(281,7970
+Symbol_Table_Entry & Name_Ast::get_symbol_entry(286,8062
+void Name_Ast::print(291,8152
+void Name_Ast::print_value(296,8277
+Eval_Result & Name_Ast::get_value_of_evaluation(327,9334
+void Name_Ast::set_value_of_evaluation(347,10051
+Eval_Result & Name_Ast::evaluate(368,10814
+Code_For_Ast & Name_Ast::compile(373,10951
+Code_For_Ast & Name_Ast::create_store_stmt(395,11628
+Code_For_Ast & Name_Ast::compile_and_optimize_ast(421,12477
+Cast_Name_Ast::Cast_Name_Ast(453,13432
+Cast_Name_Ast::~Cast_Name_Ast(460,13646
+Data_Type Cast_Name_Ast::get_data_type(464,13700
+void Cast_Name_Ast::print(468,13772
+Eval_Result & Cast_Name_Ast::evaluate(472,13856
+Code_For_Ast & Cast_Name_Ast::compile(504,14915
+Code_For_Ast & Cast_Name_Ast::compile_and_optimize_ast(550,16924
+Number_Ast<DATA_TYPE>::Number_Ast(Number_Ast557,17116
+Number_Ast<DATA_TYPE>::~Number_Ast(~Number_Ast568,17357
+Data_Type Number_Ast<DATA_TYPE>::get_data_type(get_data_type572,17425
+void Number_Ast<DATA_TYPE>::print(print578,17533
+Eval_Result & Number_Ast<DATA_TYPE>::evaluate(evaluate587,17736
+Code_For_Ast & Number_Ast<DATA_TYPE>::compile(compile599,18026
+Code_For_Ast & Number_Ast<DATA_TYPE>::compile_and_optimize_ast(compile_and_optimize_ast629,18977
+Expr_Ast::Expr_Ast 660,19981
+Expr_Ast::~Expr_Ast(669,20139
+bool Expr_Ast::check_ast(674,20186
+Data_Type Expr_Ast::get_data_type(705,21165
+void Expr_Ast::print(711,21257
+Eval_Result & Expr_Ast::evaluate(751,21895
+Code_For_Ast & Expr_Ast::compile(815,23666
+Code_For_Ast & Expr_Ast::compile_and_optimize_ast(883,25918
+Code_For_Ast & Expr_Ast::create_set_stmt(923,27500
+Code_For_Ast & Expr_Ast::create_set_stmt(952,28636
+Cast_Expr_Ast::Cast_Expr_Ast(981,29679
+Cast_Expr_Ast::~Cast_Expr_Ast 988,29893
+Data_Type Cast_Expr_Ast::get_data_type(992,29948
+void Cast_Expr_Ast::print(996,30016
+Eval_Result & Cast_Expr_Ast::evaluate(1000,30104
+Code_For_Ast & Cast_Expr_Ast::compile(1031,31097
+Code_For_Ast & Cast_Expr_Ast::compile_and_optimize_ast(1077,33110
+Conditional_Ast::Conditional_Ast(1083,33275
+Conditional_Ast::~Conditional_Ast(1091,33440
+void Conditional_Ast::print 1096,33498
+Eval_Result & Conditional_Ast::evaluate(1104,33804
+Code_For_Ast & Conditional_Ast::compile(1137,34690
+Code_For_Ast & Conditional_Ast::compile_and_optimize_ast(1162,35521
+Code_For_Ast Conditional_Ast::create_bne_stmt(1187,36406
+Goto_Ast::Goto_Ast 1198,36907
+Goto_Ast::~Goto_Ast 1203,36986
+void Goto_Ast::print 1208,37015
+Eval_Result & Goto_Ast::evaluate(1214,37193
+Eval_Result & Goto_Ast::evaluate_without_print(1223,37479
+Code_For_Ast & Goto_Ast::compile(1230,37685
+Code_For_Ast & Goto_Ast::compile_and_optimize_ast(1241,38010
+Return_Ast::Return_Ast(1246,38197
+Return_Ast::~Return_Ast(1253,38323
+void Return_Ast::print(1256,38353
+Eval_Result & Return_Ast::evaluate(1261,38466
+Code_For_Ast & Return_Ast::compile(1267,38635
+Code_For_Ast & Return_Ast::compile_and_optimize_ast(1273,38749
+
+basic-block.cc,348
+Basic_Block::Basic_Block(39,1227
+Basic_Block::~Basic_Block(46,1341
+void Basic_Block::set_ast_list(53,1481
+int Basic_Block::get_bb_number(57,1568
+void Basic_Block::print_bb(61,1624
+Eval_Result & Basic_Block::evaluate(70,1864
+void Basic_Block::compile(86,2323
+void Basic_Block::print_assembly(126,3261
+void Basic_Block::print_icode(133,3456
+
+error-display.cc,196
+void check_invariant_underlying_function(36,1090
+bool global_error_status 47,1306
+void report_violation_of_condition(49,1341
+void report_violation_and_abort(59,1642
+bool error_status(69,1921
+
+icode.cc,4190
+Opd_Category Ics_Opd::get_opd_category(45,1373
+Register_Descriptor * Ics_Opd::get_reg(50,1439
+Symbol_Table_Entry & Ics_Opd::get_symbol_entry(56,1604
+Mem_Addr_Opd::Mem_Addr_Opd(64,1871
+Mem_Addr_Opd & Mem_Addr_Opd::operator=(Mem_Addr_Opd::operator=71,2027
+void Mem_Addr_Opd::print_ics_opd(79,2174
+void Mem_Addr_Opd::print_asm_opd(86,2315
+Data_Type Mem_Addr_Opd::get_data_type 102,2737
+Register_Addr_Opd::Register_Addr_Opd(108,2893
+Register_Descriptor * Register_Addr_Opd::get_reg(115,3071
+Register_Addr_Opd& Register_Addr_Opd::operator=(Register_Addr_Opd::operator=117,3159
+void Register_Addr_Opd::print_ics_opd(125,3341
+void Register_Addr_Opd::print_asm_opd(134,3567
+Data_Type Register_Addr_Opd::get_data_type 143,3800
+Const_Opd<DATA_TYPE>::Const_Opd(Const_Opd150,3980
+Const_Opd<DATA_TYPE> & Const_Opd<DATA_TYPE>::operator=(operator=158,4147
+void Const_Opd<DATA_TYPE>::print_ics_opd(print_ics_opd167,4327
+void Const_Opd<DATA_TYPE>::print_asm_opd(print_asm_opd178,4555
+Data_Type Const_Opd<DATA_TYPE>::get_data_type(get_data_type189,4783
+Instruction_Descriptor & Icode_Stmt::get_op(196,4939
+Ics_Opd * Icode_Stmt::get_opd1(201,5012
+Ics_Opd * Icode_Stmt::get_opd2(206,5140
+Ics_Opd * Icode_Stmt::get_result(211,5268
+void Icode_Stmt::set_opd1(216,5400
+void Icode_Stmt::set_opd2(221,5540
+void Icode_Stmt::set_result(226,5680
+Move_IC_Stmt::Move_IC_Stmt(233,5904
+Ics_Opd * Move_IC_Stmt::get_opd1(243,6220
+Ics_Opd * Move_IC_Stmt::get_result(244,6281
+void Move_IC_Stmt::set_opd1(246,6345
+void Move_IC_Stmt::set_result(247,6404
+Move_IC_Stmt& Move_IC_Stmt::operator=(Move_IC_Stmt::operator=249,6466
+void Move_IC_Stmt::print_icode(258,6627
+void Move_IC_Stmt::print_assembly(285,7349
+Set_Rel_IC_Stmt::Set_Rel_IC_Stmt(322,8344
+Ics_Opd * Set_Rel_IC_Stmt::get_opd1(333,8693
+Ics_Opd * Set_Rel_IC_Stmt::get_opd2(334,8757
+Ics_Opd * Set_Rel_IC_Stmt::get_result(335,8821
+void Set_Rel_IC_Stmt::set_opd1(337,8888
+void Set_Rel_IC_Stmt::set_opd2(338,8950
+void Set_Rel_IC_Stmt::set_result(339,9012
+Set_Rel_IC_Stmt& Set_Rel_IC_Stmt::operator=(Set_Rel_IC_Stmt::operator=341,9077
+void Set_Rel_IC_Stmt::print_icode(351,9268
+void Set_Rel_IC_Stmt::print_assembly(381,10137
+Set_Unary_Rel_IC_Stmt::Set_Unary_Rel_IC_Stmt(408,11037
+Ics_Opd * Set_Unary_Rel_IC_Stmt::get_opd1(418,11369
+Ics_Opd * Set_Unary_Rel_IC_Stmt::get_result(419,11439
+void Set_Unary_Rel_IC_Stmt::set_opd1(421,11512
+void Set_Unary_Rel_IC_Stmt::set_result(422,11580
+Set_Unary_Rel_IC_Stmt& Set_Unary_Rel_IC_Stmt::operator=(Set_Unary_Rel_IC_Stmt::operator=424,11651
+void Set_Unary_Rel_IC_Stmt::print_icode(433,11839
+void Set_Unary_Rel_IC_Stmt::print_assembly(460,12574
+Control_IC_Stmt::Control_IC_Stmt(484,13337
+Control_IC_Stmt::Control_IC_Stmt(490,13519
+Control_IC_Stmt & Control_IC_Stmt::operator=(Control_IC_Stmt::operator=496,13671
+Ics_Opd * Control_IC_Stmt::get_opd1(502,13820
+void Control_IC_Stmt::set_opd1(506,13879
+int Control_IC_Stmt::get_label(510,13943
+void Control_IC_Stmt::set_label(514,13999
+void Control_IC_Stmt::print_icode(518,14058
+void Control_IC_Stmt::print_assembly(544,14727
+Label_IC_Stmt::Label_IC_Stmt(568,15467
+Label_IC_Stmt & Label_IC_Stmt::operator=(Label_IC_Stmt::operator=572,15527
+int Label_IC_Stmt::get_num(576,15619
+void Label_IC_Stmt::set_num(580,15669
+void Label_IC_Stmt::print_icode(584,15728
+void Label_IC_Stmt::print_assembly(588,15840
+Code_For_Ast::Code_For_Ast(594,16038
+Code_For_Ast::Code_For_Ast(599,16112
+void Code_For_Ast::append_ics(605,16246
+list<Icode_Stmt *> & Code_For_Ast::get_icode_list(612,16423
+void Code_For_Ast::set_icode_list(617,16505
+Register_Descriptor * Code_For_Ast::get_reg(622,16604
+Code_For_Ast& Code_For_Ast::operator=(Code_For_Ast::operator=627,16683
+Tgt_Op Instruction_Descriptor::get_op(637,16932
+string Instruction_Descriptor::get_name(638,17011
+string Instruction_Descriptor::get_mnemonic(639,17092
+string Instruction_Descriptor::get_ic_symbol(640,17177
+Icode_Format Instruction_Descriptor::get_ic_format(641,17263
+Assembly_Format Instruction_Descriptor::get_assembly_format(642,17349
+Instruction_Descriptor::Instruction_Descriptor 644,17439
+Instruction_Descriptor::Instruction_Descriptor(655,17760
+
+local-environment.cc,2405
+float Eval_Result::get_value(35,1136
+void Eval_Result::set_value(42,1319
+void Eval_Result::set_value(49,1515
+bool Eval_Result::is_variable_defined(56,1715
+void Eval_Result::set_variable_status(63,1917
+int Eval_Result::get_block(70,2127
+void Eval_Result::set_block_id(75,2252
+float Eval_Result_Value::get_value(82,2472
+void Eval_Result_Value::set_value(89,2661
+void Eval_Result_Value::set_value(96,2861
+Eval_Result_Value_Int::Eval_Result_Value_Int(105,3146
+Eval_Result_Value_Int::~Eval_Result_Value_Int(112,3264
+void Eval_Result_Value_Int::set_value(115,3317
+float Eval_Result_Value_Int::get_value(121,3412
+void Eval_Result_Value_Int::set_variable_status(126,3476
+bool Eval_Result_Value_Int::is_variable_defined(131,3558
+void Eval_Result_Value_Int::set_result_enum(136,3633
+Result_Enum Eval_Result_Value_Int::get_result_enum(141,3722
+Eval_Result_Value_Float::Eval_Result_Value_Float(148,3885
+Eval_Result_Value_Float::~Eval_Result_Value_Float(155,4012
+void Eval_Result_Value_Float::set_value(158,4069
+float Eval_Result_Value_Float::get_value(164,4168
+void Eval_Result_Value_Float::set_variable_status(169,4234
+bool Eval_Result_Value_Float::is_variable_defined(174,4318
+void Eval_Result_Value_Float::set_result_enum(179,4395
+Result_Enum Eval_Result_Value_Float::get_result_enum(184,4486
+Eval_Result_Value_Double::Eval_Result_Value_Double(191,4651
+Eval_Result_Value_Double::~Eval_Result_Value_Double(198,4778
+void Eval_Result_Value_Double::set_value(201,4837
+float Eval_Result_Value_Double::get_value(207,4937
+void Eval_Result_Value_Double::set_variable_status(212,5004
+bool Eval_Result_Value_Double::is_variable_defined(217,5089
+void Eval_Result_Value_Double::set_result_enum(222,5167
+Result_Enum Eval_Result_Value_Double::get_result_enum(227,5259
+Eval_Result_BB::Eval_Result_BB(235,5439
+Eval_Result_BB::~Eval_Result_BB(241,5525
+void Eval_Result_BB::set_block_id(244,5564
+int Eval_Result_BB::get_block(249,5638
+Result_Enum Eval_Result_BB::get_result_enum(254,5696
+void Eval_Result_BB::set_result_enum(259,5771
+Local_Environment::Local_Environment(265,5915
+Local_Environment::~Local_Environment(268,5958
+void Local_Environment::print(271,6002
+bool Local_Environment::is_variable_defined(295,6610
+Eval_Result * Local_Environment::get_variable_value(306,6844
+void Local_Environment::put_variable_value(317,7057
+bool Local_Environment::does_variable_exist(322,7166
+
+main.cc,18
+int main(46,1366
+
+procedure.cc,727
+Procedure::Procedure(42,1290
+Procedure::~Procedure(50,1441
+string Procedure::get_proc_name(57,1589
+void Procedure::set_basic_block_list(62,1642
+void Procedure::set_local_list(67,1744
+Data_Type Procedure::get_return_type(73,1881
+bool Procedure::variable_in_symbol_list_check(78,1946
+Symbol_Table_Entry & Procedure::get_symbol_table_entry(83,2082
+void Procedure::print(88,2230
+Basic_Block & Procedure::get_start_basic_block(108,2879
+Basic_Block * Procedure::get_next_bb(115,3011
+Eval_Result & Procedure::evaluate(134,3348
+void Procedure::compile(160,4070
+void Procedure::print_icode(173,4446
+void Procedure::print_assembly(183,4742
+void Procedure::print_prologue(194,5003
+void Procedure::print_epilogue(218,5755
+
+program.cc,662
+Program program_object;41,1271
+Local_Environment interpreter_global_table;42,1295
+Program::Program(44,1340
+Program::~Program(47,1363
+void Program::delete_all(50,1387
+void Program::set_global_table(57,1542
+void Program::set_procedure_map(63,1698
+bool Program::variable_in_symbol_list_check(70,1872
+Symbol_Table_Entry & Program::get_symbol_table_entry(75,2007
+bool Program::variable_in_proc_map_check(80,2154
+void Program::global_list_in_proc_map_check(88,2302
+Procedure * Program::get_main_procedure(93,2407
+void Program::print(105,2686
+Eval_Result & Program::evaluate(140,3558
+void Program::compile(162,4281
+void Program::print_assembly(193,5173
+
+reg-alloc.cc,1596
+Machine_Description machine_dscr_object;42,1276
+Register_Descriptor::Register_Descriptor(46,1400
+Register_Use_Category Register_Descriptor::get_use_category(55,1633
+Spim_Register Register_Descriptor::get_register(56,1716
+Register_Val_Type Register_Descriptor::get_value_type(57,1798
+string Register_Descriptor::get_name(58,1884
+bool Register_Descriptor::is_symbol_list_empty(59,1947
+bool Register_Descriptor::is_symbol_list_singleton(60,2041
+bool Register_Descriptor::is_free(62,2144
+void Register_Descriptor::set_use_for_expr_result(70,2315
+void Register_Descriptor::reset_use_for_expr_result(74,2405
+void Register_Descriptor::remove_symbol_entry_from_list(78,2498
+bool Register_Descriptor::find_symbol_entry_in_list(83,2631
+void Register_Descriptor::clear_lra_symbol_list(93,2895
+void Register_Descriptor::update_symbol_information(105,3179
+Lra_Outcome::Lra_Outcome(113,3452
+Lra_Outcome::Lra_Outcome(123,3729
+Register_Descriptor * Lra_Outcome::get_register(133,3951
+bool Lra_Outcome::is_new_register(134,4035
+bool Lra_Outcome::is_source_register(135,4108
+bool Lra_Outcome::is_destination_register(136,4181
+bool Lra_Outcome::is_move_needed(137,4265
+bool Lra_Outcome::is_load_needed(138,4340
+void Lra_Outcome::optimize_lra(140,4407
+void Machine_Description::initialize_register_table(262,8031
+void Machine_Description::initialize_instruction_table(310,11834
+void Machine_Description::validate_init_local_register_mapping(340,15193
+void Machine_Description::clear_local_register_mappings(352,15617
+Register_Descriptor * Machine_Description::get_new_register(371,16253
+
+symbol-table.cc,1741
+Symbol_Table::Symbol_Table(42,1298
+Symbol_Table::~Symbol_Table(48,1387
+void Symbol_Table::set_table_scope(51,1421
+Table_Scope Symbol_Table::get_table_scope(60,1651
+bool Symbol_Table::is_empty(65,1715
+void Symbol_Table::push_symbol(70,1782
+void Symbol_Table::global_list_in_proc_map_check(75,1886
+bool Symbol_Table::variable_in_symbol_list_check(86,2241
+Symbol_Table_Entry & Symbol_Table::get_symbol_table_entry(98,2502
+void Symbol_Table::create(110,2853
+void Symbol_Table::print(131,3347
+void Symbol_Table::set_start_offset_of_first_symbol(161,4116
+int Symbol_Table::get_start_offset_of_first_symbol(166,4215
+void Symbol_Table::set_size(171,4311
+int Symbol_Table::get_size(176,4367
+void Symbol_Table::assign_offsets(181,4424
+int Symbol_Table::get_size_of_value_type(193,4743
+void Symbol_Table::print_assembly(204,5081
+Symbol_Table_Entry::Symbol_Table_Entry(216,5405
+Symbol_Table_Entry::Symbol_Table_Entry(223,5551
+Symbol_Table_Entry::~Symbol_Table_Entry(234,5785
+bool Symbol_Table_Entry::operator==(Symbol_Table_Entry::operator==237,5831
+void Symbol_Table_Entry::set_symbol_scope(249,6112
+Table_Scope Symbol_Table_Entry::get_symbol_scope(254,6188
+int Symbol_Table_Entry::get_lineno(259,6259
+Data_Type Symbol_Table_Entry::get_data_type(264,6317
+string Symbol_Table_Entry::get_variable_name(269,6396
+int Symbol_Table_Entry::get_start_offset(276,6483
+int Symbol_Table_Entry::get_end_offset(277,6551
+void Symbol_Table_Entry::set_start_offset(278,6615
+void Symbol_Table_Entry::set_end_offset(279,6686
+void Symbol_Table_Entry::set_register(281,6754
+Register_Descriptor * Symbol_Table_Entry::get_register(286,6853
+void Symbol_Table_Entry::free_register(291,6945
+void Symbol_Table_Entry::update_register(303,7382
+
+user-options.cc,1306
+User_Options command_options;40,1166
+User_Options::User_Options(42,1197
+User_Options::~User_Options(57,1519
+bool User_Options::is_show_tokens_selected(71,1741
+bool User_Options::is_show_ast_selected(72,1819
+bool User_Options::is_do_eval_selected(73,1891
+bool User_Options::is_demo_mode_selected(74,1961
+bool User_Options::is_show_symtab_selected(75,2035
+bool User_Options::is_show_program_selected(76,2113
+bool User_Options::is_show_ic_selected(77,2193
+bool User_Options::is_do_lra_selected(78,2263
+bool User_Options::is_do_compile_selected(79,2331
+void User_Options::create_tokens_buffer(81,2408
+void User_Options::create_ast_buffer(92,2633
+void User_Options::create_output_buffer(103,2840
+void User_Options::create_symtab_buffer(111,2984
+void User_Options::create_program_buffer(121,3208
+void User_Options::create_ic_buffer(131,3438
+ostream & User_Options::get_tokens_buffer(141,3637
+ostream & User_Options::get_ast_buffer(149,3764
+ostream & User_Options::get_output_buffer(157,3879
+ostream & User_Options::get_symtab_buffer(165,4006
+ostream & User_Options::get_program_buffer(173,4133
+ostream & User_Options::get_ic_buffer(181,4264
+string User_Options::get_file_name(189,4375
+void User_Options::remove_files(194,4438
+string User_Options::process_user_command_options(205,4683
+
+ast.hh,1867
+#define AST_HH25,961
+#define AST_SPACE 33,1066
+#define AST_NODE_SPACE 34,1096
+#define AST_SUB_NODE_SPACE 35,1134
+class Ast41,1214
+	    zero_arity Ast::zero_arity46,1257
+	    unary_arity Ast::unary_arity47,1278
+	    binary_arity Ast::binary_arity48,1300
+	    ternary_arity Ast::ternary_arity49,1323
+	}Ast_Arity;Ast::Ast_Arity50,1346
+    Data_Type node_data_type;Ast::node_data_type52,1360
+    Ast_Arity ast_num_child;Ast::ast_num_child53,1390
+    int lineno;Ast::lineno55,1420
+class Assignment_Ast:Assignment_Ast77,2202
+    Ast * lhs;Assignment_Ast::lhs79,2236
+    Ast * rhs;Assignment_Ast::rhs80,2251
+class Cast_Assignment_Ast:Cast_Assignment_Ast97,2635
+    Ast * lhs;Cast_Assignment_Ast::lhs99,2674
+    Ast * rhs;Cast_Assignment_Ast::rhs100,2689
+    Data_Type data_type;Cast_Assignment_Ast::data_type101,2704
+class Name_Ast:Name_Ast118,3122
+    string variable_name;Name_Ast::variable_name120,3150
+    Symbol_Table_Entry * variable_symbol_entry;Name_Ast::variable_symbol_entry121,3176
+class Cast_Name_Ast:Cast_Name_Ast142,3929
+    Ast *name;Cast_Name_Ast::name144,3962
+    Data_Type data_type;Cast_Name_Ast::data_type145,3977
+class Number_Ast:Number_Ast162,4351
+    T constant;Number_Ast::constant164,4381
+class Expr_Ast:Expr_Ast181,4776
+    Ast *lhs;Expr_Ast::lhs183,4804
+    Ast *rhs;Expr_Ast::rhs184,4818
+    Tgt_Op op;Expr_Ast::op185,4832
+class Cast_Expr_Ast:Cast_Expr_Ast205,5399
+    Ast *expr;Cast_Expr_Ast::expr207,5432
+    Data_Type data_type;Cast_Expr_Ast::data_type208,5447
+class Return_Ast:Return_Ast223,5801
+class Conditional_Ast:Conditional_Ast238,6106
+    Ast * pred;Conditional_Ast::pred241,6142
+    int label_id1;Conditional_Ast::label_id1242,6158
+    int label_id2;Conditional_Ast::label_id2243,6177
+class Goto_Ast:Goto_Ast257,6542
+    int bb_id;Goto_Ast::bb_id259,6570
+
+basic-block.hh,317
+#define BASIC_BLOCK_HH25,969
+#define BB_SPACE 31,1040
+class Basic_Block37,1109
+    int id_number;Basic_Block::id_number39,1129
+    list<Ast *> statement_list;Basic_Block::statement_list40,1148
+    list<Icode_Stmt *> bb_icode_list;Basic_Block::bb_icode_list42,1181
+    int lineno;Basic_Block::lineno44,1220
+
+error-display.hh,204
+#define ERROR_DISPLAY_HH25,929
+#define NO_FILE_LINE 30,993
+#define CONTROL_SHOULD_NOT_REACH 32,1018
+#define CHECK_INVARIANT(41,1327
+#define CHECK_INPUT(47,1594
+#define CHECK_INPUT_AND_ABORT(50,1723
+
+icode.hh,4259
+#define ICODE_HH24,962
+	a_op,::a_op45,1465
+	a_op_o1,::a_op_o146,1509
+	a_op_r,::a_op_r47,1565
+	a_op_r_o1,::a_op_r_o148,1617
+	a_op_o1_r,::a_op_o1_r49,1643
+	a_op_r_r_o1,::a_op_r_r_o150,1669
+	a_op_r_o1_o2,::a_op_r_o1_o251,1702
+	a_op_o1_o2_r,::a_op_o1_o2_r52,1738
+	a_nsy	::a_nsy53,1794
+    } Assembly_Format;54,1826
+	i_op,::i_op58,1946
+	i_op_o1,::i_op_o159,1990
+	i_r_op,::i_r_op60,2046
+	i_op_o1_r,::i_op_o1_r61,2098
+	i_op_r_o1,::i_op_r_o162,2114
+	i_r_op_o1,::i_r_op_o163,2130
+	i_r_r_op_o1,::i_r_r_op_o164,2156
+	i_r_o1_op_o2,::i_r_o1_op_o265,2189
+	i_op_o1_o2_r,::i_op_o1_o2_r66,2225
+	i_nsy	::i_nsy67,2282
+    } Icode_Format;68,2314
+	memory_addr,::memory_addr73,2355
+	register_addr,::register_addr74,2369
+	constant_addr::constant_addr75,2385
+    } Opd_Category;76,2400
+	load,::load80,2444
+	load_d,::load_d81,2451
+	imm_load,::imm_load82,2460
+	imm_load_d,::imm_load_d83,2471
+	store,::store84,2484
+	store_d,::store_d85,2492
+	mtc1,::mtc186,2502
+	mfc1,::mfc187,2509
+	sle,::sle88,2516
+	sge,::sge89,2522
+	slt,::slt90,2528
+	sgt,::sgt91,2534
+	sne,::sne92,2540
+	seq,::seq93,2546
+	goto_command,::goto_command94,2553
+	bne,::bne95,2568
+	add,::add96,2574
+	add_d,::add_d97,2580
+	sub,::sub98,2588
+	sub_d,::sub_d99,2594
+	mul,::mul100,2602
+	mul_d,::mul_d101,2608
+	div_i,::div_i102,2616
+	div_d,::div_d103,2624
+	uminus,::uminus104,2632
+	uminus_d,::uminus_d105,2641
+	nop	::nop106,2652
+    } Tgt_Op;107,2658
+class Instruction_Descriptor111,2759
+    Tgt_Op inst_op;Instruction_Descriptor::inst_op118,2943
+    string mnemonic;Instruction_Descriptor::mnemonic119,2963
+    string ic_symbol;Instruction_Descriptor::ic_symbol120,2984
+    string name;Instruction_Descriptor::name121,3059
+    Icode_Format ic_format;Instruction_Descriptor::ic_format122,3076
+    Assembly_Format assem_format;Instruction_Descriptor::assem_format123,3150
+    ~Instruction_Descriptor(Instruction_Descriptor::~Instruction_Descriptor128,3338
+class Ics_Opd142,3707
+    Opd_Category type;Ics_Opd::type151,3915
+class Mem_Addr_Opd:Mem_Addr_Opd164,4318
+    Symbol_Table_Entry * symbol_entry;Mem_Addr_Opd::symbol_entry166,4354
+    Data_Type data_type;Mem_Addr_Opd::data_type167,4393
+    ~Mem_Addr_Opd(Mem_Addr_Opd::~Mem_Addr_Opd171,4492
+class Register_Addr_Opd:Register_Addr_Opd181,4704
+    Register_Descriptor * register_description;Register_Addr_Opd::register_description183,4746
+    Data_Type data_type;Register_Addr_Opd::data_type184,4794
+    ~Register_Addr_Opd(Register_Addr_Opd::~Register_Addr_Opd188,4899
+class Const_Opd:Const_Opd200,5181
+    T num;Const_Opd::num202,5215
+    Data_Type data_type;Const_Opd::data_type203,5226
+    ~Const_Opd(Const_Opd::~Const_Opd207,5305
+class Icode_Stmt219,5606
+    Instruction_Descriptor op_desc;Icode_Stmt::op_desc228,5839
+    Icode_Stmt(Icode_Stmt::Icode_Stmt231,5884
+    ~Icode_Stmt(Icode_Stmt::~Icode_Stmt232,5904
+class Move_IC_Stmt:Move_IC_Stmt247,6319
+    Ics_Opd * opd1;Move_IC_Stmt::opd1249,6360
+    Ics_Opd * result;Move_IC_Stmt::result250,6383
+    ~Move_IC_Stmt(Move_IC_Stmt::~Move_IC_Stmt254,6484
+class Set_Rel_IC_Stmt:Set_Rel_IC_Stmt269,6838
+    Ics_Opd * opd1;Set_Rel_IC_Stmt::opd1271,6882
+    Ics_Opd * opd2;Set_Rel_IC_Stmt::opd2272,6905
+    Ics_Opd * result;Set_Rel_IC_Stmt::result273,6928
+    ~Set_Rel_IC_Stmt(Set_Rel_IC_Stmt::~Set_Rel_IC_Stmt277,7048
+class Set_Unary_Rel_IC_Stmt:Set_Unary_Rel_IC_Stmt294,7470
+    Ics_Opd * opd1;Set_Unary_Rel_IC_Stmt::opd1296,7520
+    Ics_Opd * result;Set_Unary_Rel_IC_Stmt::result297,7543
+    ~Set_Unary_Rel_IC_Stmt(Set_Unary_Rel_IC_Stmt::~Set_Unary_Rel_IC_Stmt301,7653
+class Label_IC_Stmt:Label_IC_Stmt316,8034
+    int num;Label_IC_Stmt::num318,8076
+    ~Label_IC_Stmt(Label_IC_Stmt::~Label_IC_Stmt322,8129
+class Control_IC_Stmt:Control_IC_Stmt334,8407
+    Ics_Opd * opd;Control_IC_Stmt::opd336,8451
+    int label;Control_IC_Stmt::label337,8473
+    ~Control_IC_Stmt(Control_IC_Stmt::~Control_IC_Stmt342,8608
+class Code_For_Ast359,9044
+    list<Icode_Stmt *> ics_list;Code_For_Ast::ics_list369,9379
+    Register_Descriptor * result_register;Code_For_Ast::result_register370,9412
+    ~Code_For_Ast(Code_For_Ast::~Code_For_Ast375,9556
+
+local-environment.hh,1297
+#define LOCAL_ENVIRONMENT_HH25,975
+#define VAR_SPACE 30,1037
+	int_result,::int_result36,1109
+	void_result,::void_result37,1122
+	bb_result,::bb_result38,1136
+	float_result,::float_result39,1148
+	double_result,::double_result40,1163
+	return_result::return_result41,1179
+    } Result_Enum;42,1194
+class Eval_Result 47,1259
+    Result_Enum result_type;Eval_Result::result_type50,1291
+class Eval_Result_Value:Eval_Result_Value67,1717
+    int block_id;Eval_Result_Value::block_id69,1762
+class Eval_Result_BB:Eval_Result_BB84,2130
+	int block_id;Eval_Result_BB::block_id86,2172
+class Eval_Result_Value_Int:Eval_Result_Value_Int99,2401
+    int value;Eval_Result_Value_Int::value101,2456
+    bool defined;Eval_Result_Value_Int::defined102,2471
+class Eval_Result_Value_Float:Eval_Result_Value_Float117,2768
+    float value;Eval_Result_Value_Float::value119,2825
+    bool defined;Eval_Result_Value_Float::defined120,2842
+class Eval_Result_Value_Double:Eval_Result_Value_Double135,3145
+    double value;Eval_Result_Value_Double::value137,3203
+    bool defined;Eval_Result_Value_Double::defined138,3221
+class Local_Environment153,3526
+    map<Local_Environment::map155,3552
+    map<string, Eval_Result *> variable_table;Local_Environment::variable_table155,3552
+
+procedure.hh,390
+#define PROCEDURE_HH25,967
+#define PROC_SPACE 31,1036
+#define LOC_VAR_SPACE 32,1061
+class Procedure38,1133
+	Data_Type return_type;Procedure::return_type40,1151
+	string name;Procedure::name41,1175
+	Symbol_Table local_symbol_table;Procedure::local_symbol_table42,1189
+	list<Basic_Block *> basic_block_list;Procedure::basic_block_list43,1223
+	int lineno;Procedure::lineno45,1263
+
+program.hh,247
+#define PROGRAM_HH25,965
+#define GLOB_SPACE 31,1032
+class Program39,1128
+	Symbol_Table global_symbol_table;Program::global_symbol_table41,1144
+	map<Program::map42,1179
+	map<string, Procedure *> procedure_map;Program::procedure_map42,1179
+
+reg-alloc.hh,3509
+#define REG_ALLOC_HH25,967
+	none,::none38,1189
+	zero,::zero39,1232
+	v0,::v040,1263
+	v1,::v141,1301
+	a0,::a042,1337
+	a1,::a143,1366
+	a1, a2,::a243,1366
+	a1, a2, a3,::a343,1366
+	t0,::t044,1379
+	t1,::t145,1427
+	t1, t2,::t245,1427
+	t1, t2, t3,::t345,1427
+	t1, t2, t3, t4,::t445,1427
+	t1, t2, t3, t4, t5,::t545,1427
+	t1, t2, t3, t4, t5, t6,::t645,1427
+	t1, t2, t3, t4, t5, t6, t7,::t745,1427
+	t1, t2, t3, t4, t5, t6, t7, t8,::t845,1427
+	t1, t2, t3, t4, t5, t6, t7, t8, t9,::t945,1427
+	s0,::s046,1465
+	s1,::s147,1509
+	s1, s2,::s247,1509
+	s1, s2, s3,::s347,1509
+	s1, s2, s3, s4,::s447,1509
+	s1, s2, s3, s4, s5,::s547,1509
+	s1, s2, s3, s4, s5, s6,::s647,1509
+	s1, s2, s3, s4, s5, s6, s7,::s747,1509
+	f2,::f248,1538
+	f4,::f449,1577
+	f4, f6,::f649,1577
+	f4, f6, f8,::f849,1577
+	f4, f6, f8, f10,::f1049,1577
+	f4, f6, f8, f10, f12,::f1249,1577
+	f4, f6, f8, f10, f12, f14,::f1449,1577
+	f4, f6, f8, f10, f12, f14, f16,::f1649,1577
+	f4, f6, f8, f10, f12, f14, f16, f18,::f1849,1577
+	f4, f6, f8, f10, f12, f14, f16, f18, f20,::f2049,1577
+	f4, f6, f8, f10, f12, f14, f16, f18, f20, f22,::f2249,1577
+	f4, f6, f8, f10, f12, f14, f16, f18, f20, f22, f24,::f2449,1577
+	f4, f6, f8, f10, f12, f14, f16, f18, f20, f22, f24, f26,::f2649,1577
+	f4, f6, f8, f10, f12, f14, f16, f18, f20, f22, f24, f26, f28,::f2849,1577
+	f4, f6, f8, f10, f12, f14, f16, f18, f20, f22, f24, f26, f28, f30,::f3049,1577
+	gp,::gp50,1645
+	sp,::sp51,1685
+	fp,::fp52,1719
+	ra	::ra53,1753
+    } Spim_Register;54,1787
+	int_num,::int_num58,1830
+	float_num::float_num59,1840
+    } Register_Val_Type;60,1851
+	fixed_reg,::fixed_reg64,1898
+	gp_data,::gp_data65,1911
+	fn_result,::fn_result66,1922
+	argument,::argument67,1935
+	pointer,::pointer68,1946
+	ret_address ::ret_address69,1957
+    } Register_Use_Category;70,1971
+class Register_Descriptor72,2001
+    Spim_Register reg_id;Register_Descriptor::reg_id74,2029
+    string reg_name;Register_Descriptor::reg_name75,2055
+    Register_Val_Type value_type;Register_Descriptor::value_type76,2076
+    Register_Use_Category reg_use;Register_Descriptor::reg_use77,2110
+    list<Symbol_Table_Entry *> lra_symbol_list;Register_Descriptor::lra_symbol_list79,2147
+    bool used_for_expr_result;Register_Descriptor::used_for_expr_result80,2195
+    Register_Descriptor(Register_Descriptor::Register_Descriptor84,2340
+    ~Register_Descriptor(Register_Descriptor::~Register_Descriptor85,2369
+	mc_2m ::mc_2m207,6456
+	mc_2r,::mc_2r208,6469
+	r2m,::r2m209,6478
+	c2m,::c2m210,6485
+	r2r::r2r211,6491
+    } Lra_Scenario;212,6496
+class Lra_Outcome214,6517
+    Register_Descriptor * register_description;Lra_Outcome::register_description216,6537
+    bool is_a_new_register;Lra_Outcome::is_a_new_register218,6586
+    bool is_same_as_source;Lra_Outcome::is_same_as_source219,6614
+    bool is_same_as_destination;Lra_Outcome::is_same_as_destination220,6642
+    bool register_move_needed;Lra_Outcome::register_move_needed221,6675
+    bool load_needed;Lra_Outcome::load_needed222,6707
+    ~Lra_Outcome(Lra_Outcome::~Lra_Outcome227,6845
+class Machine_Description241,7242
+    map<Machine_Description::map244,7278
+    map<Tgt_Op, Instruction_Descriptor *> spim_instruction_table;Machine_Description::spim_instruction_table244,7278
+    map<Machine_Description::map245,7344
+    map<Spim_Register, Register_Descriptor *> spim_register_table;Machine_Description::spim_register_table245,7344
+
+symbol-table.hh,1084
+#define SYMBOL_TABLE_HH25,970
+	void_data_type,::void_data_type37,1112
+	int_data_type,::int_data_type38,1129
+	float_data_type,::float_data_type39,1145
+	double_data_type::double_data_type40,1163
+} Data_Type;41,1181
+	global,::global45,1210
+	local::local46,1219
+} Table_Scope;47,1226
+class Symbol_Table49,1242
+	list<Symbol_Table_Entry *> variable_table;Symbol_Table::variable_table51,1263
+	Table_Scope scope;Symbol_Table::scope52,1307
+	int size_in_bytes;Symbol_Table::size_in_bytes55,1340
+	int start_offset_of_first_symbol;Symbol_Table::start_offset_of_first_symbol56,1377
+class Symbol_Table_Entry92,2147
+	string variable_name;Symbol_Table_Entry::variable_name94,2174
+	Data_Type variable_data_type;Symbol_Table_Entry::variable_data_type95,2197
+	Table_Scope scope;Symbol_Table_Entry::scope96,2228
+	int lineno;Symbol_Table_Entry::lineno98,2249
+	int start_offset;Symbol_Table_Entry::start_offset101,2275
+	int end_offset;Symbol_Table_Entry::end_offset102,2294
+	Register_Descriptor * register_description;Symbol_Table_Entry::register_description103,2311
+
+user-options.hh,1982
+#define USER_OPTIONS_HH25,928
+class User_Options36,1074
+	string source_file;User_Options::source_file38,1095
+	string tokens_file_name;User_Options::tokens_file_name39,1116
+	string ast_file_name;User_Options::ast_file_name40,1142
+	string output_file_name;User_Options::output_file_name41,1165
+	string symtab_file_name;User_Options::symtab_file_name42,1191
+	string program_file_name;User_Options::program_file_name43,1217
+	string ic_file_name;User_Options::ic_file_name44,1244
+	bool show_tokens_selected;User_Options::show_tokens_selected46,1267
+	bool show_ast_selected;User_Options::show_ast_selected47,1295
+	bool do_eval_selected;User_Options::do_eval_selected48,1320
+	bool demo_mode_selected;User_Options::demo_mode_selected49,1344
+	bool show_symtab_selected;User_Options::show_symtab_selected50,1370
+	bool show_program_selected;User_Options::show_program_selected51,1398
+	bool show_ic_selected;User_Options::show_ic_selected52,1427
+	bool do_lra_selected;User_Options::do_lra_selected53,1451
+	bool do_compile_selected;User_Options::do_compile_selected54,1474
+	ostream * tokens_buffer;User_Options::tokens_buffer56,1502
+	ostream * ast_buffer;User_Options::ast_buffer57,1528
+	ostream * output_buffer;User_Options::output_buffer58,1551
+	ostream * symtab_buffer;User_Options::symtab_buffer59,1577
+	ostream * program_buffer;User_Options::program_buffer60,1603
+	ostream * ic_buffer;User_Options::ic_buffer61,1630
+	ofstream tokens_file_buffer;User_Options::tokens_file_buffer63,1653
+	ofstream ast_file_buffer;User_Options::ast_file_buffer64,1683
+	ofstream output_file_buffer;User_Options::output_file_buffer65,1710
+	ofstream symtab_file_buffer;User_Options::symtab_file_buffer66,1740
+	ofstream program_file_buffer;User_Options::program_file_buffer67,1770
+	ofstream ic_file_buffer;User_Options::ic_file_buffer68,1801
+	FILE * file_buffer;User_Options::file_buffer70,1828
+	bool not_only_parse;User_Options::not_only_parse76,1895
+
+common-classes.hh,0

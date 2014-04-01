@@ -857,7 +857,7 @@ singleton:
 		$$ = new Expr_Ast($3,uminus,NULL, get_line_number());
 		}
 		else {
-		$$ = new Expr_Ast($3,uminus,NULL, get_line_number());
+		$$ = new Expr_Ast($3,uminus_d,NULL, get_line_number());
 		}
 		$$->check_ast();
 		}

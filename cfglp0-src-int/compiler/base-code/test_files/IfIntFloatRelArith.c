@@ -5,7 +5,7 @@ main()
 
 	a = a + e / f * d;
 
-	if (a != b <= d + g * e * h / e != 0 + d*e)
+	if (a != b <= d + g * h / e != 0)
 		a++;
 	else
 		e++;
