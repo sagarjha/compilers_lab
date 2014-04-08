@@ -21,12 +21,23 @@ done
 
 echo
 echo
-echo asm
+echo opticode
+echo
+echo
+for f in *.cfg.opticode
+do
+	echo $f
+	diff -bB $f ../../level-2-32bits/output/$f
+done
+
+echo
+echo
+echo optasm
 echo
 echo
 
-# for f in *.optasm
-# do
-# 	echo $f
-# 	diff -bB $f ../../level-1-32bits/output/$f
-# done
+for f in *.cfg.optasm
+do
+	echo $f
+	diff -bB $f ../../level-2-32bits/output/$f
+done
