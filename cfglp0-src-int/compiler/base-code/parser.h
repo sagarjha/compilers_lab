@@ -88,6 +88,12 @@ class Parser: public ParserBase
 	    return b;
 	}
 
+	void reset ()
+	{
+	    max_bb_num = max_goto_bb_num = 0;
+	    cur_num_basic_block = 2;
+	}
+
     private:
         void error(char const *msg);
         int lex();

@@ -190,6 +190,10 @@ void Symbol_Table::assign_offsets()
 	}
 }
 
+list <Symbol_Table_Entry *> Symbol_Table::get_variable_table () {
+    return variable_table;
+}
+
 int Symbol_Table::get_size_of_value_type(Data_Type dt)
 {
 	switch(dt)
@@ -198,6 +202,16 @@ int Symbol_Table::get_size_of_value_type(Data_Type dt)
 	case float_data_type: return 8; break;
 	case void_data_type: CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, "Attempt to seek size of type void");
 	defualt: CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, "Data type not supported");
+	}
+}
+
+void Symbol_Table::print_local_symbol_table(ostream & file_buffer)
+{
+	list<Symbol_Table_Entry *>::iterator i;
+	for (i = variable_table.begin(); i != variable_table.end(); i++)
+	{
+		if (scope == local)
+			file_buffer << (*i)->get_variable_name() << ":\t.word 0\n";
 	}
 }
 

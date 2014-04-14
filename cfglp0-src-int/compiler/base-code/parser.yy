@@ -85,18 +85,21 @@
 %%
 
 program:
-		variable_declaration_list
-		function_declaration_list procedure_definition_list
+		variable_declaration_list 
+		function_declaration_list
 		{
-		    if (NOT_ONLY_PARSE)
-		{
-		CHECK_INVARIANT(program_object.check_all_functions_defined(), "Function declared but not defined");
 		Symbol_Table * global_table = $1;
 
 		CHECK_INVARIANT((global_table != NULL), "Global declarations cannot be null");
 
 		program_object.set_global_table(*global_table);
-		CHECK_INVARIANT((current_procedure != NULL), "Current procedure cannot be null");
+		
+		}
+		procedure_definition_list
+		{
+		    if (NOT_ONLY_PARSE)
+		{
+		CHECK_INVARIANT(program_object.check_all_functions_defined(), "Function declared but not defined");
 		CHECK_INVARIANT(program_object.get_main_procedure(cout), "No main procedure defined");
 		program_object.global_list_in_proc_map_check();
 		}
@@ -110,7 +113,6 @@ program:
 		CHECK_INVARIANT(program_object.get_main_procedure(cout), "No main procedure defined");
 		program_object.global_list_in_proc_map_check();
 		}
-
 		}
 ;
 
@@ -137,6 +139,7 @@ function_declaration:
 		  bool ret = program_object.set_procedure_map(current_procedure, get_line_number());
 		CHECK_INVARIANT(!program_object.variable_in_symbol_list_check(*($2)), "Function name the same as that of a global");
 		CHECK_INVARIANT(ret, "Function already defined, overloading not allowed");
+		current_procedure->push_arguments_into_symbol_table();
 		$$ = current_procedure;
 		}
 		}
@@ -150,6 +153,7 @@ function_declaration:
 		  bool ret = program_object.set_procedure_map(current_procedure, get_line_number());
 		CHECK_INVARIANT(!program_object.variable_in_symbol_list_check(*($2)), "Function name the same as that of a global");
 		CHECK_INVARIANT(ret, "Function already defined, overloading not allowed");
+		current_procedure->push_arguments_into_symbol_table();
 		$$ = current_procedure;
 		}
 		}
@@ -213,7 +217,10 @@ procedure_definition_list:
 function_declaration_in_definition:
 		NAME '(' declaration_argument_list ')' {
 		  if (NOT_ONLY_PARSE) {
-		  CHECK_INVARIANT(current_procedure->match_argument_list($3), "Argument list of the function does not match in declaration and definition");
+		current_procedure = program_object.get_procedure(*$1);
+		CHECK_INVARIANT(current_procedure, "The procedure has not been declared");
+		CHECK_INVARIANT(current_procedure->match_argument_list($3), "Argument list of the function does not match in declaration and definition");
+		program_object.push_to_list(*$1);
 		}
 		}
 ;
@@ -233,7 +240,7 @@ procedure_definition:
 		local_table = new Symbol_Table();
 
 		current_procedure->set_local_list(*local_table);
-		max_bb_num = max_goto_bb_num = 0;
+		reset();
 		}
 		}
 
@@ -248,7 +255,7 @@ procedure_definition:
 		CHECK_INVARIANT((max_bb_num >= max_goto_bb_num), "Invalid goto statement present in program");
 
 		current_procedure->set_basic_block_list(*bb_list);
-		
+		reset();
 		}
 		}
 	|
@@ -257,9 +264,11 @@ procedure_definition:
 		{
 		    if (NOT_ONLY_PARSE)
 		{
-		  CHECK_INVARIANT(current_procedure->match_argument_list(NULL), "Argument list of the function does not match in declaration and definition");		  
-		current_procedure = new Procedure (void_data_type, *($1), *(new (list<args*>)), get_line_number());
-		// push to procedure_map of program object
+		program_object.push_to_list(*$1);		  
+		current_procedure = program_object.get_procedure(*$1);
+		CHECK_INVARIANT(current_procedure, "The procedure has not been declared");		  
+		CHECK_INVARIANT(current_procedure->match_argument_list(NULL), "Argument list of the function does not match in declaration and definition");		  
+		current_procedure = program_object.get_procedure(*$1);
 		CHECK_INVARIANT(!program_object.variable_in_symbol_list_check(*($1)), "Function name the same as that of a global");
 		    
 		CHECK_INVARIANT((current_procedure != NULL), "Current procedure cannot be null");
@@ -271,6 +280,7 @@ procedure_definition:
 
 		current_procedure->set_local_list(*local_table);
 		max_bb_num = max_goto_bb_num = 0;
+		reset();
 		}
 		}
 
@@ -285,7 +295,8 @@ procedure_definition:
 		CHECK_INVARIANT((max_bb_num >= max_goto_bb_num), "Invalid goto statement present in program");
 
 		current_procedure->set_basic_block_list(*bb_list);
-		
+
+		reset();
 		}
 		}
 	|
@@ -310,19 +321,22 @@ procedure_definition:
 		CHECK_INVARIANT((max_bb_num >= max_goto_bb_num), "Invalid goto statement present in program");
 
 		current_procedure->set_basic_block_list(*bb_list);
-		
+		reset();
 		}
 		}
 	|
 		NAME '(' ')'
 		'{'
+	{
+		program_object.push_to_list(*$1);		  
+		current_procedure = program_object.get_procedure(*$1);
+		CHECK_INVARIANT(current_procedure, "The procedure has not been declared");		  
+		}
 		basic_block_list '}'
 		{
 		    if (NOT_ONLY_PARSE)
 		{
 		  CHECK_INVARIANT(current_procedure->match_argument_list(NULL), "Argument list of the function does not match in declaration and definition");
-		current_procedure = new Procedure (void_data_type, *($1), *(new (list<args*>)), get_line_number());
-		// push to procedure_map of program object
 		CHECK_INVARIANT(!program_object.variable_in_symbol_list_check(*($1)), "Function name the same as that of a global");
 
 		CHECK_INVARIANT((current_procedure != NULL), "Current procedure cannot be null");
@@ -332,14 +346,13 @@ procedure_definition:
 		current_procedure->set_local_list(*local_table);
 		max_bb_num = max_goto_bb_num = 0;
 
-		list<Basic_Block *> * bb_list = $5;
+		list<Basic_Block *> * bb_list = $6;
 
-		CHECK_INVARIANT((current_procedure != NULL), "Current procedure cannot be null");
 		CHECK_INVARIANT((bb_list != NULL), "Basic block list cannot be null");
 		CHECK_INVARIANT((max_bb_num >= max_goto_bb_num), "Invalid goto statement present in program");
 
 		current_procedure->set_basic_block_list(*bb_list);
-
+		reset();
 		}
 		}
 		;
@@ -406,7 +419,7 @@ variable_declaration:
 		{
 		    if (NOT_ONLY_PARSE)
 		{
-		    CHECK_INVARIANT(($2 != NULL), "Name cannot be null");
+		CHECK_INVARIANT(($2 != NULL), "Name cannot be null");
 
 		string decl_name = *$2;
 		Data_Type type = $1;
@@ -568,8 +581,9 @@ return_statement:
 		RETURN exp_assign_op
 		{
 		  if (NOT_ONLY_PARSE) {
+		    CHECK_INVARIANT(current_procedure, "Current Procedure cannot be NULL, line number " + get_line_number());
 		bool ret = current_procedure->check_return_type ($2->get_data_type());
-		CHECK_INVARIANT(ret, "Return type mismatch error");
+		CHECK_INVARIANT(ret, "Return type mismatch error for the function " +  current_procedure->get_proc_name());
 		$$ = new Return_Ast($2->get_data_type(), get_line_number());
 		}
 		}
@@ -717,7 +731,7 @@ variable:
 		var_table_entry = &(program_object.get_symbol_table_entry(var_name));
 
 		else
-		CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, "Variable has not been declared");
+		CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, "Variable has not been declared " + var_name);
 
 		Ast * name_ast = new Name_Ast(var_name, *var_table_entry, get_line_number());
 
