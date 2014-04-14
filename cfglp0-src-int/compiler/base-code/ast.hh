@@ -59,6 +59,7 @@ public:
     ~Ast();
 
     virtual Data_Type get_data_type();
+    virtual void set_data_type(Data_Type);    
     virtual bool check_ast();
     virtual Symbol_Table_Entry & get_symbol_entry();
 
@@ -224,7 +225,7 @@ class Return_Ast:public Ast
 {
 
 public:
-    Return_Ast(int line);
+    Return_Ast(Data_Type data_type, int line);
     ~Return_Ast();
 
     void print(ostream & file_buffer);
@@ -266,6 +267,28 @@ public:
 
     Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
     Eval_Result & evaluate_without_print(Local_Environment & eval_env, ostream & file_buffer);
+    Code_For_Ast & compile();
+    Code_For_Ast & compile_and_optimize_ast(Lra_Outcome & lra);
+};
+
+class Functional_Call_Ast:public Ast
+{
+    string name;
+    list <Ast *> argument;
+    
+public:
+    Functional_Call_Ast(string & given_name, list <Ast*> arguments);
+    ~Functional_Call_Ast();
+
+    void print (ostream &);
+
+    Data_Type get_data_type();
+    void set_data_type(Data_Type);
+    bool check_ast(int line);
+
+    Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
+    Eval_Result & get_value_of_evaluation(Local_Environment & eval_env, ostream & file_buffer);
+
     Code_For_Ast & compile();
     Code_For_Ast & compile_and_optimize_ast(Lra_Outcome & lra);
 };

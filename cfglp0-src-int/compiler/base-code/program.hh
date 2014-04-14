@@ -38,32 +38,37 @@ extern Program program_object;
 
 class Program
 {
-	Symbol_Table global_symbol_table;
-	map<string, Procedure *> procedure_map;
-
+    Symbol_Table global_symbol_table;
+    map<string, Procedure *> procedure_map;
+    list <string> procedure_list;
+    
 public:
-	Program();
-	~Program();
-	void delete_all();
+    Program();
+    ~Program();
+    void delete_all();
 
-	void set_procedure_map(Procedure * proc, int line);
-	void set_global_table(Symbol_Table & new_global_table);
+    bool set_procedure_map(Procedure * proc, int line);
+    Procedure * get_procedure(string);
+    bool check_all_functions_defined();
+    void check_all_functions_returned();
+    void set_global_table(Symbol_Table & new_global_table);
+    void push_to_list(string);
+    
+    Symbol_Table_Entry & get_symbol_table_entry(string variable);
 
-	Symbol_Table_Entry & get_symbol_table_entry(string variable);
+    void print();
 
-	void print();
+    Procedure * get_main_procedure(ostream & file_buffer);
 
-	Procedure * get_main_procedure(ostream & file_buffer);
+    Eval_Result & evaluate();
 
-	Eval_Result & evaluate();
+    bool variable_in_proc_map_check(string symbol);
+    bool variable_in_symbol_list_check(string variable);
+    void global_list_in_proc_map_check();
 
-	bool variable_in_proc_map_check(string symbol);
-	bool variable_in_symbol_list_check(string variable);
-	void global_list_in_proc_map_check();
-
-	// compile
-	void compile();
-	void print_assembly();
+    // compile
+    void compile();
+    void print_assembly();
 };
 
 #endif

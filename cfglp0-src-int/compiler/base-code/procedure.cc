@@ -39,11 +39,37 @@ using namespace std;
 #include"procedure.hh"
 #include"program.hh"
 
-Procedure::Procedure(Data_Type proc_return_type, string proc_name, int line)
-{
-	return_type = proc_return_type;
-	name = proc_name;
+Data_Type args::get_type() {
+    return type;
+}
 
+string args::get_name() {
+    return name;
+}
+
+void args::set_name(string arg_name) {
+    name = arg_name;
+}
+
+Procedure::Procedure(Data_Type proc_return_type, string proc_name, list<args*> arg_list, int line)
+{
+    return_type = proc_return_type;
+    name = proc_name;
+    list <args *>::iterator i;
+    list <args>::iterator j;
+    for (i = arg_list.begin(); i != arg_list.end(); ++i) {
+	for (j = arguments.begin(); j!=arguments.end(); j++) { // March 11, 4:00 am, inner loop introduced to check if any two arguments had the same name
+	    if ((*j).get_name() == (*i)->get_name())
+		{
+		    CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, "Variable name clash amongst function arguments.");
+		}
+	}
+	arguments.push_back(*(*i));
+    }
+    cur_num_basic_block = 2;
+    function_defined=false;
+    function_returned=false;
+	
 	lineno = line;
 }
 
@@ -64,6 +90,26 @@ void Procedure::set_basic_block_list(list<Basic_Block *> & bb_list)
 	basic_block_list = bb_list;
 }
 
+void Procedure::push_call_arguments(list<Eval_Result_Value *> new_arg)
+{
+    // call_arguments = new_arg;
+    
+    // Deep copy
+    int n = new_arg.size();
+    for (int i=0; i<n; i++)
+	{
+	    call_arguments.splice(call_arguments.begin(), new_arg);
+	}
+}
+
+void Procedure::clear_call_arguments()
+{
+    int n = call_arguments.size();
+    for (int i=0; i<n; i++) {
+	call_arguments.pop_back();
+    }
+}
+
 void Procedure::set_local_list(Symbol_Table & new_list)
 {
 	local_symbol_table = new_list;
@@ -75,9 +121,82 @@ Data_Type Procedure::get_return_type()
 	return return_type;
 }
 
+bool Procedure::check_function_defined() {
+    return function_defined;
+}
+
+void Procedure::check_function_returned() {
+    if (return_type == void_data_type) {
+	return ;
+    }	
+    if (!function_returned) {
+	CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, "Function " + name + " does not have a return statement matching its return type");
+    }
+}
+
+bool Procedure::check_return_type (Data_Type data_type) {
+    function_returned = true;
+    return (return_type == data_type);
+}
+
+bool Procedure::match_argument_list(list<args*> *arg_list) {
+    if (function_defined) {
+	CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, "The function has already been defined");
+    }
+    function_defined = true;
+    if (arg_list == NULL) {
+	return arguments.size() == 0;
+    }
+    if (arg_list->size() != arguments.size()) {
+	return false;
+    }
+    list<args>::iterator i;
+    list<args*>::iterator j;
+  
+    for (i = arguments.begin(), j = arg_list->begin(); i != arguments.end(); ++i, ++j) {
+	// March 11, 4:00 am. Previously, only type was checked here and the name was set
+	if (((*i).get_type() != (*j)->get_type()) || ((*i).get_name()).compare((*j)->get_name()) != 0) {
+	    return false;
+	}
+    }
+    return true;
+}
+
+bool Procedure::match_function_call(list <Ast *> * parameter_list) {
+    if (parameter_list == NULL) {
+	if (arguments.size() == 0) {
+	    return true;
+	}
+	return false;
+    }
+    if (parameter_list->size () != arguments.size()) {
+	return false;
+    }
+    list<args>::iterator i = arguments.begin();
+    list<Ast*>::iterator j = (*parameter_list).begin();
+    for (; i != arguments.end(); ++i,++j) {
+	if ((*i).get_type() != (*j)->get_data_type()) {
+	    return false;
+	}
+    }
+    return true;
+}
+
 bool Procedure::variable_in_symbol_list_check(string variable)
 {
 	return local_symbol_table.variable_in_symbol_list_check(variable);
+}
+
+void Procedure::push_arguments_into_symbol_table()
+{
+    for (list<args>::iterator i = arguments.begin(); i != arguments.end(); ++i) {
+	string name_tmp = (*i).get_name();
+	if (variable_in_symbol_list_check(name_tmp)) {
+	    CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, "A local variable has the same name as a function argument");
+	}
+	Symbol_Table_Entry * sym_tab_ent = new Symbol_Table_Entry(name_tmp, (*i).get_type(), lineno);
+	local_symbol_table.push_symbol(sym_tab_ent);
+    }
 }
 
 Symbol_Table_Entry & Procedure::get_symbol_table_entry(string variable_name)

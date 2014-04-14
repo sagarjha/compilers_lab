@@ -57,6 +57,11 @@
 	 return Parser::ASSIGN;
      }
 
+void {
+    store_token_name("VOID");
+    return Parser::VOID; 
+}
+
 int		{
     store_token_name("INTEGER");
     return Parser::INTEGER; 
@@ -107,7 +112,7 @@ return		{
     return Parser::EQUAL;
 }
 
-[:{}();?!]	{
+[:{}();?!,]	{
     store_token_name("META CHAR");
     return matched()[0];
 }

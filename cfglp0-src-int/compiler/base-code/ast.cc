@@ -59,6 +59,14 @@ Data_Type Ast::get_data_type()
   CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, msg.str());
 }
 
+void Ast::set_data_type(Data_Type data_type)
+{
+  stringstream msg;
+  msg << "No set_data_type() function for " << typeid(*this).name();
+  CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, msg.str());
+}
+
+
 Symbol_Table_Entry & Ast::get_symbol_entry()
 {
   stringstream msg;
@@ -1356,10 +1364,10 @@ Code_For_Ast & Goto_Ast::compile_and_optimize_ast(Lra_Outcome & lra) {
 }
 //////////////////////////////////////////////////////////////////////////////////////////
 
-Return_Ast::Return_Ast(int line)
+Return_Ast::Return_Ast(Data_Type data_type, int line)
 {
   lineno = line;
-  node_data_type = void_data_type;
+  node_data_type = data_type;
   ast_num_child = zero_arity;
 }
 
@@ -1387,6 +1395,65 @@ Code_For_Ast & Return_Ast::compile_and_optimize_ast(Lra_Outcome & lra)
 {
   Code_For_Ast & ret_code = *new Code_For_Ast();
   return ret_code;
+}
+
+////////////////////////////////////////////////////////////////////////////////////
+
+Functional_Call_Ast::Functional_Call_Ast (string& given_name, list <Ast*> arguments) {
+  name = given_name;
+  argument = arguments;
+}
+
+Functional_Call_Ast::~Functional_Call_Ast() {
+  for (list<Ast*>::iterator i = argument.begin(); i != argument.end();) {
+    argument.erase(i);
+  }
+}
+
+Data_Type Functional_Call_Ast::get_data_type() {
+  return node_data_type;
+}
+
+void Functional_Call_Ast::set_data_type(Data_Type data_type) {
+  node_data_type = data_type;
+}
+
+bool Functional_Call_Ast::check_ast(int line) {
+  CHECK_INVARIANT("Should not reach here", line);
+}
+
+void Functional_Call_Ast::print(ostream& file_buffer) {
+  file_buffer << endl << AST_SPACE << "FN CALL: " << name << "(";
+  for (list <Ast *>::iterator i = argument.begin(); i != argument.end(); i++) {
+    file_buffer << endl << AST_NODE_SPACE;
+    (*i) -> print(file_buffer);
+  }
+  file_buffer << ")";
+}
+
+Eval_Result & Functional_Call_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer) {
+  Procedure * called_procedure = program_object.get_procedure(name);
+  list<Eval_Result_Value *> new_arg_list;
+  for (list<Ast *>::iterator i = argument.begin(); i!=argument.end(); i++) {
+    Eval_Result & val = (*i)->evaluate(eval_env, file_buffer);
+    new_arg_list.push_back((Eval_Result_Value*) &val);
+  }
+  called_procedure -> push_call_arguments(new_arg_list);
+  Eval_Result & result = called_procedure -> evaluate(file_buffer);
+  called_procedure -> clear_call_arguments();
+  return result;
+}
+
+Eval_Result & Functional_Call_Ast::get_value_of_evaluation(Local_Environment & eval_env, ostream & file_buffer) {
+  return evaluate(eval_env, file_buffer);
+}
+
+Code_For_Ast & Functional_Call_Ast::compile()
+{
+}
+
+Code_For_Ast & Functional_Call_Ast::compile_and_optimize_ast(Lra_Outcome & lra)
+{
 }
 
 template class Number_Ast<int>;

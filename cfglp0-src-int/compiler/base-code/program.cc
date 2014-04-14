@@ -60,11 +60,46 @@ void Program::set_global_table(Symbol_Table & new_global_table)
 	global_symbol_table.set_table_scope(global);
 }
 
-void Program::set_procedure_map(Procedure * proc, int line)
+bool Program::set_procedure_map(Procedure * proc, int line)
 {
 	CHECK_INVARIANT((proc != NULL), "Procedure cannot be null");
-
+	if (procedure_map[proc->get_proc_name()]) {
+	    return false;
+	}    
 	procedure_map[proc->get_proc_name()] = proc;
+	return true;
+}
+
+bool Program::check_all_functions_defined() {
+    map<string, Procedure *>::iterator i;
+    for(i = procedure_map.begin(); i != procedure_map.end(); i++)
+	{
+	    bool ret = (i->second)->check_function_defined();
+	    if (ret == false) {
+		return ret;
+	    }
+	}
+    return true;
+}
+
+void Program::check_all_functions_returned() {
+    map<string, Procedure *>::iterator i;
+    for(i = procedure_map.begin(); i != procedure_map.end(); i++)
+	{
+	    (i->second)->check_function_returned();
+	}
+}
+
+Procedure * Program::get_procedure(string name)
+{
+    if (procedure_map.find(name) == procedure_map.end()) {
+	return NULL;
+    }
+    return procedure_map[name];
+}
+
+void Program::push_to_list(string name) {
+    procedure_list.push_back(name);
 }
 
 bool Program::variable_in_symbol_list_check(string variable)
