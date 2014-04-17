@@ -83,6 +83,8 @@ typedef enum
 	imm_load_d,
 	store,
 	store_d,
+	move_reg,
+	move_reg_d,
 	mtc1,
 	mfc1,
 	sle,
@@ -350,6 +352,24 @@ public:
     int get_label();
     void set_label(int n);
 
+    void print_icode(ostream & file_buffer);
+    void print_assembly(ostream & file_buffer);
+};
+
+class Ret_IC_Stmt: public Icode_Stmt
+{
+  string fn_name;
+public:
+  Ret_IC_Stmt (string _fn_name);
+  void print_icode(ostream & file_buffer);
+  void print_assembly(ostream & file_buffer);
+};
+
+class Call_IC_Stmt: public Icode_Stmt
+{
+    string name;
+public:
+    Call_IC_Stmt(string _name);
     void print_icode(ostream & file_buffer);
     void print_assembly(ostream & file_buffer);
 };

@@ -88,12 +88,15 @@ program:
 		variable_declaration_list 
 		function_declaration_list
 		{
+		if (NOT_ONLY_PARSE)
+		{
 		Symbol_Table * global_table = $1;
 
 		CHECK_INVARIANT((global_table != NULL), "Global declarations cannot be null");
 
 		program_object.set_global_table(*global_table);
 		
+		}
 		}
 		procedure_definition_list
 		{
@@ -327,10 +330,12 @@ procedure_definition:
 	|
 		NAME '(' ')'
 		'{'
-	{
+	        {
+		if (NOT_ONLY_PARSE) {
 		program_object.push_to_list(*$1);		  
 		current_procedure = program_object.get_procedure(*$1);
-		CHECK_INVARIANT(current_procedure, "The procedure has not been declared");		  
+		CHECK_INVARIANT(current_procedure, "The procedure has not been declared " + *$1);
+		}
 		}
 		basic_block_list '}'
 		{
@@ -574,7 +579,7 @@ return_statement:
 		RETURN
 		{
 		  if (NOT_ONLY_PARSE) {
-		  $$ = new Return_Ast(void_data_type, get_line_number());
+		    $$ = new Return_Ast(current_procedure->get_proc_name(), get_line_number());
 		}
 		}
 	|
@@ -584,7 +589,7 @@ return_statement:
 		    CHECK_INVARIANT(current_procedure, "Current Procedure cannot be NULL, line number " + get_line_number());
 		bool ret = current_procedure->check_return_type ($2->get_data_type());
 		CHECK_INVARIANT(ret, "Return type mismatch error for the function " +  current_procedure->get_proc_name());
-		$$ = new Return_Ast($2->get_data_type(), get_line_number());
+		$$ = new Return_Ast($2, current_procedure->get_proc_name(), get_line_number());
 		}
 		}
 	;

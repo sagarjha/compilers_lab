@@ -74,6 +74,7 @@ public:
     ~Procedure();
 
     string get_proc_name();
+    list<args> get_arguments();
     void set_basic_block_list(list<Basic_Block *> & bb_list);
     void set_local_list(Symbol_Table & new_list);
     /* To set arguments (Eval_Result_Value objects) before evaluating and to clear them afterwards */

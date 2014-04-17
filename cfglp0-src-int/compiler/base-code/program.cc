@@ -49,25 +49,25 @@ Program::~Program()
 
 void Program::delete_all()
 {
-	map<string, Procedure *>::iterator i;
-	for (i = procedure_map.begin(); i != procedure_map.end(); i++)
-		delete i->second;
+    map<string, Procedure *>::iterator i;
+    for (i = procedure_map.begin(); i != procedure_map.end(); i++)
+	delete i->second;
 }
 
 void Program::set_global_table(Symbol_Table & new_global_table)
 {
-	global_symbol_table = new_global_table;
-	global_symbol_table.set_table_scope(global);
+    global_symbol_table = new_global_table;
+    global_symbol_table.set_table_scope(global);
 }
 
 bool Program::set_procedure_map(Procedure * proc, int line)
 {
-	CHECK_INVARIANT((proc != NULL), "Procedure cannot be null");
-	if (procedure_map[proc->get_proc_name()]) {
-	    return false;
-	}    
-	procedure_map[proc->get_proc_name()] = proc;
-	return true;
+    CHECK_INVARIANT((proc != NULL), "Procedure cannot be null");
+    if (procedure_map[proc->get_proc_name()]) {
+	return false;
+    }
+    procedure_map[proc->get_proc_name()] = proc;
+    return true;
 }
 
 bool Program::check_all_functions_defined() {
@@ -104,139 +104,139 @@ void Program::push_to_list(string name) {
 
 bool Program::variable_in_symbol_list_check(string variable)
 {
-	return global_symbol_table.variable_in_symbol_list_check(variable);
+    return global_symbol_table.variable_in_symbol_list_check(variable);
 }
 
 Symbol_Table_Entry & Program::get_symbol_table_entry(string variable_name)
 {
-	return global_symbol_table.get_symbol_table_entry(variable_name);
+    return global_symbol_table.get_symbol_table_entry(variable_name);
 }
 
 bool Program::variable_in_proc_map_check(string symbol)
 {
-	if (procedure_map.find(symbol) == procedure_map.end())
-		return false;
+    if (procedure_map.find(symbol) == procedure_map.end())
+	return false;
 
-	return true;
+    return true;
 }
 
 void Program::global_list_in_proc_map_check()
 {
-	global_symbol_table.global_list_in_proc_map_check();
+    global_symbol_table.global_list_in_proc_map_check();
 }
 
 Procedure * Program::get_main_procedure(ostream & file_buffer)
 {
-	map<string, Procedure *>::iterator i;
-	for(i = procedure_map.begin(); i != procedure_map.end(); i++)
+    map<string, Procedure *>::iterator i;
+    for(i = procedure_map.begin(); i != procedure_map.end(); i++)
 	{
-		if (i->second != NULL && i->second->get_proc_name() == "main")
-				return i->second;
+	    if (i->second != NULL && i->second->get_proc_name() == "main")
+		return i->second;
 	}
 	
-	return NULL;
+    return NULL;
 }
 
 void Program::print()
 {
-	ostream * file_buffer;
+    ostream * file_buffer;
 
-	if(command_options.is_show_ast_selected())
+    if(command_options.is_show_ast_selected())
 	{
-		command_options.create_ast_buffer();
-		file_buffer = &(command_options.get_ast_buffer());
+	    command_options.create_ast_buffer();
+	    file_buffer = &(command_options.get_ast_buffer());
 	}
 
-	else if (command_options.is_show_program_selected())
+    else if (command_options.is_show_program_selected())
 	{
-		command_options.create_program_buffer();
-		file_buffer = &(command_options.get_program_buffer());
+	    command_options.create_program_buffer();
+	    file_buffer = &(command_options.get_program_buffer());
 	}
 
-	else if (command_options.is_show_symtab_selected())
+    else if (command_options.is_show_symtab_selected())
 	{
-		command_options.create_symtab_buffer();
-		file_buffer = &(command_options.get_symtab_buffer());
+	    command_options.create_symtab_buffer();
+	    file_buffer = &(command_options.get_symtab_buffer());
 	}
 
-	*file_buffer << "Program:\n";
+    *file_buffer << "Program:\n";
 
-	if (command_options.is_show_program_selected() || command_options.is_show_symtab_selected())
+    if (command_options.is_show_program_selected() || command_options.is_show_symtab_selected())
 	{
-		*file_buffer << "\nGlobal Declarations:\n";
-		global_symbol_table.print(*file_buffer);
+	    *file_buffer << "\nGlobal Declarations:\n";
+	    global_symbol_table.print(*file_buffer);
 	}
 
-	map<string, Procedure *>::iterator i;
-	for(i = procedure_map.begin(); i != procedure_map.end(); i++)
-		i->second->print(*file_buffer);
+    map<string, Procedure *>::iterator i;
+    for(i = procedure_map.begin(); i != procedure_map.end(); i++)
+	i->second->print(*file_buffer);
 }
 
 Eval_Result & Program::evaluate()
 {
-	Procedure * main = get_main_procedure(command_options.get_output_buffer());
-	CHECK_INPUT_AND_ABORT((main != NULL), 
-		"No main function found in the program", NO_FILE_LINE);
+    Procedure * main = get_main_procedure(command_options.get_output_buffer());
+    CHECK_INPUT_AND_ABORT((main != NULL), 
+			  "No main function found in the program", NO_FILE_LINE);
 
-	global_symbol_table.create(interpreter_global_table);
+    global_symbol_table.create(interpreter_global_table);
 
-	command_options.create_output_buffer();
-	ostream & file_buffer = command_options.get_output_buffer();
-	file_buffer << "Evaluating Program\n";
-	file_buffer << GLOB_SPACE << "Global Variables (before evaluating):\n";
-	interpreter_global_table.print(file_buffer);
+    command_options.create_output_buffer();
+    ostream & file_buffer = command_options.get_output_buffer();
+    file_buffer << "Evaluating Program\n";
+    file_buffer << GLOB_SPACE << "Global Variables (before evaluating):\n";
+    interpreter_global_table.print(file_buffer);
 
-	Eval_Result & result = main->evaluate(file_buffer);
+    Eval_Result & result = main->evaluate(file_buffer);
 
-	file_buffer << GLOB_SPACE << "Global Variables (after evaluating):\n";
-	interpreter_global_table.print(file_buffer);
+    file_buffer << GLOB_SPACE << "Global Variables (after evaluating):\n";
+    interpreter_global_table.print(file_buffer);
 
-	return result;
+    return result;
 }
 
 void Program::compile()
 {
-	// set up machine details
-	machine_dscr_object.initialize_register_table();
-	machine_dscr_object.initialize_instruction_table();
+    // set up machine details
+    machine_dscr_object.initialize_register_table();
+    machine_dscr_object.initialize_instruction_table();
 	
-	// assign offsets to global variables
-	global_symbol_table.set_start_offset_of_first_symbol(0);
-	global_symbol_table.set_size(0);
-	global_symbol_table.assign_offsets();
+    // assign offsets to global variables
+    global_symbol_table.set_start_offset_of_first_symbol(0);
+    global_symbol_table.set_size(0);
+    global_symbol_table.assign_offsets();
 	
-	// compile the program by visiting each procedure
-	map<string, Procedure *>::iterator i;
-	for(i = procedure_map.begin(); i != procedure_map.end(); i++)
+    // compile the program by visiting each procedure
+    map<string, Procedure *>::iterator i;
+    for(i = procedure_map.begin(); i != procedure_map.end(); i++)
 	{
-		i->second->compile();
-		if(command_options.is_show_ic_selected())
+	    i->second->compile();
+	    if(command_options.is_show_ic_selected())
 		{
-			ostream * file_buffer;
-			command_options.create_ic_buffer();
-			file_buffer = &(command_options.get_ic_buffer());
+		    ostream * file_buffer;
+		    command_options.create_ic_buffer();
+		    file_buffer = &(command_options.get_ic_buffer());
 		
-			i->second->print_icode(*file_buffer);
+		    i->second->print_icode(*file_buffer);
 		}
 	}
-	// print assembly language
-	if (!((command_options.is_do_lra_selected() == true) && 
-		(command_options.is_do_compile_selected() == false)))
-		print_assembly();
+    // print assembly language
+    if (!((command_options.is_do_lra_selected() == true) && 
+	  (command_options.is_do_compile_selected() == false)))
+	print_assembly();
 }
 
 void Program::print_assembly()
 {
-	command_options.create_output_buffer();
-	ostream & file_buffer = command_options.get_output_buffer();
+    command_options.create_output_buffer();
+    ostream & file_buffer = command_options.get_output_buffer();
 
-	if (!global_symbol_table.is_empty())
-		file_buffer << "\n\t.data\n";
+    if (!global_symbol_table.is_empty())
+	file_buffer << "\n\t.data\n";
 
-	global_symbol_table.print_assembly(file_buffer);
+    global_symbol_table.print_assembly(file_buffer);
 
-	// print each procedure
-	map<string, Procedure *>::iterator i;
-	for (i = procedure_map.begin(); i != procedure_map.end(); i++)
-		i->second->print_assembly(file_buffer);
+    // print each procedure
+    map<string, Procedure *>::iterator i;
+    for (i = procedure_map.begin(); i != procedure_map.end(); i++)
+	i->second->print_assembly(file_buffer);
 }

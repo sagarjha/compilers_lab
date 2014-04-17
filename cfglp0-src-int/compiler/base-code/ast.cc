@@ -1364,10 +1364,20 @@ Code_For_Ast & Goto_Ast::compile_and_optimize_ast(Lra_Outcome & lra) {
 }
 //////////////////////////////////////////////////////////////////////////////////////////
 
-Return_Ast::Return_Ast(Data_Type data_type, int line)
+Return_Ast::Return_Ast(Ast* _expn, string _fn_name, int line)
 {
+  fn_name = _fn_name;  
   lineno = line;
-  node_data_type = data_type;
+  expn = _expn;
+  node_data_type = expn->get_data_type();
+  ast_num_child = unary_arity;
+}
+
+Return_Ast::Return_Ast(string _fn_name, int line)
+{
+  fn_name = _fn_name;
+  lineno = line;
+  node_data_type = void_data_type;
   ast_num_child = zero_arity;
 }
 
@@ -1387,14 +1397,101 @@ Eval_Result & Return_Ast::evaluate(Local_Environment & eval_env, ostream & file_
 
 Code_For_Ast & Return_Ast::compile()
 {
-  Code_For_Ast & ret_code = *new Code_For_Ast();
-  return ret_code;
+  if (ast_num_child == zero_arity) {
+    // return
+    Icode_Stmt * ret_stmt;
+    ret_stmt = new Ret_IC_Stmt(fn_name);
+    list<Icode_Stmt *> & ic_list = * (new list<Icode_Stmt *>());
+    ic_list.push_back(ret_stmt);
+
+    Code_For_Ast * complete_ret_stmt = new Code_For_Ast(ic_list, machine_dscr_object.get_return_register(node_data_type));
+    
+    return *complete_ret_stmt;
+  }
+  else {
+    // first compile what is to be returned
+    Code_For_Ast compiled_return_expn = expn->compile();
+
+    // get the icode list
+    list<Icode_Stmt *> & ic_list = compiled_return_expn.get_icode_list();
+
+    // get the register that is occupied by the expn
+    Register_Descriptor * load_register_ret = compiled_return_expn.get_reg();
+
+    Ics_Opd * load_register_ret_opd = new Register_Addr_Opd(load_register_ret, node_data_type);
+    
+    Icode_Stmt * load_stmt;
+    Ics_Opd * ret_ics_opd = new Register_Addr_Opd (machine_dscr_object.get_return_register(node_data_type), node_data_type);
+    // move it to v1 or f0 depending on the node_data_type
+    if (node_data_type == int_data_type) {
+      load_stmt = new Move_IC_Stmt(move_reg, load_register_ret_opd, ret_ics_opd);
+    }
+
+    else {
+      load_stmt = new Move_IC_Stmt(move_reg_d, load_register_ret_opd, ret_ics_opd);
+    }
+
+    ic_list.push_back(load_stmt);
+    
+    // return
+    Icode_Stmt * ret_stmt;
+    ret_stmt = new Ret_IC_Stmt(fn_name);
+    ic_list.push_back(ret_stmt);
+
+    Code_For_Ast * complete_ret_stmt = new Code_For_Ast(ic_list, machine_dscr_object.get_return_register(node_data_type));
+    return *complete_ret_stmt;
+  }
 }
 
 Code_For_Ast & Return_Ast::compile_and_optimize_ast(Lra_Outcome & lra)
 {
-  Code_For_Ast & ret_code = *new Code_For_Ast();
-  return ret_code;
+  if (ast_num_child == zero_arity) {
+    // return
+    Icode_Stmt * ret_stmt;
+    ret_stmt = new Ret_IC_Stmt(fn_name);
+    list<Icode_Stmt *> & ic_list = * (new list<Icode_Stmt *>());
+    ic_list.push_back(ret_stmt);
+
+    Code_For_Ast * complete_ret_stmt = new Code_For_Ast(ic_list, machine_dscr_object.get_return_register(node_data_type));
+    
+    return *complete_ret_stmt;
+  }
+  else {
+    // first optimize the register allocation, if that made sense
+    lra.optimize_lra(mc_2r, NULL, expn);
+    
+    // first compile what is to be returned
+    Code_For_Ast compiled_return_expn = expn->compile_and_optimize_ast(lra);
+
+    // get the icode list
+    list<Icode_Stmt *> & ic_list = compiled_return_expn.get_icode_list();
+
+    // get the register that is occupied by the expn
+    Register_Descriptor * load_register_ret = compiled_return_expn.get_reg();
+
+    Ics_Opd * load_register_ret_opd = new Register_Addr_Opd(load_register_ret, node_data_type);
+    
+    Icode_Stmt * load_stmt;
+    Ics_Opd * ret_ics_opd = new Register_Addr_Opd (machine_dscr_object.get_return_register(node_data_type), node_data_type);
+    // move it to v1 or f0 depending on the node_data_type
+    if (node_data_type == int_data_type) {
+      load_stmt = new Move_IC_Stmt(move_reg, load_register_ret_opd, ret_ics_opd);
+    }
+
+    else {
+      load_stmt = new Move_IC_Stmt(move_reg_d, load_register_ret_opd, ret_ics_opd);
+    }
+
+    ic_list.push_back(load_stmt);
+    
+    // return
+    Icode_Stmt * ret_stmt;
+    ret_stmt = new Ret_IC_Stmt(fn_name);
+    ic_list.push_back(ret_stmt);
+
+    Code_For_Ast * complete_ret_stmt = new Code_For_Ast(ic_list, machine_dscr_object.get_return_register(node_data_type));
+    return *complete_ret_stmt;
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -1450,10 +1547,150 @@ Eval_Result & Functional_Call_Ast::get_value_of_evaluation(Local_Environment & e
 
 Code_For_Ast & Functional_Call_Ast::compile()
 {
+  // the ic_list for the whole compilation
+  list<Icode_Stmt *> ic_list;
+
+  // get the handle of the procedure being called
+  Procedure * called_procedure = program_object.get_procedure(name);
+
+  // get the parameters of the function
+  list <args> parameters = called_procedure->get_arguments();
+
+  // list of arguments iterator
+  list <args> ::iterator j,j1;
+  j = j1  = parameters.end();
+  list<Ast*>::iterator i,i1;
+  i = i1 = argument.end();
+  j--;i--;
+  // compile each argument ast one by one
+  for (; i1!=argument.begin(); --i,--j,--i1,--j1) {
+    // compile the ast
+    Code_For_Ast arg_code_list = (*i)->compile();
+    // get the register that is occupied by the arg
+    Register_Descriptor * load_register_ret = arg_code_list.get_reg();
+    // get the name of the argument
+    string arg_name = (*j).get_name();
+    // get the data type of the argument
+    Data_Type data_t = (*j).get_type();
+    // get the symbol table entry of the argument
+    Symbol_Table_Entry * sym_tab_ent = new Symbol_Table_Entry(called_procedure->get_symbol_table_entry(arg_name));
+    // create the register operand
+    Ics_Opd * register_opd = new Register_Addr_Opd(load_register_ret, data_t);
+    // create the memory operand
+    Ics_Opd * opd = new Mem_Addr_Opd(*sym_tab_ent, data_t);
+
+    Icode_Stmt * store_stmt;
+    if (data_t == int_data_type) {
+      store_stmt = new Move_IC_Stmt(store, register_opd, opd);
+    }
+    else {
+      store_stmt = new Move_IC_Stmt(store_d, register_opd, opd);
+    }
+
+    ic_list.splice(ic_list.end(), arg_code_list.get_icode_list());
+    ic_list.push_back(store_stmt);
+  }
+
+  // now make a call icode statement
+  Call_IC_Stmt * call_stmt = new Call_IC_Stmt(name);
+  ic_list.push_back(call_stmt);
+
+  Register_Descriptor * store_register_for_return = machine_dscr_object.get_new_register(called_procedure->get_return_type());
+
+  // create a new move statement, in case the function returns
+  if (called_procedure->get_return_type() != void_data_type) {
+    Icode_Stmt * store_ret_stmt;
+    Ics_Opd * store_ret_opd = new Register_Addr_Opd (store_register_for_return, called_procedure->get_return_type());
+    Ics_Opd * ret_ics_opd = new Register_Addr_Opd (machine_dscr_object.get_return_register(node_data_type), called_procedure->get_return_type());
+
+    if (node_data_type == int_data_type) {
+      store_ret_stmt = new Move_IC_Stmt(move_reg, ret_ics_opd, store_ret_opd);
+    }
+    else {
+      store_ret_stmt = new Move_IC_Stmt(move_reg_d, ret_ics_opd, store_ret_opd);
+    }
+    
+    ic_list.push_back(store_ret_stmt);
+  }
+  
+  Code_For_Ast & fun_call_code = *new Code_For_Ast(ic_list, store_register_for_return);
+  return fun_call_code;
+
 }
 
 Code_For_Ast & Functional_Call_Ast::compile_and_optimize_ast(Lra_Outcome & lra)
 {
+  // the ic_list for the whole compilation
+  list<Icode_Stmt *> ic_list;
+
+  // get the handle of the procedure being called
+  Procedure * called_procedure = program_object.get_procedure(name);
+
+  // get the parameters of the function
+  list <args> parameters = called_procedure->get_arguments();
+
+  // list of arguments iterator
+  list <args> ::iterator j,j1;
+  j = j1  = parameters.end();
+  list<Ast*>::iterator i,i1;
+  i = i1 = argument.end();
+  j--;i--;
+  // compile each argument ast one by one
+  for (; i1!=argument.begin(); --i,--j,--i1,--j1) {
+    lra.optimize_lra(mc_2r, NULL, *i);
+    
+    // compile the ast
+    Code_For_Ast arg_code_list = (*i)->compile_and_optimize_ast(lra);
+    // get the register that is occupied by the arg
+    Register_Descriptor * load_register_ret = arg_code_list.get_reg();
+    // get the name of the argument
+    string arg_name = (*j).get_name();
+    // get the data type of the argument
+    Data_Type data_t = (*j).get_type();
+    // get the symbol table entry of the argument
+    Symbol_Table_Entry * sym_tab_ent = new Symbol_Table_Entry(called_procedure->get_symbol_table_entry(arg_name));
+    // create the register operand
+    Ics_Opd * register_opd = new Register_Addr_Opd(load_register_ret, data_t);
+    // create the memory operand
+    Ics_Opd * opd = new Mem_Addr_Opd(*sym_tab_ent, data_t);
+
+    Icode_Stmt * store_stmt;
+    if (data_t == int_data_type) {
+      store_stmt = new Move_IC_Stmt(store, register_opd, opd);
+    }
+    else {
+      store_stmt = new Move_IC_Stmt(store_d, register_opd, opd);
+    }
+
+    ic_list.splice(ic_list.end(), arg_code_list.get_icode_list());
+    ic_list.push_back(store_stmt);
+  }
+
+  // now make a call icode statement
+  Call_IC_Stmt * call_stmt = new Call_IC_Stmt(name);
+  ic_list.push_back(call_stmt);
+
+  Register_Descriptor * store_register_for_return = machine_dscr_object.get_new_register(called_procedure->get_return_type());
+
+  // create a new move statement, in case the function returns
+  if (called_procedure->get_return_type() != void_data_type) {
+    Icode_Stmt * store_ret_stmt;
+    Ics_Opd * store_ret_opd = new Register_Addr_Opd (store_register_for_return, called_procedure->get_return_type());
+    Ics_Opd * ret_ics_opd = new Register_Addr_Opd (machine_dscr_object.get_return_register(node_data_type), called_procedure->get_return_type());
+
+    if (node_data_type == int_data_type) {
+      store_ret_stmt = new Move_IC_Stmt(move_reg, ret_ics_opd, store_ret_opd);
+    }
+    else {
+      store_ret_stmt = new Move_IC_Stmt(move_reg_d, ret_ics_opd, store_ret_opd);
+    }
+    
+    ic_list.push_back(store_ret_stmt);
+  }
+  
+  Code_For_Ast & fun_call_code = *new Code_For_Ast(ic_list, store_register_for_return);
+  return fun_call_code;
+
 }
 
 template class Number_Ast<int>;

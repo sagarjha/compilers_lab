@@ -38,101 +38,102 @@ using namespace std;
 
 Basic_Block::Basic_Block(int basic_block_number, int line)
 {
-	id_number = basic_block_number;
+    id_number = basic_block_number;
 
-	lineno = line;
+    lineno = line;
 }
 
 Basic_Block::~Basic_Block()
 {
-	list<Ast *>::iterator i;
-	for (i = statement_list.begin(); i != statement_list.end(); i++)
-		delete (*i);
+    list<Ast *>::iterator i;
+    for (i = statement_list.begin(); i != statement_list.end(); i++)
+	delete (*i);
 }
 
 void Basic_Block::set_ast_list(list<Ast *> & ast_list)
 {
-	statement_list = ast_list;
+    statement_list = ast_list;
 }
 int Basic_Block::get_bb_number()
 {
-	return id_number;
+    return id_number;
 }
 void Basic_Block::print_bb(ostream & file_buffer)
 {
-	file_buffer << BB_SPACE << "Basic_Block " << id_number << "\n";
+    file_buffer << BB_SPACE << "Basic_Block " << id_number << "\n";
 
-	list<Ast *>::iterator i;
-	for(i = statement_list.begin(); i != statement_list.end(); i++)
-		(*i)->print(file_buffer);
+    list<Ast *>::iterator i;
+    for(i = statement_list.begin(); i != statement_list.end(); i++)
+	(*i)->print(file_buffer);
 }
 
 Eval_Result & Basic_Block::evaluate(Local_Environment & eval_env, ostream & file_buffer)
 {
-	Eval_Result * result = NULL;
+    Eval_Result * result = NULL;
 
-	file_buffer << "\n" << BB_SPACE << "Basic Block: " << id_number << "\n";
+    file_buffer << "\n" << BB_SPACE << "Basic Block: " << id_number << "\n";
 
-	list <Ast *>::iterator i;
-	for (i = statement_list.begin(); i != statement_list.end(); i++)
+    list <Ast *>::iterator i;
+    for (i = statement_list.begin(); i != statement_list.end(); i++)
 	{
-		CHECK_INVARIANT(((*i) != NULL), "Ast pointer seems to be NULL into the basic block");
-		result = &((*i)->evaluate(eval_env, file_buffer)); 
+	    CHECK_INVARIANT(((*i) != NULL), "Ast pointer seems to be NULL into the basic block");
+	    result = &((*i)->evaluate(eval_env, file_buffer)); 
 	}
 
-	return *result;
+    return *result;
 }
 
 void Basic_Block::compile()
 {
-	Code_For_Ast ast_code;
+    Code_For_Ast ast_code;
 
-	machine_dscr_object.validate_init_local_register_mapping();
+    machine_dscr_object.validate_init_local_register_mapping();
 	
-	Icode_Stmt * bb_label_stmt = new Label_IC_Stmt(id_number);
-	bb_icode_list.push_back(bb_label_stmt);
+    Icode_Stmt * bb_label_stmt = new Label_IC_Stmt(id_number);
+    bb_icode_list.push_back(bb_label_stmt);
 
-	// compile the program by visiting each ast in the block
-	list<Ast *>::iterator i;
-	for (i = statement_list.begin(); i != statement_list.end(); i++)
+    // compile the program by visiting each ast in the block
+    list<Ast *>::iterator i;
+    for (i = statement_list.begin(); i != statement_list.end(); i++)
 	{
-		Ast * ast = *i;
+	    Ast * ast = *i;
 
-		if (typeid(*ast) != typeid(Return_Ast))
-		{
-			if (command_options.is_do_lra_selected() == true)
+	    // if (typeid(*ast) != typeid(Return_Ast))
+	    // 	{
+		    if (command_options.is_do_lra_selected() == true)
 			{
-				Lra_Outcome lra;
-				ast_code = ast->compile_and_optimize_ast(lra);
+			    Lra_Outcome lra;
+			    ast_code = ast->compile_and_optimize_ast(lra);
 			}
 
-			else
-				ast_code = ast->compile();
+		    else {
+			ast_code = ast->compile();
+		    }
 
-			list<Icode_Stmt *> & ast_icode_list = ast_code.get_icode_list();
-			if (ast_icode_list.empty() == false)
+		    list<Icode_Stmt *> & ast_icode_list = ast_code.get_icode_list();
+		    if (ast_icode_list.empty() == false)
 			{
-				if (bb_icode_list.empty())
-					bb_icode_list = ast_icode_list;
-				else
-					bb_icode_list.splice(bb_icode_list.end(), ast_icode_list);
+			    if (bb_icode_list.empty())
+				bb_icode_list = ast_icode_list;
+			    else
+				bb_icode_list.splice(bb_icode_list.end(), ast_icode_list);
 			}
-		}
+		    //		}
 	}
 
-	machine_dscr_object.clear_local_register_mappings();
+    machine_dscr_object.clear_local_register_mappings();
 }
 
 void Basic_Block::print_assembly(ostream & file_buffer)
 {
-	list<Icode_Stmt *>::iterator i;
-	for (i = bb_icode_list.begin(); i != bb_icode_list.end(); i++)
-		(*i)->print_assembly(file_buffer);
+    list<Icode_Stmt *>::iterator i;
+    for (i = bb_icode_list.begin(); i != bb_icode_list.end(); i++)
+	(*i)->print_assembly(file_buffer);
 }
 
 void Basic_Block::print_icode(ostream & file_buffer)
 {
-	list<Icode_Stmt *>::iterator i;
-	for (i = bb_icode_list.begin(); i != bb_icode_list.end(); i++)
-		(*i)->print_icode(file_buffer);
+    list<Icode_Stmt *>::iterator i;
+    for (i = bb_icode_list.begin(); i != bb_icode_list.end(); i++)
+	(*i)->print_icode(file_buffer);
 }

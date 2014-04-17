@@ -589,6 +589,33 @@ void Label_IC_Stmt::print_assembly(ostream & file_buffer) {
     file_buffer << endl << "label" << num << ":\n";
 }
 
+/******************************* Class Ret_IC_Stmt*******************************/
+
+Ret_IC_Stmt::Ret_IC_Stmt (string _fn_name) {
+  fn_name = _fn_name;
+}
+
+void Ret_IC_Stmt::print_icode(ostream & file_buffer) {
+  file_buffer << "\treturn" << endl;
+}
+
+void Ret_IC_Stmt::print_assembly(ostream & file_buffer) {
+  file_buffer << "\tj epilogue_" << fn_name << endl;
+}
+
+/******************************* Class Call_IC_Stmt ****************************/
+Call_IC_Stmt::Call_IC_Stmt(string _name) {
+  name = _name;
+}
+
+void Call_IC_Stmt::print_icode(ostream & file_buffer) {
+  file_buffer << "\tcall " << name << endl;
+}
+
+void Call_IC_Stmt::print_assembly(ostream & file_buffer) {
+  file_buffer << "\tjal " << name << endl;
+}
+
 /******************************* Class Code_For_Ast ****************************/
 
 Code_For_Ast::Code_For_Ast()

@@ -45,6 +45,7 @@ typedef enum
 	t1, t2, t3, t4, t5, t6, t7, t8, t9, 
 	s0,	/* temporary callee-save registers */ 
 	s1, s2, s3, s4, s5, s6, s7,
+	f0,	/* fp function result register */
 	f2,     /* floating point register */
 	f4, f6, f8, f10, f12, f14, f16, f18, f20, f22, f24, f26, f28, f30,
 	gp,	/* global data pointer register */
@@ -251,6 +252,7 @@ public:
     void clear_local_register_mappings();
 
     Register_Descriptor * get_new_register(Data_Type data_type);
+    Register_Descriptor * get_return_register(Data_Type data_type);
 };
 
 extern Machine_Description machine_dscr_object;
