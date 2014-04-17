@@ -224,7 +224,7 @@ Code_For_Ast & Assignment_Ast::compile_and_optimize_ast(Lra_Outcome & lra)
     
   Code_For_Ast load_stmt;
 
-  if ((typeid(*rhs).name() == typeid(Expr_Ast).name()) || (typeid(*rhs).name() == typeid(Cast_Expr_Ast).name()) || (typeid(*rhs).name() == typeid(Cast_Name_Ast).name())) {
+  if ((typeid(*rhs).name() == typeid(Expr_Ast).name()) || (typeid(*rhs).name() == typeid(Cast_Expr_Ast).name()) || (typeid(*rhs).name() == typeid(Cast_Name_Ast).name()) || (typeid(*rhs).name() == typeid(Functional_Call_Ast).name()) || (typeid(*rhs).name() == typeid(Return_Ast).name())) {
     load_stmt = rhs->compile_and_optimize_ast(lra);
 		
     Register_Descriptor * intermediate_result = load_stmt.get_reg();
@@ -1562,6 +1562,8 @@ Code_For_Ast & Functional_Call_Ast::compile()
   list<Ast*>::iterator i,i1;
   i = i1 = argument.end();
   j--;i--;
+
+  int stack_offset = 0;
   // compile each argument ast one by one
   for (; i1!=argument.begin(); --i,--j,--i1,--j1) {
     // compile the ast
@@ -1576,8 +1578,9 @@ Code_For_Ast & Functional_Call_Ast::compile()
     Symbol_Table_Entry * sym_tab_ent = new Symbol_Table_Entry(called_procedure->get_symbol_table_entry(arg_name));
     // create the register operand
     Ics_Opd * register_opd = new Register_Addr_Opd(load_register_ret, data_t);
-    // create the memory operand
-    Ics_Opd * opd = new Mem_Addr_Opd(*sym_tab_ent, data_t);
+    // create the stack memory operand
+    Ics_Opd * opd = new Stack_Mem_Addr_Opd(*sym_tab_ent, data_t, stack_offset);
+    stack_offset -= (*j).get_size();
 
     Icode_Stmt * store_stmt;
     if (data_t == int_data_type) {
@@ -1592,7 +1595,7 @@ Code_For_Ast & Functional_Call_Ast::compile()
   }
 
   // now make a call icode statement
-  Call_IC_Stmt * call_stmt = new Call_IC_Stmt(name);
+  Call_IC_Stmt * call_stmt = new Call_IC_Stmt(name, -stack_offset);
   ic_list.push_back(call_stmt);
 
   Register_Descriptor * store_register_for_return = machine_dscr_object.get_new_register(called_procedure->get_return_type());
@@ -1635,6 +1638,8 @@ Code_For_Ast & Functional_Call_Ast::compile_and_optimize_ast(Lra_Outcome & lra)
   list<Ast*>::iterator i,i1;
   i = i1 = argument.end();
   j--;i--;
+
+  int stack_offset = 0;
   // compile each argument ast one by one
   for (; i1!=argument.begin(); --i,--j,--i1,--j1) {
     lra.optimize_lra(mc_2r, NULL, *i);
@@ -1651,9 +1656,10 @@ Code_For_Ast & Functional_Call_Ast::compile_and_optimize_ast(Lra_Outcome & lra)
     Symbol_Table_Entry * sym_tab_ent = new Symbol_Table_Entry(called_procedure->get_symbol_table_entry(arg_name));
     // create the register operand
     Ics_Opd * register_opd = new Register_Addr_Opd(load_register_ret, data_t);
-    // create the memory operand
-    Ics_Opd * opd = new Mem_Addr_Opd(*sym_tab_ent, data_t);
-
+    // create the stack memory operand
+    Ics_Opd * opd = new Stack_Mem_Addr_Opd(*sym_tab_ent, data_t, stack_offset);
+    stack_offset -= (*j).get_size();
+    
     Icode_Stmt * store_stmt;
     if (data_t == int_data_type) {
       store_stmt = new Move_IC_Stmt(store, register_opd, opd);
@@ -1667,9 +1673,12 @@ Code_For_Ast & Functional_Call_Ast::compile_and_optimize_ast(Lra_Outcome & lra)
   }
 
   // now make a call icode statement
-  Call_IC_Stmt * call_stmt = new Call_IC_Stmt(name);
+  Call_IC_Stmt * call_stmt = new Call_IC_Stmt(name, -stack_offset);
   ic_list.push_back(call_stmt);
 
+  // clear local mappings -_-
+  machine_dscr_object.clear_local_register_mappings();
+  
   Register_Descriptor * store_register_for_return = machine_dscr_object.get_new_register(called_procedure->get_return_type());
 
   // create a new move statement, in case the function returns

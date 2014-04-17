@@ -88,7 +88,7 @@ public:
     void set_start_offset_of_first_symbol(int n);
     int get_start_offset_of_first_symbol();
 
-    void assign_offsets();
+    void assign_offsets(list<Data_Type> arguments);
     int get_size();
     void set_size(int n);
 

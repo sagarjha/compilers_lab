@@ -203,7 +203,7 @@ void Program::compile()
     // assign offsets to global variables
     global_symbol_table.set_start_offset_of_first_symbol(0);
     global_symbol_table.set_size(0);
-    global_symbol_table.assign_offsets();
+    global_symbol_table.assign_offsets(*(new list<Data_Type>()));
 	
     // compile the program by visiting each procedure
     map<string, Procedure *>::iterator i;

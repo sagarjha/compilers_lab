@@ -51,6 +51,15 @@ void args::set_name(string arg_name) {
   name = arg_name;
 }
 
+int args::get_size() {
+  if (type == int_data_type) {
+    return 4;
+  }
+  else {
+    return 8;
+  }
+}
+
 Procedure::Procedure(Data_Type proc_return_type, string proc_name, list<args*> arg_list, int line)
 {
   return_type = proc_return_type;
@@ -164,6 +173,7 @@ bool Procedure::match_argument_list(list<args*> *arg_list) {
     if (((*i).get_type() != (*j)->get_type()) || ((*i).get_name()).compare((*j)->get_name()) != 0) {
       return false;
     }
+    parameters_dt_list.push_back((*i).get_type());
   }
   return true;
 }
@@ -293,7 +303,7 @@ void Procedure::compile()
   // assign offsets to local symbol table
   local_symbol_table.set_start_offset_of_first_symbol(4);
   local_symbol_table.set_size(4);
-  local_symbol_table.assign_offsets();
+  local_symbol_table.assign_offsets(parameters_dt_list);
 
   // compile the program by visiting each basic block
   list<Basic_Block *>::iterator i;
@@ -337,8 +347,9 @@ void Procedure::print_prologue(ostream & file_buffer)
 	sub $fp, $sp, 8\t\t# Update the frame pointer\n";
 
   int size = local_symbol_table.get_size();
+
   if (size > 0)
-    prologue << "\n\tsub $sp, $sp, " << (size+4) << "\t\t# Make space for the locals\n";
+    prologue << "\n\tsub $sp, $sp, " << (size+8) << "\t\t# Make space for the locals\n";
   else
     prologue << "\n\tsub $sp, $sp, 8\t\t# Make space for the locals\n";
 
@@ -347,14 +358,22 @@ void Procedure::print_prologue(ostream & file_buffer)
   file_buffer << prologue.str();
 }
 
+int Procedure::get_arguments_size() {
+  int size = 0;
+  for (list<args>::iterator i = arguments.begin(); i != arguments.end(); ++i) {
+    size += (*i).get_size();
+  }
+  return size;
+}
+
 void Procedure::print_epilogue(ostream & file_buffer)
 {
   stringstream epilogue;
 
   int size = local_symbol_table.get_size();
-
+  
   if (size > 0)
-    epilogue << "\n# Epilogue Begins\nepilogue_" << name << ":\n\tadd $sp, $sp, " << (size+4) << "\n";
+    epilogue << "\n# Epilogue Begins\nepilogue_" << name << ":\n\tadd $sp, $sp, " << (size+8) << "\n";
   else
     epilogue << "\n# Epilogue Begins\nepilogue_" << name << ":\n\tadd $sp, $sp, 8\n";
 

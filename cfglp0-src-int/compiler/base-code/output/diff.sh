@@ -21,6 +21,17 @@ done
 
 echo
 echo
+echo asm
+echo
+echo
+for f in *.cfg.asm
+do
+	echo $f
+	diff -bB $f ../../level-3-32bits/output/$f
+done
+
+echo
+echo
 echo opticode
 echo
 echo

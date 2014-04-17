@@ -103,6 +103,52 @@ Data_Type Mem_Addr_Opd::get_data_type () {
     return data_type;
 }
 
+/****************************** Class Stack_Mem_Addr_Opd *****************************/
+
+Stack_Mem_Addr_Opd::Stack_Mem_Addr_Opd(Symbol_Table_Entry & se, Data_Type _data_type, int _stack_offset) 
+{
+    symbol_entry = &se;
+    type = memory_addr;
+    data_type = _data_type;
+    stack_offset = _stack_offset;
+}
+
+Stack_Mem_Addr_Opd & Stack_Mem_Addr_Opd::operator=(const Stack_Mem_Addr_Opd & rhs)
+{
+    type = rhs.type;
+    symbol_entry = rhs.symbol_entry;
+    stack_offset = rhs.stack_offset;
+    
+    return *this;
+}
+
+void Stack_Mem_Addr_Opd::print_ics_opd(ostream & file_buffer) 
+{
+    string name = symbol_entry->get_variable_name();
+
+    file_buffer << name;
+}
+
+void Stack_Mem_Addr_Opd::print_asm_opd(ostream & file_buffer) 
+{
+    Table_Scope symbol_scope = symbol_entry->get_symbol_scope();
+
+    CHECK_INVARIANT(((symbol_scope == local) || (symbol_scope == global)), 
+		    "Wrong scope value");
+
+    if (symbol_scope == local)
+	{
+	    int offset = symbol_entry->get_start_offset();
+	    file_buffer << stack_offset << "($sp)";
+	}
+    else
+	file_buffer << symbol_entry->get_variable_name();
+}
+
+Data_Type Stack_Mem_Addr_Opd::get_data_type () {
+    return data_type;
+}
+
 /****************************** Class Register_Addr_Opd *****************************/
 
 Register_Addr_Opd::Register_Addr_Opd(Register_Descriptor * reg, Data_Type _data_type) 
@@ -604,8 +650,9 @@ void Ret_IC_Stmt::print_assembly(ostream & file_buffer) {
 }
 
 /******************************* Class Call_IC_Stmt ****************************/
-Call_IC_Stmt::Call_IC_Stmt(string _name) {
+Call_IC_Stmt::Call_IC_Stmt(string _name, int _size) {
   name = _name;
+  size = _size;
 }
 
 void Call_IC_Stmt::print_icode(ostream & file_buffer) {
@@ -613,7 +660,13 @@ void Call_IC_Stmt::print_icode(ostream & file_buffer) {
 }
 
 void Call_IC_Stmt::print_assembly(ostream & file_buffer) {
+  if (size != 0) {
+    file_buffer << "\tsub $sp, $sp, " << size << endl;
+  }
   file_buffer << "\tjal " << name << endl;
+  if (size != 0) {
+    file_buffer << "\tadd $sp, $sp, " << size << endl;
+  }
 }
 
 /******************************* Class Code_For_Ast ****************************/

@@ -179,16 +179,30 @@ int Symbol_Table::get_size()
   return size_in_bytes;
 }
 
-void Symbol_Table::assign_offsets()
+void Symbol_Table::assign_offsets(list <Data_Type> arguments)
 {
   list<Symbol_Table_Entry *>::iterator i;
-  for (i = variable_table.begin(); i != variable_table.end(); i++)
+  list <Data_Type>::iterator j;
+  int start_offset_of_parameters = -8;
+  // first assign offsets to the parameters
+  for (i = variable_table.begin(), j = arguments.begin(); j != arguments.end(); i++, j++)
+    {
+      int size = get_size_of_value_type(*j);
+      start_offset_of_parameters -= size;
+      (*i)->set_start_offset(start_offset_of_parameters);
+      (*i)->set_end_offset(start_offset_of_parameters+size);
+
+    }
+  // then to the local variables
+  for (; i != variable_table.end(); i++)
     {
       int size = get_size_of_value_type((*i)->get_data_type());
-      (*i)->set_start_offset(size_in_bytes-12);
+      (*i)->set_start_offset(size_in_bytes);
       size_in_bytes += size;
       (*i)->set_end_offset(size_in_bytes);
+
     }
+
 }
 
 list <Symbol_Table_Entry *> Symbol_Table::get_variable_table () {
@@ -201,6 +215,7 @@ int Symbol_Table::get_size_of_value_type(Data_Type dt)
     {
     case int_data_type: return 4; break;
     case float_data_type: return 8; break;
+    case double_data_type: return 8; break;
     case void_data_type: CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, "Attempt to seek size of type void");
     defualt: CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, "Data type not supported");
     }
